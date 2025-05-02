@@ -204,6 +204,9 @@
 % The declaration signature
 \def\declaresign#1{\gdef\@declaresign{#1}}
 
+% The AI used in the report
+\def\AIVersion#1{\gdef\@AIVersion{#1}}
+
 % The alwayssingle environment ensures that front matter is always
 % single column even in a double-column document.
 
@@ -298,12 +301,18 @@
     {\Large \bfseries \declearname}\par
     \vspace{1in}
     {\large 
-    I hereby declare that this thesis is my original work and it has\par 
+    I hereby declare that this report is my original work and it has\par 
      been written by me in its entirety. I have duly\par 
     acknowledged all the sources of information which have\par
-    been used in the thesis.\par
+    been used in this report.\par
     \vspace{1.5em}
-    This thesis has also not been submitted for any\par
+    I also acknowledge the use of \@AIVersion\par
+    {\color{red} for initial idea generation, language refinement, and\par
+    summarization.} All content has been critically reviewed\par
+    and supplemented with my own analysis to ensure\par
+    accuracy and originality.\par
+    \vspace{1.5em}
+    This report has also not been submitted for any\par
     degree in any university previously.\par
     \ifdefined \@declaresign
       \vspace{1.2in}
