@@ -2,6 +2,12 @@
 %%% remove it for the final submission, i.e. electronic thesis
 %\newcommand*{\DoubleSided}{} 
 
+\ifdefined\DoubleSided
+  \documentclass[twoside,openright,a4paper]{nusthesis}
+\else
+  \documentclass[a4paper]{nusthesis}
+\fi
+
 \input{_global_settings.tex}
 
 \begin{document}

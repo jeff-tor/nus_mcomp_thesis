@@ -27,3 +27,4 @@ pdfbuild/
 *.lof 
 *.toc 
 *.zip
+*.xdv
