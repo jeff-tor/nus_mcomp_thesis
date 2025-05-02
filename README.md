@@ -1,14 +1,19 @@
-# A LaTeX Template for PhD/Master Thesis of the National University of Singapore (NUS)
+# A LaTeX template for Capstone Report of the Master of Science in Precision Health and Medicine (MSc. PHM), National University of Singapore (NUS)
 
-> Although I have already left NUS, I'm still actively maintaining this thesis template. As the formatting guidelines may change from time to time, I endeavor to adapt this template to the latest guidelines, which (unfortunately) can only be accessed by NUS students and staff. Therefore, if you find that this template deviates from the latest guidelines, please [create an issue](https://github.com/streamjoin/nusthesis/issues) by attaching the guidelines and I will take the time to address it. Thanks for your support along the way! 
+Special thanks to [Qian Lin](https://github.com/streamjoin) for the original template. This is a fork of the original template [streamjoin/nusthesis](https://github.com/streamjoin/nusthesis) with some modifications to suit the requirements of the MSc. PHM program.
 
 This set of latex code (mainly the [`nusthesis.cls`](nusthesis.cls)) composes a template of NUS thesis, which is compliant with the [university's requirement](https://www.dropbox.com/s/o6jtrk9y7cil70w/General-Guidelines-and-Instructions-on-Format-of-Research-Thesis-and-Electronic-Submission.pdf "General Guidelines and Instructions on Format of Research Thesis and Electronic Submission").
 Using this template to organize your thesis content can save a lot of effort spent in formatting. 
 
-Apart from formatting, the example .tex files also include a lot of latex tricks extracted from my years' experience of using latex.
+Additional modifications have been made to the original template to fits the requirements of the MSc. PHM program. The modifications include:
+- Change the cover page to match the MSc. PHM program requirements.
+- Add Declaration of AI Usage
+- And other minor changes to the formatting and layout.
+
+Apart from formatting, the example .tex files also include a lot of latex tricks extracted from Qian's years' experience of using latex.
 These tricks are mainly described and demonstrated in the `chapters/ch-Intro.tex` file. 
 
-You may refer to [this](https://www.dropbox.com/s/rar6yxn9u6n19dp/ChickenR.pdf) to preview a sample thesis generated using this template. In addition, the template is also available on [Overleaf](https://www.overleaf.com/latex/templates/thesis-template-of-the-national-university-of-singapore-nus/gkvbbgybrjnw) (but it may not be timely synchronized with updates maintained in this repository).
+You can get a quick overview of the template by looking at the [`main.pdf`](https://github.com/arnold117/nus_phm_thesis/blob/master/main.pdf) file, which is the compiled version of `main.tex`.
 
 ## Compilation
 
@@ -58,6 +63,6 @@ And comment it out when you are producing the electronic thesis for the final su
 
 ## Contact 
 
-If you encounter any problem with this template, feel free to [contact me](http://linqian.me/) or [create an issue](https://github.com/streamjoin/nusthesis/issues) in this repository. 
+If you encounter any problem with this template, feel free to [contact me](mailto:yanuo.zhou@u.nus.edu) or [create an issue](https://github.com/arnold117/nus_phm_thesis/issues) in this repository. 
 
 All the best for your graduation!
