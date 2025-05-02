@@ -178,6 +178,9 @@
 % These macros are used to declare arguments needed for the
 % construction of the front matter.
 
+% NUSID of the author
+\def\nusid#1{\gdef\@nusid{#1}}
+
 % The year the degree will be officially conferred
 \def\degreeyear#1{\gdef\@degreeyear{#1}}
 
@@ -194,6 +197,13 @@
 
 % The names of your thesis examiners, one per line
 \def\examiners#1{\gdef\@examiners{#1}}
+
+% Start Date and End Date of the research attachment
+\def\startdate#1{\gdef\@startdate{#1}}
+\def\enddate#1{\gdef\@enddate{#1}}
+
+% Capstone Type
+\def\typeofReport#1{\gdef\@typeofReport{#1}}
 
 % The name of your degree's field (e.g. Psychology, Computer Science)
 \def\field#1{\gdef\@field{#1}}
@@ -249,20 +259,18 @@
     \vspace{14pt minus 4pt}
     by \par
     \blocklt{\@author}
+    \ifdefined \@nusid
+      \par\vspace{-10pt}NUS ID: \@nusid
+    \fi\par
     \ifdefined \@prevdegrees
       \par\vspace{-10pt}\textit{(\@prevdegrees)}
     \fi\par
-    \vspace{28pt minus 8pt}
-    \blocklt{A thesis submitted for the degree of} \par
-    \blocklt{\@degree}\par
-    in \par
-    \blocklt{\@field}\par
-    in the \par
-    \blocklt{Graduate Division} \par
-    of the \par
-    \blocklt{National University of Singapore} \par
-    \vspace{28pt minus 8pt}
-    \blocklt{\@degreeyear} \par
+
+    \vspace{14pt minus 4pt}
+    Research Attachment Period:\par
+    \blocklt{\@startdate} to \blocklt{\@enddate}\par
+
+
     \vspace{14pt minus 4pt}
     \ifdefined \@cosupervisor
       Supervisors: \par\vspace{-10pt}
@@ -275,11 +283,26 @@
       Supervisor: \par\vspace{-10pt}
       {\@supervisor}
     \fi\par
-    \ifdefined \@examiners
-      \vspace{5pt}
-      Examiners: \par\vspace{-10pt}
-      {\@examiners}\par
-    \fi
+    % \ifdefined \@examiners
+    %   \vspace{5pt}
+    %   Examiners: \par\vspace{-10pt}
+    %   {\@examiners}\par
+    % \fi
+
+    \vspace{28pt minus 8pt}
+    \blocklt{\@typeofReport\ Capstone Report submitted to the} \par
+    \blocklt{Department of Biochemistry} \par
+    of the \par
+    \blocklt{National University of Singapore} \par
+
+    \vspace{28pt minus 8pt}
+    \blocklt{In Partial Fulfillment for the Degree of the} \par
+    \blocklt{\@degree}\par
+    in \par
+    \blocklt{\@field}\par
+    
+    \vspace{28pt minus 8pt}
+    \blocklt{\@degreeyear} \par
   \end{center}
   \vfill
   \hrule height 0pt
