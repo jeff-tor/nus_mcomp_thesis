@@ -1,68 +1,185 @@
-# A LaTeX template for Capstone Report of the Master of Science in Precision Health and Medicine (MSc. PHM), National University of Singapore (NUS)
+# NUS MSc. PHM Capstone Report LaTeX Template
 
-Special thanks to [Qian Lin](https://github.com/streamjoin) for the original template. This is a fork of the original template [streamjoin/nusthesis](https://github.com/streamjoin/nusthesis) with some modifications to suit the requirements of the MSc. PHM program.
+A comprehensive LaTeX template for the **Master of Science in Precision Health and Medicine (MSc. PHM)** capstone reports at the **National University of Singapore (NUS)**.
 
-This set of latex code (mainly the [`nusthesis.cls`](nusthesis.cls)) composes a template of NUS thesis, which is compliant with the [university's requirement](https://www.dropbox.com/s/o6jtrk9y7cil70w/General-Guidelines-and-Instructions-on-Format-of-Research-Thesis-and-Electronic-Submission.pdf "General Guidelines and Instructions on Format of Research Thesis and Electronic Submission").
-Using this template to organize your thesis content can save a lot of effort spent in formatting. 
+## ✨ Features
 
-Additional modifications have been made to the original template to fits the requirements of the MSc. PHM program. The modifications include:
-- Change the cover page to match the MSc. PHM program requirements.
-- Add Declaration of AI Usage
-- And other minor changes to the formatting and layout.
+- **Compliant formatting** with NUS thesis requirements
+- **MSc. PHM specific modifications** including:
+  - Customized cover page for capstone reports
+  - Declaration of AI usage (required for modern academic integrity)
+  - Research attachment period specification
+  - Academic/Industrial report type selection
+- **Professional styling** with proper typography and spacing
+- **Comprehensive examples** including figures, tables, algorithms, and citations
+- **Automated compilation** with build scripts
+- **Cross-platform support** (Linux, macOS, Windows)
 
-Apart from formatting, the example .tex files also include a lot of latex tricks extracted from Qian's years' experience of using latex.
-These tricks are mainly described and demonstrated in the `chapters/ch-Intro.tex` file. 
+## 🚀 Quick Start
 
-You can get a quick overview of the template by looking at the [`main.pdf`](https://github.com/arnold117/nus_phm_thesis/blob/master/main.pdf) file, which is the compiled version of `main.tex`.
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/arnold117/nus_phm_thesis.git
+   cd nus_phm_thesis
+   ```
 
-## Compilation
+2. **Edit the main content**
+   - Modify [`main.tex`](main.tex) with your thesis details
+   - Add your chapters in the [`chapters/`](chapters/) folder
+   - Place figures in [`pic/`](pic/) and experimental plots in [`exp/`](exp/)
 
-Run the `build.sh` script to compile in Linux, macOS or emulated Unix-like environment for Windows (e.g., [Cygwin](https://www.cygwin.com/) and [MinGW](http://www.mingw.org/ "Minimalist GNU for Windows")). ~~For compilation in the native Windows, run the `build.bat` script.~~ The produced .pdf file locates in the same folder. 
+3. **Compile your thesis**
+   ```bash
+   ./build.sh
+   ```
 
-You may customize the name of the output .pdf file by configuring `PDF_NAME` in the above scripts. Alternatively, you could specify the filename with the `--pdf-name` option (or `-o` for short). For example, 
+## 📁 Project Structure
 
-```sh
-$ ./build.sh --pdf-name MyThesis
+```
+├── main.tex                    # Main document entry point
+├── nusthesis.cls              # NUS thesis document class
+├── _global_settings.tex       # Global packages and configurations
+├── references.bib             # Bibliography database
+├── build.sh                   # Compilation script
+├── chapters/                  # Individual chapter files
+│   ├── abstract.tex
+│   ├── acknowledgments.tex
+│   ├── ch-intro.tex
+│   ├── ch-review.tex
+│   └── ...
+├── pic/                       # Figures and images
+├── exp/                       # Experimental plots and data
+└── fairy-lite/               # LaTeX compilation utilities
 ```
 
-This will produce `MyThesis.pdf` as output.
+## 🔧 Compilation
 
-ps: Since [Windows 10 already provides built-in Linux Bash Shell](https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/), the original crappy `build.bat` script has been deprecated. Nevertheless, you are still welcomed to provide a robust one via [pull request](https://github.com/streamjoin/nusthesis/pulls) if you believed that's really necessary.
+### Automated Build (Recommended)
 
-### Manual Compilation 
+```bash
+# Default compilation
+./build.sh
 
-In case you prefer to compile the code manually, please run *exactly* the following commands at the project root (i.e., where the `main.tex` locates at the same directory level).
+# Custom output filename
+./build.sh --pdf-name "MyCapstoneReport"
 
-```sh
-$ pdflatex main.tex
-$ biber main
-$ pdflatex main.tex
-$ pdflatex main.tex
+# Clean build files
+./build.sh --clean
 ```
 
-Note that the parameter to `biber` is the filename *without extension*. Moreover, you must run the second `pdflatex` to generate bibliography and resolve citations, and the third `pdflatex` to generate the bibliography entry in the table of contents. 
+### Manual Compilation
 
-### Dependencies 
+If you prefer manual control:
 
-- LaTeX ([MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/))
-- [biber](http://biblatex-biber.sourceforge.net/ "Biber: A BibTeX replacement for users of BibLaTeX")
+```bash
+pdflatex main.tex
+biber main
+pdflatex main.tex
+pdflatex main.tex
+```
 
-## Editing 
+**Note**: The bibliography compilation requires `biber` (not `bibtex`), and multiple LaTeX runs are necessary for proper cross-references and bibliography generation.
 
-Your edit should start with [`main.tex`](main.tex), which is also the compilation entry (as configured in [`build.sh`](build.sh)). Sources of individual chapters as well as abstract, acknowledgments, appendices, etc., are placed in the [`chapters`](chapters/) folder. Illustrative figures and analytical plotting should be stored in the [`pic`](pic/) and [`exp`](exp/) folders respectively. 
+## ✏️ Customization
 
-### Printing vs. Electronic
+### Essential Information
 
-Uncomment the following line at the head of `main.tex` when you are producing the thesis for printing hard copies in a **double-sided** fashion. 
+Edit the following in [`main.tex`](main.tex):
 
+```latex
+\title{Your Capstone Title}
+\author{Your Name}
+\nusid{A1234567X}
+\supervisor{Your Supervisor Name \\ Department/Institution}
+\startdate{Start Date}
+\enddate{End Date}
+\typeofReport{Academic} % or Industrial
+\AIVersion{ChatGPT (OpenAI, GPT-4)} % Specify AI tools used
+```
+
+### Print vs. Electronic Version
+
+For **double-sided printing**, uncomment this line in [`main.tex`](main.tex):
 ```latex
 \newcommand*{\DoubleSided}{}
 ```
 
-And comment it out when you are producing the electronic thesis for the final submission. 
+For **electronic submission** (default), keep it commented out.
 
-## Contact 
+## 📖 Writing Guide
 
-If you encounter any problem with this template, feel free to [contact me](mailto:yanuo.zhou@u.nus.edu) or [create an issue](https://github.com/arnold117/nus_phm_thesis/issues) in this repository. 
+### Chapter Organization
+- **Introduction**: [`chapters/ch-intro.tex`](chapters/ch-intro.tex) - Contains LaTeX tips and tricks
+- **Literature Review**: [`chapters/ch-review.tex`](chapters/ch-review.tex)
+- **Main Content**: Add your research chapters following the example structure
+- **Conclusion**: [`chapters/ch-concl.tex`](chapters/ch-concl.tex)
 
-All the best for your graduation!
+### Figures and Tables
+- Use `\SetPicSubDir{folder-name}` to organize figures by chapter
+- Use `\Pic{extension}{filename}` for figures: `\includegraphics{\Pic{pdf}{my-figure}}`
+- Use `\Exp{extension}{filename}` for experimental plots
+
+### Citations and References
+- Add references to [`references.bib`](references.bib)
+- Use `\cite{key}` for citations and `\citet{key}` for author-year format
+- Bibliography is automatically generated using IEEE style
+
+## 🛠️ Dependencies
+
+### Required Software
+- **LaTeX Distribution**: [TeX Live](https://www.tug.org/texlive/) (recommended) or [MiKTeX](https://miktex.org/)
+- **Bibliography Tool**: [biber](http://biblatex-biber.sourceforge.net/)
+- **Build Environment**: Bash shell (built-in on Linux/macOS, WSL/Git Bash on Windows)
+
+### LaTeX Packages
+All required packages are automatically loaded. Key packages include:
+- `biblatex` with IEEE style for references
+- `algorithm2e` for pseudocode
+- `hyperref` for cross-references and links
+- `graphicx` for figures
+- And many more (see [`_global_settings.tex`](_global_settings.tex))
+
+## 🐳 Development Container (Optional)
+
+For a consistent development environment:
+
+```bash
+# Using VS Code with Docker
+code .
+# Select "Reopen in Container" when prompted
+```
+
+The [`.devcontainer/`](.devcontainer/) setup provides a complete LaTeX environment with VS Code extensions.
+
+## 📋 Examples Included
+
+This template includes comprehensive examples:
+- **Algorithm pseudocode** with proper formatting
+- **Mathematical equations** and notation
+- **Figure and table placement** with captions
+- **Cross-referencing** system
+- **Citation styles** for different source types
+- **Appendices** structure
+
+## 🤝 Contributing
+
+Found an issue or have an improvement? 
+- [Create an issue](https://github.com/arnold117/nus_phm_thesis/issues)
+- Submit a pull request
+- [Contact the maintainer](mailto:yanuo.zhou@u.nus.edu)
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### License Compatibility
+
+This template is derived from the original [nusthesis template](https://github.com/streamjoin/nusthesis) by Qian Lin, which is also under MIT License. The MIT License ensures maximum compatibility and ease of use for academic and research purposes.
+
+## 🙏 Acknowledgments
+
+Special thanks to [Qian Lin](https://github.com/streamjoin) for the original [nusthesis template](https://github.com/streamjoin/nusthesis). This template has been adapted and enhanced specifically for the MSc. PHM program requirements.
+
+---
+
+**Good luck with your capstone report! 🎓**
