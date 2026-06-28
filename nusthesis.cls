@@ -291,12 +291,12 @@
 
     \vspace{28pt minus 8pt}
     \blocklt{\@typeofReport\ Capstone Report submitted to the} \par
-    \blocklt{Department of Biochemistry} \par
+    \blocklt{School of Computing} \par
     of the \par
     \blocklt{National University of Singapore} \par
 
     \vspace{28pt minus 8pt}
-    \blocklt{In Partial Fulfillment for the Degree of the} \par
+    \blocklt{In Fulfillment for the Degree of the} \par
     \blocklt{\@degree}\par
     in \par
     \blocklt{\@field}\par
