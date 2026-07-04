@@ -12,6 +12,93 @@
 % TODO: Functional and non-functional requirements derived from the problem
 % statement and stakeholder needs (faculty, students, administrators).
 
+\section{Deployment Model Analysis}
+\label{design:sec:deployment}
+
+% TODO: Frame the analysis -- before committing to an architecture, the system's
+% deployment model must be chosen. Introduce the three candidates (fully cloud,
+% fully on-premises, hybrid) and state that they are assessed against the
+% requirements from \autoref{design:sec:requirements}.
+
+\autoref{design:tab:deployment} compares the three candidate deployment models
+across the dimensions most relevant to a virtual teaching assistant.
+
+\begin{table}[htb]
+  \centering
+  \caption{Comparison of deployment models for the virtual teaching assistant.}
+  \label{design:tab:deployment}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.13\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.185\textwidth}}
+    \hline
+    \textbf{Dimension} & \textbf{Cloud} & \textbf{On-Premises} & \textbf{Hybrid} & \textbf{Relevance to This System} \\
+    \hline
+    Scalability &
+      Auto-scaling, elastic resources &
+      Fixed hardware capacity &
+      Burst to cloud for peak load &
+      Needed when many students interact simultaneously \\
+    Initial cost (CapEx) &
+      Low upfront cost &
+      High hardware investment &
+      Moderate; reuses existing hardware &
+      Important for student projects with limited budget \\
+    Operational cost (OpEx) &
+      Pay-as-you-go pricing &
+      Maintenance, electricity, upgrades &
+      Both cost models apply &
+      Cloud easier to forecast for experimentation \\
+    AI/ML infrastructure &
+      Managed GPUs, LLM APIs, training services &
+      GPUs and frameworks configured manually &
+      Local inference; managed services for heavy workloads &
+      Faster iteration for adaptive learning models \\
+    Maintenance and updates &
+      Managed by provider &
+      Self-managed patches and upgrades &
+      Split responsibility &
+      Frees effort for algorithm design over operations \\
+    Security controls &
+      Built-in IAM, encryption, monitoring &
+      Full control, higher responsibility &
+      Must secure both environments and the link &
+      Student learning data requires strong protection \\
+    Data privacy and control &
+      Shared responsibility model &
+      Full ownership of data &
+      Sensitive data on-premises; compute in cloud &
+      On-premises stronger for sensitive datasets \\
+    Reliability and availability &
+      Multi-region redundancy &
+      Depends on local setup &
+      Cloud fallback for local outages &
+      Important for continuous student access \\
+    Latency &
+      Depends on region selection &
+      Very low on local network &
+      Low for local paths; variable for cloud paths &
+      Useful for real-time AI responses \\
+    Development speed &
+      Fast prototyping with managed services &
+      Longer setup time &
+      Added integration complexity &
+      Accelerates the project timeline \\
+    Vendor lock-in risk &
+      Higher (managed services) &
+      Lower &
+      Lower; workloads remain portable &
+      Key architectural consideration \\
+    \hline
+  \end{tabular}
+\end{table}
+
+% TODO: Follow the table with a justified decision. State which deployment model
+% was chosen and tie each deciding factor back to a specific requirement in
+% \autoref{design:sec:requirements} (e.g. data privacy of student records,
+% limited budget, need for managed LLM services). Explicitly acknowledge the
+% trade-offs of the rejected options -- in particular, engage with why hybrid
+% (sensitive data on-premises, LLM inference in cloud) was or was not adopted.
+
 \section{System Architecture}
 \label{design:sec:architecture}
 
