@@ -207,6 +207,7 @@
 
 % The name of your degree's field (e.g. Psychology, Computer Science)
 \def\field#1{\gdef\@field{#1}}
+\def\@field{} % default: empty, so \maketitle does not fail when \field is unset
 
 % The declaration date
 \def\declaredate#1{\gdef\@declaredate{#1}}

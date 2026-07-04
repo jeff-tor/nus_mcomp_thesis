@@ -22,6 +22,52 @@
 % TODO: The LLM integration, prompting/RAG strategy, and personalisation
 % logic.
 
+\section{Context Compression for Token Reduction}
+\label{impl:sec:compression}
+
+A practical constraint of the deployed system is that response generation runs on a
+small, locally hosted language model (Llama~3.2, 3B parameters, served through
+Ollama on an 8\,GB consumer laptop). Under standard retrieval-augmented generation
+(RAG)~\cite{neurips20:Lewis}, the top-$N$ retrieved chunks of course material are
+prepended to the prompt in full, even though each chunk is typically only
+partially relevant to the student's question. This inflates prompt length --- the
+dominant cost for a compute-bound local model --- and risks distracting the model
+with irrelevant context, a failure mode documented for long-context
+inputs~\cite{tacl24:Liu}.
+
+To address this, the pipeline implements a lightweight context-compression stage
+inspired by \textsc{Recomp}~\cite{iclr24:Xu}, which proposes compressing retrieved
+passages before generation and, crucially, \emph{selective augmentation}:
+returning an empty context when nothing relevant survives compression, rather than
+forcing the model to attend to noise. The implementation here is the untrained
+extractive variant: instead of the paper's fine-tuned contrastive compressor, it
+selects existing sentences by embedding similarity, making it faithful by
+construction (the compressor cannot introduce content that was not retrieved).
+
+The stage is inserted between the existing retriever and the generation call, and
+proceeds as follows:
+
+\begin{enumerate}[nosep]
+  \item retrieved chunks are segmented into candidate sentences, with markdown
+        structure and code fences stripped;
+  \item each candidate sentence is embedded with the system's existing retrieval
+        embedder (BGE-M3~\cite{arxiv24:Chen}) in a single batched call;
+  \item each sentence is scored by cosine similarity against the query embedding,
+        which is reused from the retrieval step at no additional cost;
+  \item sentences scoring above a threshold $\tau$ are retained, highest first,
+        capped at $k$ sentences; if none qualifies, the context is left empty
+        (selective augmentation) and the model is instructed to state that the
+        topic is not covered by the course materials.
+\end{enumerate}
+
+Reusing the retrieval embedder is a deliberate engineering choice: the compressor
+adds no new model, dependency, or runtime to the stack (approximately 130 lines of
+JavaScript), which matters on the memory-constrained host described in
+\autoref{impl:sec:stack}. The stage is deployed behind a runtime feature flag
+(\texttt{RAG\_COMPRESS}, with $\tau$ and $k$ configurable), which both protects
+the production path and enables the controlled A/B comparison reported in
+\autoref{eval:sec:results}.
+
 \section{Analytics and Feedback Loop}
 \label{impl:sec:analytics}
 
