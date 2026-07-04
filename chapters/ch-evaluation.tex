@@ -22,6 +22,71 @@
 
 % TODO: Quantitative and qualitative results, with tables and figures.
 
+\subsection{Context Compression: Token Reduction and Latency}
+\label{eval:sec:results:compression}
+
+The compression stage of \autoref{impl:sec:compression} was evaluated end-to-end
+against the uncompressed RAG baseline on the deployed stack: identical questions,
+identical retrieved chunks, generation by Llama~3.2 at temperature~0, with prompt
+and output token counts taken directly from the inference runtime
+(\texttt{prompt\_eval\_count}). The probe used the ingested CS3241 (computer
+graphics) corpus with two in-syllabus questions --- Q1 on shadow rays, Q2 on
+ray--sphere intersection --- and one deliberately out-of-syllabus question (Q3, on
+TCP congestion control), with compression parameters $\tau = 0.5$, $k = 6$.
+\autoref{eval:tab:compression} summarises the results.
+
+\begin{table}[htb]
+  \centering
+  \caption{Uncompressed RAG versus extractive compression ($\tau=0.5$, $k=6$) on
+           the deployed system. Compressed latency includes the compression
+           overhead itself (1.1--2.0\,s per query on the 8\,GB host).}
+  \label{eval:tab:compression}
+  \begin{tabular}{l r r r}
+    \hline
+    \textbf{Metric} & \textbf{Raw RAG} & \textbf{Compressed} & \textbf{Change} \\
+    \hline
+    Prompt tokens, Q1            & 769            & 257           & $-66.6\%$ \\
+    Prompt tokens, Q2            & 545            & 195           & $-64.2\%$ \\
+    Response tokens, Q1          & 354            & 122           & $-65.5\%$ \\
+    Response tokens, Q2          & 91             & 86            & $-5.5\%$  \\
+    End-to-end latency, Q1       & 17.2\,s        & 7.7\,s        & $-55\%$   \\
+    End-to-end latency, Q2       & 5.7\,s         & 5.2\,s        & $-9\%$    \\
+    Context retained (chars), Q1 & 100\%          & 26.9\%        & ---       \\
+    Context retained (chars), Q2 & 100\%          & 18.7\%        & ---       \\
+    Off-syllabus context, Q3     & $\sim$446 tok. & 0 (empty)     & ---       \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Three observations follow. First, compression removed roughly two-thirds of the
+prompt tokens on in-syllabus questions while retaining the sentences that answer
+them (the top-scoring sentence for Q1 was the corpus sentence defining shadow
+rays, at cosine similarity 0.66). Because a compute-bound local model's latency
+scales with prompt length, this translated into a net end-to-end speed-up
+despite the added compression step. Second, the shorter, more focused context
+also changed generation behaviour: on Q1 the baseline produced a longer answer
+that drifted into adjacent material, whereas the compressed run stayed on the
+retrieved definition, consistent with the distraction effect reported
+by~\citet{tacl24:Liu}~\cite{tacl24:Liu}. Third, selective augmentation behaved as
+designed: for the out-of-syllabus Q3, every candidate sentence scored below
+$\tau$ (0.40--0.42, against 0.57--0.82 for in-syllabus sentences), so no context
+was injected and the model correctly reported the topic as outside the course
+materials; at a looser $\tau = 0.4$ the same query leaked three marginal
+sentences, illustrating that $\tau$ is the precision--recall control of the
+stage.
+
+Compression is not uniformly beneficial, however. On Q2 the sentence containing
+the ray--sphere intersection \emph{equation} itself scored below the retention
+cut-off, and the compressed answer, while correct about the discriminant, could
+no longer reproduce the equation --- an answer-quality regression directly
+attributable to over-compression. This mirrors the recall risk inherent to
+extractive compression~\cite{iclr24:Xu} and motivates the conservative default
+($\tau = 0.5$ with $k = 6$) and the per-deployment tunability noted in
+\autoref{impl:sec:compression}. These results are indicative rather than
+statistically robust: they derive from a three-question probe over a single
+course corpus, and a larger question set across multiple courses is required
+before the reductions can be claimed as general.
+
 \section{Discussion}
 \label{eval:sec:discussion}
 
