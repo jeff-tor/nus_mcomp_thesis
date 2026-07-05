@@ -2,23 +2,298 @@
 \label{ch:review}
 \vspace{2em}
 
-Placeholder for literature review content.
+This chapter assembles the evidence that motivates an AI-powered virtual
+teaching assistant and positions this thesis against prior work. It proceeds
+in two movements. \autoref{review:sec:workload} reviews three literatures that
+have so far run in parallel: time-use surveys that quantify how much of an
+educator's week non-teaching work consumes, econometric evidence that this
+burden degrades teaching quality when it is uncompensated, and the
+AI-in-education literature that has long nominated intelligent assistants as
+the remedy without ever measuring the relief they deliver.
+\autoref{review:subsec:gap} states the three-way gap at their intersection,
+which this thesis addresses. \autoref{review:sec:rag} then reviews the
+technical line of work --- retrieval-augmented generation and its refinements
+--- that separates the system built here from the scripted chatbots surveyed
+in the earlier education literature.
 
-A journal paper~\cite{cacm70:Codd} is cited. 
+\section{Educator Workload, Administrative Burden, and AI-Assisted
+         Intervention}
+\label{review:sec:workload}
 
-Placeholder for more content.
+\subsection{Educator Time Allocation: The Measured Burden}
+\label{review:subsec:burden}
 
-A conference paper~\cite{sigmod14:Chandramouli} is cited.
+The most comprehensive measurement of how educators spend their working week
+is the OECD's Teaching and Learning International Survey (TALIS), whose 2024
+cycle covered some 280\,000 educators across 55 education
+systems~\cite{oecd25:Talis}. Across the OECD, full-time lower-secondary
+teachers report a 41-hour working week, of which only 22.7 hours is classroom
+teaching; general administrative work accounts for roughly 3 hours per week, a
+share that has remained essentially stable since the 2018
+cycle~\cite{oecd25:Talis}.
 
-Placeholder for more content.
+Singapore, the deployment context of this thesis, sits well above these
+averages. Its teachers report a 47.3-hour working week --- about six hours
+above the international average --- of which only 17.7 hours is teaching, with
+8.2 hours going to lesson preparation, 6.4 hours to marking, and 4.0 hours to
+administrative work~\cite{oecd25:TalisSG}. Teaching, in other words, occupies
+a minority of the working week. The burden is also felt as such: 53\% of
+Singapore teachers rank excessive administrative work as their foremost source
+of occupational stress, with marking second at 49\%~\cite{oecd25:TalisSG}.
+Internationally the administrative share varies widely --- from more than six
+hours per week in Korea down to roughly an hour and a half in Finland and
+France --- but it is persistent wherever it is high, having barely moved in
+most systems between 2018 and 2024~\cite{oecd25:Talis}.
+% TODO: verify the cross-system figures (Korea, Finland, France; optionally
+% Japan ~5h, Australia 4.7h) against the published TALIS 2024 tables before
+% submission, and cite the specific table numbers.
 
-A PhD thesis~\cite{PHD:Pavlo} is cited.
+TALIS surveys school teachers, whereas this thesis deploys into university
+courses; the two populations must be bridged explicitly rather than silently.
+The higher-education evidence tells the same story at a larger scale: US
+faculty in the National Study of Postsecondary Faculty (NSOPF) data report
+working weeks on the order of 53 hours, with roughly a fifth going to
+administrative and other non-instructional work, and economics faculty
+specifically report about 6.2 hours per week of administration plus a further
+3.7 hours of institutional service~\cite{wp07:Allgood, aer13:Allgood}. The
+non-teaching burden is thus documented at both the school and university
+levels; the Singapore school data establishes the local policy salience of the
+problem, while the faculty studies carry the evidence for the university
+setting in which this system operates.
 
-\section{Related Work in Field1}
-Placeholder for related work in Field1.
-\section{Related Work in Field2}
-Placeholder for related work in Field2.
-\section{Existing Frameworks}
-Placeholder for existing frameworks.
+\subsection{Non-Teaching Burden and Teaching Quality}
+\label{review:subsec:quality}
+
+Hours consumed would matter less if they were workload-neutral for students.
+The central evidence that they are not comes from
+\citet{apec15:GarciaGallego}~\cite{apec15:GarciaGallego}, who analyse a panel
+of 604 professors at a medium-sized public Spanish university over 2002--2006
+using random-effects GLS, relating teaching quality to research output and
+administrative duties. Their key result is a distinction between two kinds of
+administrative burden. Holding \emph{light} administrative positions ---
+duties that carry no statutory teaching-load relief --- has a negative and
+statistically significant effect on teaching quality ($-0.064$, $z = -2.47$),
+whereas \emph{heavy} administrative positions, which come with a compensating
+statutory load reduction, show no significant effect. The harm, in other
+words, is determined not by the duty itself but by whether the time it
+consumes is compensated. This is the pivotal finding for the present thesis:
+a virtual teaching assistant that absorbs routine support load is precisely a
+compensation mechanism, one that requires no statutory decree.
+
+The same study clarifies a long-standing puzzle in the research--teaching
+nexus literature. Earlier syntheses assuming a linear relationship found
+little connection between research and teaching: \citet{rhe87:Feldman} reported a small
+positive correlation~\cite{rhe87:Feldman}, \citet{rer96:Hattie} an association
+near zero --- the relationship famously dismissed as an \enquote{enduring
+myth}~\cite{rer96:Hattie} --- and \citet{jhe02:Marsh} a near-null
+relation~\cite{jhe02:Marsh}. García-Gallego et al.\ show the relationship is
+instead nonlinear: teaching quality rises with research output up to an
+interior peak (an inverted U, with roughly two-thirds of the faculty below the
+peak), and professors with no research at all are about five times more likely
+than their colleagues to be among the worst-rated teachers (14.8\% versus
+3.04\%)~\cite{apec15:GarciaGallego}. Under a linearity assumption, such a
+relationship averages out to the earlier null results. Two accuracy caveats
+apply when using this evidence. First, the study measures administrative
+burden by positions held over years, not by hours, so it establishes a quality
+effect but not a time mechanism. Second, its quality outcome is built from
+student evaluations of teaching (SET), which are known to be susceptible to
+expected-grade bias and to measure perceived rather than actual learning ---
+a limitation that motivates the richer, behaviour-based telemetry proposed in
+this thesis (\autoref{eval:sec:metrics}).
+
+Where does the time for uncompensated duties come from? Allgood and Walstad's
+time-allocation evidence shows that research and teaching do trade off
+directly --- roughly ten additional weekly hours of research correspond to
+about three fewer hours of teaching --- but that administrative and
+\enquote{other} time does \emph{not} significantly displace teaching
+hours~\cite{wp07:Allgood, aer13:Allgood}. Faculty absorb the administrative
+load as overtime, which is why the cost remains invisible in time-use data
+even as the quality evidence above shows it is real. The field's own normative
+remedy points the same way: the AAUP holds that heavy service assignments
+impair teaching effectiveness and that the correct response is workload relief
+estimated in hours~\cite{aaup00:Workload}. An assistant that deflects routine
+queries is exactly such hour-denominated relief, delivered by a system rather
+than by policy.
+
+\subsection{AI as a Workload Intervention: The Recognised Thread and Its
+            Limits}
+\label{review:subsec:ai}
+
+That AI systems could supply this relief is not a new idea.
+\citet{sust22:Ahmad}~\cite{sust22:Ahmad} survey AI applications in education
+and organise them at two levels --- \emph{administrative} (admissions,
+counselling, library services) and \emph{academic} (assessment, feedback,
+tutoring) --- a taxonomy this thesis adopts: the system built here operates at
+the academic level, with administrative spillover through the deflection of
+routine questions. Their core claim is that AI applications
+\enquote{minimize the administrative tasks of a teacher to invest more in
+teaching and guiding students}, with chatbots singled out for operating around
+the clock and reducing the question-answering burden on staff. The larger
+systematic-review literature reaches a similar position:
+\citet{ijethe19:ZawackiRichter}~\cite{ijethe19:ZawackiRichter}, reviewing
+research on AI in higher education, find the field concentrated on
+profiling, assessment and intelligent tutoring, while pointedly asking
+\enquote{where are the educators?} --- the teacher-workload perspective is
+largely absent from the systems the field builds and evaluates.
+
+The practitioner side corroborates the intervention hypothesis. In TALIS 2024,
+teachers in systems with high administrative load disproportionately believe
+AI can automate administrative tasks, and 52\% across the OECD believe AI can
+adapt materials to student abilities~\cite{oecd25:Talis}. Singapore is a
+natural deployment context on this evidence: 76\% of its teachers have already
+been trained in the use of AI, against single-digit percentages in some
+European systems~\cite{oecd25:TalisSG}.
+
+Two limits of this thread must be stated plainly. First, its evidentiary
+weight is low: Ahmad et al.'s survey is a narrative review with a managerial
+scope and no quantitative testing, a limitation its authors declare themselves
+--- the claims, they note, still need to be quantitatively checked to be
+generalisable~\cite{sust22:Ahmad}. Second, its technology is dated: the
+chatbot precedents it rests on are keyword- and string-similarity systems
+answering university FAQs from hand-maintained scripts, such as the AIML-based
+assistant of \citet{icacci17:Ranoliya}~\cite{icacci17:Ranoliya} --- pre-LLM
+retrieval, reviewed further in \autoref{review:sec:rag}. The thread thus
+supplies the framing and the hypothesis, but neither the mechanism nor the
+measurement.
+
+\subsection{The Gap This Thesis Addresses}
+\label{review:subsec:gap}
+
+Read together, the three literatures interlock but do not close. The
+time-accounting literature (\autoref{review:subsec:burden}) quantifies the
+hours that non-teaching work consumes, but says nothing about its effects.
+The quality literature (\autoref{review:subsec:quality}) quantifies the
+effect --- uncompensated burden degrades teaching --- but measures duties in
+positions held over years rather than hours, so it contains no time
+mechanism; and because faculty absorb the burden as overtime, the displacement
+never surfaces in time-use data. The AI-intervention literature
+(\autoref{review:subsec:ai}) proposes the remedy but, by its own admission,
+has never quantified the workload reduction it promises, and the systems it
+surveys predate retrieval-augmented large language models. No study connects
+the three: nobody has deployed the proposed intervention and measured, in
+hours, the relief it delivers.
+
+This thesis addresses that gap with two contributions. First, it builds the
+modern form of the proposed intervention: a retrieval-augmented virtual
+teaching assistant over institutional (NUS Canvas) course materials
+(Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second --- and unlike
+prior work --- it instruments the intervention, logging every deflected query,
+to produce a direct estimate of the instructor-hours returned per course per
+week: the hour-denominated measurement that all three literatures lack. The
+metric and its results are developed in \autoref{ch:evaluation}
+(\autoref{eval:sec:metrics}). \autoref{review:tab:findings} summarises the
+sources reviewed in this section and the specific findings this thesis builds
+on.
+
+\begin{table}[htb]
+  \centering
+  \caption{Summary of the workload, teaching-quality, and AI-intervention
+           evidence used in this chapter.}
+  \label{review:tab:findings}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.21\textwidth} L{0.13\textwidth} L{0.14\textwidth} L{0.4\textwidth}}
+    \hline
+    \textbf{Source} & \textbf{Type} & \textbf{Population} & \textbf{Key finding used} \\
+    \hline
+    OECD TALIS 2024, Singapore country note~\cite{oecd25:TalisSG} &
+      Survey &
+      SG lower-sec. teachers &
+      4\,h/week admin; 17.7 of 47.3\,h/week teaching; admin the top stressor
+      (53\%) \\
+    OECD TALIS 2024, international report~\cite{oecd25:Talis} &
+      Survey &
+      55 systems &
+      OECD average 3\,h/week admin; stable since 2018; AI seen by teachers as
+      an admin remedy \\
+    García-Gallego et al.~\cite{apec15:GarciaGallego} &
+      Panel econometrics &
+      604 professors, Spain &
+      Uncompensated admin duties reduce teaching quality ($-0.064$);
+      compensated duties show no effect; research--quality is an inverted U \\
+    Allgood \& Walstad~\cite{wp07:Allgood, aer13:Allgood} &
+      Survey + regression &
+      US faculty &
+      $\sim$6.2\,h/week admin; admin time absorbed as overtime rather than
+      displacing teaching hours \\
+    Hattie \& Marsh~\cite{rer96:Hattie} &
+      Meta-analysis &
+      58 studies &
+      Research--teaching relation $\approx 0$ under a linear assumption \\
+    AAUP~\cite{aaup00:Workload} &
+      Policy statement &
+      --- &
+      Remedy for service burden is hour-estimated workload relief \\
+    Ahmad et al.~\cite{sust22:Ahmad} &
+      Narrative review &
+      --- &
+      Two-level AI taxonomy (administrative/academic); chatbots reduce Q\&A
+      burden; claims self-declared as unquantified \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\section{From Scripted Chatbots to Retrieval-Augmented Generation}
+\label{review:sec:rag}
+
+The chatbot systems surveyed by the AI-in-education literature of
+\autoref{review:subsec:ai} share a common architecture: student questions are
+matched against hand-authored scripts by keywords or string similarity, and
+the response is the stored answer of the best-matching
+pattern~\cite{icacci17:Ranoliya, sust22:Ahmad}. Such systems can deflect
+narrowly anticipated FAQs, but they are brittle to paraphrase, cannot answer
+questions whose answers were never scripted, and shift the maintenance burden
+back onto staff --- every syllabus change requires editing scripts, which is
+itself administrative work.
+
+Retrieval-augmented generation (RAG)~\cite{neurips20:Lewis} replaces both
+halves of that architecture. Questions and course materials are embedded in a
+shared dense vector space, so retrieval is semantic rather than lexical and
+survives paraphrase; and the answer is synthesised by a language model
+conditioned on the retrieved passages, so the system can compose answers from
+material nobody scripted, while remaining grounded in the course corpus rather
+than in the model's parametric memory. The retrieval quality of such a
+pipeline rests on the embedding model; this thesis uses
+BGE-M3~\cite{arxiv24:Chen}, a multilingual, multi-granularity embedder suited
+to heterogeneous course materials.
+
+Naive RAG, however, has a known failure mode: retrieved chunks are prepended
+to the prompt in full even though each is usually only partially relevant,
+and language models demonstrably struggle to use long contexts, with relevant
+information degraded or ignored depending on its position in the
+prompt~\cite{tacl24:Liu}. \citet{iclr24:Xu}~\cite{iclr24:Xu} address this
+with \textsc{Recomp}: retrieved passages are compressed before generation,
+and --- through \emph{selective augmentation} --- an empty context is returned
+when nothing relevant survives compression, rather than forcing the model to
+attend to noise. This matters doubly for the present system, whose generation
+runs on a small locally hosted model for which prompt length is the dominant
+latency cost; the extractive compression stage adapted from this line of work
+is described in \autoref{impl:sec:compression} and evaluated in
+\autoref{eval:sec:results:compression}.
+
+Positioned against both literatures, the distinction of this thesis is not
+architectural novelty for its own sake: it is that the RAG pipeline is
+deployed as the workload intervention that \autoref{review:subsec:ai}
+identified, and instrumented to yield the measurement that
+\autoref{review:subsec:gap} identified as missing.
+
 \section{Summary}
-Placeholder for summary of the chapter.
+\label{review:sec:summary}
+
+Educator time is finite and heavily taxed by non-instructional work ---
+quantified by TALIS 2024, with Singapore above the OECD average and
+administrative work its teachers' top stressor~\cite{oecd25:TalisSG}. When
+that burden is uncompensated, teaching quality measurably
+suffers~\cite{apec15:GarciaGallego}, and because faculty absorb the load as
+overtime rather than reduced teaching hours~\cite{wp07:Allgood}, the cost
+stays hidden in time-use data. The field's own remedy is hour-denominated
+load relief~\cite{aaup00:Workload}, and the AI-in-education literature has
+long nominated intelligent assistants as the mechanism~\cite{sust22:Ahmad} ---
+but concedes its claims are qualitatively argued and quantitatively
+unverified, resting on pre-LLM keyword chatbots. This thesis supplies both
+the modern mechanism --- a RAG-based virtual teaching assistant over NUS
+Canvas course materials with extractive retrieval
+compression~\cite{neurips20:Lewis, iclr24:Xu} --- and the missing
+measurement: per-query deflection telemetry that estimates instructor-hours
+returned, closing the loop between the workload, teaching-quality, and
+AI-intervention literatures.
