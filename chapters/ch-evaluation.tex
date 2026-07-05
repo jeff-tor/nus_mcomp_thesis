@@ -57,6 +57,50 @@ actual learning) were noted in \autoref{review:subsec:quality}.
 % TODO: decide whether topic clustering is reported in this thesis or listed
 % as future work in \autoref{ch:concl}.
 
+\subsection{Token, Cost, Latency, and Answer-Quality Metrics}
+\label{eval:subsec:tokenmetrics}
+
+The compression stage is evaluated on the comparison dimensions the
+prompt-compression literature itself uses
+(\autoref{review:subsec:compression}), so that the evaluation speaks the same
+metric language as the problem statement
+(\autoref{intro:sec:problem}) and the baseline token audit
+(\autoref{design:subsec:tokenaudit}):
+
+\begin{enumerate}[nosep]
+  \item \textbf{Input tokens per query}, before versus after compression,
+        reported with the compression ratio --- the direct measure of the
+        token inflation identified in \autoref{review:subsec:tokens};
+  \item \textbf{Cost per query and per student per semester}, computed for
+        the cloud-API analytics path; for the locally hosted generation path,
+        where no per-token charge exists, latency and hardware-utilisation
+        proxies are reported instead;
+  \item \textbf{End-to-end latency} (retrieval $\rightarrow$ compression
+        $\rightarrow$ generation), including the compression stage's own
+        overhead --- compression adds an inference step, and its cost is
+        reported rather than netted out, following the practice
+        of~\citet{facl25:Jeong}~\cite{facl25:Jeong};
+  \item \textbf{Answer quality} on course-material question answering, to
+        verify that compression does not degrade answers --- mirroring how
+        \textsc{Recomp} and TCRA-LLM report the compression--quality
+        trade-off~\cite{iclr24:Xu, femnlp23:Liu}.
+\end{enumerate}
+
+The per-student-per-semester projection under dimension 2 --- baseline versus
+compressed, extrapolated to a realistic course enrolment and set beside the
+US\$7.50 per student per course per semester observed for
+Ethel~\cite{tpt24:Kortemeyer} --- connects the evaluation directly back to
+the institutional cost evidence of \autoref{intro:sec:problem}.
+
+% TODO: report latency as P50/P95 once a larger probe set exists; the
+% three-question probe in \autoref{eval:sec:results:compression} covers
+% dimensions 1 and 3 only.
+% TODO: decide the course-material QA evaluation set (n questions over the
+% ingested Canvas corpus) for dimension 4.
+% TODO: compute the per-student-per-semester cost projection (baseline vs
+% compressed) for the cloud analytics path and chart it against the Ethel
+% benchmark.
+
 \section{Results}
 \label{eval:sec:results}
 

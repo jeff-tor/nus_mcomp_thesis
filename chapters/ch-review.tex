@@ -14,7 +14,10 @@ the remedy without ever measuring the relief they deliver.
 which this thesis addresses. \autoref{review:sec:rag} then reviews the
 technical line of work --- retrieval-augmented generation and its refinements
 --- that separates the system built here from the scripted chatbots surveyed
-in the earlier education literature.
+in the earlier education literature: the LLM-based virtual teaching
+assistants now deployed at institutional scale, the token-inflation cost
+structure they share, and the prompt-compression literature that attacks that
+cost at its source.
 
 \section{Educator Workload, Administrative Burden, and AI-Assisted
          Intervention}
@@ -257,25 +260,154 @@ pipeline rests on the embedding model; this thesis uses
 BGE-M3~\cite{arxiv24:Chen}, a multilingual, multi-granularity embedder suited
 to heterogeneous course materials.
 
-Naive RAG, however, has a known failure mode: retrieved chunks are prepended
-to the prompt in full even though each is usually only partially relevant,
-and language models demonstrably struggle to use long contexts, with relevant
-information degraded or ignored depending on its position in the
-prompt~\cite{tacl24:Liu}. \citet{iclr24:Xu}~\cite{iclr24:Xu} address this
-with \textsc{Recomp}: retrieved passages are compressed before generation,
-and --- through \emph{selective augmentation} --- an empty context is returned
-when nothing relevant survives compression, rather than forcing the model to
-attend to noise. This matters doubly for the present system, whose generation
-runs on a small locally hosted model for which prompt length is the dominant
-latency cost; the extractive compression stage adapted from this line of work
-is described in \autoref{impl:sec:compression} and evaluated in
-\autoref{eval:sec:results:compression}.
+\subsection{LLM-Based Virtual Teaching Assistants at Scale}
+\label{review:subsec:vtas}
 
-Positioned against both literatures, the distinction of this thesis is not
-architectural novelty for its own sake: it is that the RAG pipeline is
-deployed as the workload intervention that \autoref{review:subsec:ai}
-identified, and instrumented to yield the measurement that
-\autoref{review:subsec:gap} identified as missing.
+RAG over instructor-provided course materials has become the standard
+architecture for deployed virtual teaching assistants (VTAs), and such
+systems now operate at real institutional scale. Ethel, a RAG-based assistant
+at ETH Zurich built over course-specific materials --- including a 300-page
+German-language course script --- and served by GPT-4 through Azure AI
+Services, was deployed to over 1,500 students across six courses in Spring
+2024, including two large introductory physics
+courses~\cite{tpt24:Kortemeyer}. At KAIST, an LLM-based VTA grounded in
+course materials answered questions from 477 graduate students in an
+introductory AI programming course, with 3,869 student--assistant interaction
+pairs analysed; retrieval over the course corpus runs in real time for every
+query~\cite{acl25:Kweon}. The LLM-powered Jill Watson answers questions over
+instructor courseware and has been deployed across multiple courses,
+institutions, and disciplines~\cite{arxiv24:JillWatson}.
+
+Operating these systems is a live institutional cost. Kortemeyer reports that
+Ethel cost ETH Zurich US\$7.50 per student per course per semester in cloud
+AI-service charges --- an observed per-student figure from one institution,
+one cloud provider, and one model generation, cited here as evidence that the
+cost is material rather than as a market rate --- and notes that
+round-the-clock LLM inference at scale currently requires commercial cloud
+platforms, since university HPC clusters are batch-oriented and ill-suited to
+interactive serving~\cite{tpt24:Kortemeyer}. The same report states an
+explicit intent to explore open-weight models and on-premises hosting to
+reduce cost --- precisely the deployment posture of the system built in this
+thesis. Notably, none of these deployed-VTA studies applies prompt or context
+compression: the token overhead of retrieval is documented as a cost but not
+treated as a design variable.
+
+\subsection{Token Inflation: The Cost Structure of RAG}
+\label{review:subsec:tokens}
+
+The cost structure these systems share follows directly from the RAG
+mechanism: because retrieved chunks are prepended to the prompt, the input
+token count per query is dominated by retrieved course content rather than by
+the student's question. \citet{femnlp23:Liu}~\cite{femnlp23:Liu} state the
+problem exactly: deploying commercial retrieval-augmented LLMs is costly
+\emph{because the additionally retrieved context largely increases the input
+token size}. The consequences run along four dimensions. First, cost:
+commercial APIs price per token, so retrieved-context tokens translate
+linearly into charges, and the per-query overhead multiplies across thousands
+of interactions per course per semester~\cite{acl25:Kweon,
+tpt24:Kortemeyer}. Second, latency: prompt length drives prefill compute, and
+the compression literature reports end-to-end latency reduction as a headline
+benefit~\cite{acl24:Jiang, facl25:Jeong} --- on a small locally hosted model,
+where inference is compute-bound, prompt length is the dominant latency cost.
+Third, quality: long contexts are not merely expensive but poorly used ---
+language models demonstrably struggle with long inputs, with relevant
+information degraded or ignored depending on its position in the
+prompt~\cite{tacl24:Liu} --- so \enquote{just retrieve more} is not a free
+lunch, and unpruned context harms answers as well as budgets. Fourth,
+scalability: in both the cloud and local regimes, the number of input tokens
+per query is the primary controllable cost driver. \autoref{ch:design}
+quantifies this mechanism for the present system with a baseline token audit
+of the uncompressed pipeline.
+
+\subsection{Prompt and Context Compression}
+\label{review:subsec:compression}
+
+A body of work therefore compresses the prompt --- and in particular the
+retrieved context --- before generation. \citet{emnlp23:Li}~\cite{emnlp23:Li}
+prune redundant content by self-information (\emph{Selective Context}),
+roughly halving context cost at modest performance loss.
+\citet{emnlp23:Jiang}~\cite{emnlp23:Jiang} compress prompts coarse-to-fine by
+perplexity (\emph{LLMLingua}), reporting up to ${\sim}20\times$ compression
+with little performance loss, and its question-aware successor
+\emph{LongLLMLingua} reports accuracy \emph{gains} --- mitigating the
+lost-in-the-middle effect --- alongside large token and end-to-end latency
+reductions~\cite{acl24:Jiang}. In the RAG setting specifically,
+\emph{TCRA-LLM}~\cite{femnlp23:Liu} removes 65\% of retrieval tokens via
+summarisation with a 0.3\% accuracy \emph{improvement}, framed explicitly as
+inference-cost reduction for deployed commercial systems.
+\citet{iclr24:Xu}~\cite{iclr24:Xu} propose \textsc{Recomp}, the method
+adapted in this thesis: retrieved documents are compressed into summaries
+before prompting, by an \emph{extractive} compressor that selects useful
+sentences via dual-encoder relevance scoring against the query, or an
+\emph{abstractive} compressor that generates summaries; multi-document
+contexts are reduced to a small fraction of their original tokens with
+minimal loss on language modelling and open-domain QA. Crucially,
+\textsc{Recomp} adds \emph{selective augmentation}: when nothing relevant
+survives compression, an empty context is returned rather than forcing the
+model to attend to noise. The current frontier of this lineage,
+\emph{ECoRAG}~\cite{facl25:Jeong}, guides sentence compression by
+evidentiality with an adaptive compression ratio, and identifies two
+weaknesses of \textsc{Recomp} that \autoref{ch:concl} revisits: with many
+retrieved documents its compressor struggles to filter the growing share of
+irrelevant content, and a fixed compression ratio is suboptimal per question.
+\autoref{review:tab:compression} summarises this line of work. Two caveats
+temper the headline numbers: each was measured on its own benchmark, so they
+are cited here as demonstrated headroom rather than transferable rates ---
+this system's own ratios are measured in
+\autoref{eval:sec:results:compression} --- and compression itself adds an
+inference stage whose overhead must be included in end-to-end latency.
+
+\begin{table}[htb]
+  \centering
+  \caption{Prompt- and context-compression methods relevant to this thesis.
+           Reported effects are benchmark-specific and indicate headroom, not
+           transferable rates.}
+  \label{review:tab:compression}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.2\textwidth} L{0.33\textwidth} L{0.35\textwidth}}
+    \hline
+    \textbf{Method} & \textbf{Mechanism} & \textbf{Reported effect} \\
+    \hline
+    Selective Context~\cite{emnlp23:Li} &
+      Self-information pruning of redundant content &
+      ${\sim}50\%$ context cost reduction at modest performance cost \\
+    LLMLingua~\cite{emnlp23:Jiang} &
+      Perplexity-based coarse-to-fine prompt compression &
+      Up to ${\sim}20\times$ compression with little performance loss \\
+    LongLLMLingua~\cite{acl24:Jiang} &
+      Question-aware compression for long contexts &
+      Accuracy gains plus large token and latency reductions \\
+    TCRA-LLM~\cite{femnlp23:Liu} &
+      Summarisation and semantic compression of retrieved context &
+      65\% retrieval-token removal with $+0.3\%$ accuracy \\
+    \textsc{Recomp}~\cite{iclr24:Xu} &
+      Extractive (dual-encoder) or abstractive compression; selective
+      augmentation &
+      Context reduced to a small fraction of original tokens, minimal QA loss \\
+    ECoRAG~\cite{facl25:Jeong} &
+      Evidentiality-guided compression, adaptive ratio &
+      Token and latency reduction; addresses \textsc{Recomp}'s fixed-ratio
+      limits \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Positioned against these literatures, the gap is an intersection. The
+deployed-VTA studies of \autoref{review:subsec:vtas} document scale and cost
+but apply no compression; the compression methods above are evaluated on
+open-domain QA and general benchmarks, not on educational course-material
+RAG. To the best of our knowledge, no published work evaluates
+\textsc{Recomp} --- or a comparable retrieval-compression method --- in a
+deployed educational virtual-teaching-assistant setting. Quantifying
+compression's cost--latency--quality trade-off on real course-material
+question answering in a deployable VTA is therefore this thesis's empirical
+contribution on the technical side, complementing the workload measurement of
+\autoref{review:subsec:gap}: the RAG pipeline is deployed as the intervention
+that \autoref{review:subsec:ai} identified, instrumented to yield the
+missing hour-denominated measurement, and made viable on low-cost local
+hardware by the compression stage described in \autoref{impl:sec:compression}
+and evaluated in \autoref{eval:sec:results:compression}.
 
 \section{Summary}
 \label{review:sec:summary}
@@ -290,10 +422,21 @@ stays hidden in time-use data. The field's own remedy is hour-denominated
 load relief~\cite{aaup00:Workload}, and the AI-in-education literature has
 long nominated intelligent assistants as the mechanism~\cite{sust22:Ahmad} ---
 but concedes its claims are qualitatively argued and quantitatively
-unverified, resting on pre-LLM keyword chatbots. This thesis supplies both
-the modern mechanism --- a RAG-based virtual teaching assistant over NUS
+unverified, resting on pre-LLM keyword chatbots. The modern mechanism ---
+RAG over course materials --- is meanwhile deployed at institutional scale
+(Ethel at ETH Zurich, the KAIST VTA, Jill Watson~\cite{tpt24:Kortemeyer,
+acl25:Kweon, arxiv24:JillWatson}), and carries a documented cost structure:
+retrieved context dominates the input token count~\cite{femnlp23:Liu}, at an
+observed US\$7.50 per student per course per semester in one deployment, with
+long contexts also degrading answer quality~\cite{tacl24:Liu}. A compression
+literature attacks this token count at its source~\cite{emnlp23:Li,
+emnlp23:Jiang, acl24:Jiang, femnlp23:Liu, iclr24:Xu, facl25:Jeong}, but has
+never been evaluated in an educational VTA. This thesis supplies both the
+instrumented intervention --- a RAG-based virtual teaching assistant over NUS
 Canvas course materials with extractive retrieval
 compression~\cite{neurips20:Lewis, iclr24:Xu} --- and the missing
-measurement: per-query deflection telemetry that estimates instructor-hours
-returned, closing the loop between the workload, teaching-quality, and
-AI-intervention literatures.
+measurements: per-query deflection telemetry that estimates instructor-hours
+returned, and a token, cost, latency, and answer-quality account of
+compression on real course-material question answering, closing the loop
+between the workload, teaching-quality, AI-intervention, and
+prompt-compression literatures.
