@@ -176,7 +176,8 @@ surveys predate retrieval-augmented large language models. No study connects
 the three: nobody has deployed the proposed intervention and measured, in
 hours, the relief it delivers.
 
-This thesis addresses that gap with two contributions. First, it builds the
+This thesis addresses that gap with the first two of its contributions.
+First, it builds the
 modern form of the proposed intervention: a retrieval-augmented virtual
 teaching assistant over institutional (NUS Canvas) course materials
 (Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second --- and unlike
@@ -184,7 +185,10 @@ prior work --- it instruments the intervention, logging every deflected query,
 to produce a direct estimate of the instructor-hours returned per course per
 week: the hour-denominated measurement that all three literatures lack. The
 metric and its results are developed in \autoref{ch:evaluation}
-(\autoref{eval:sec:metrics}). \autoref{review:tab:findings} summarises the
+(\autoref{eval:sec:metrics}). A third, technical contribution --- the first
+evaluation of retrieval compression in a deployed educational assistant ---
+is positioned at the end of \autoref{review:subsec:compression}.
+\autoref{review:tab:findings} summarises the
 sources reviewed in this section and the specific findings this thesis builds
 on.
 
@@ -268,11 +272,11 @@ architecture for deployed virtual teaching assistants (VTAs), and such
 systems now operate at real institutional scale. Ethel, a RAG-based assistant
 at ETH Zurich built over course-specific materials --- including a 300-page
 German-language course script --- and served by GPT-4 through Azure AI
-Services, was deployed to over 1,500 students across six courses in Spring
+Services, was deployed to over 1\,500 students across six courses in Spring
 2024, including two large introductory physics
 courses~\cite{tpt24:Kortemeyer}. At KAIST, an LLM-based VTA grounded in
 course materials answered questions from 477 graduate students in an
-introductory AI programming course, with 3,869 student--assistant interaction
+introductory AI programming course, with 3\,869 student--assistant interaction
 pairs analysed; retrieval over the course corpus runs in real time for every
 query~\cite{acl25:Kweon}. The LLM-powered Jill Watson answers questions over
 instructor courseware and has been deployed across multiple courses,
@@ -298,7 +302,8 @@ treated as a design variable.
 The cost structure these systems share follows directly from the RAG
 mechanism: because retrieved chunks are prepended to the prompt, the input
 token count per query is dominated by retrieved course content rather than by
-the student's question. \citet{femnlp23:Liu}~\cite{femnlp23:Liu} state the
+the student's question. The authors of
+\emph{TCRA-LLM}~\cite{femnlp23:Liu} state the
 problem exactly: deploying commercial retrieval-augmented LLMs is costly
 \emph{because the additionally retrieved context largely increases the input
 token size}. The consequences run along four dimensions. First, cost:
