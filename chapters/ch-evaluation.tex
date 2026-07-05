@@ -17,6 +17,46 @@
 % TODO: Metrics used (e.g. answer accuracy, latency, faculty time saved,
 % student satisfaction).
 
+\subsection{Instructor-Hours Returned}
+\label{eval:subsec:hours}
+
+The headline workload metric promised in \autoref{review:subsec:gap} is
+defined as follows. A student query is counted as \emph{deflected} when the
+assistant answers it from the course corpus without instructor involvement
+--- routine clarification, content-navigation, and logistics questions that
+would otherwise reach the teaching staff. The estimated instructor-hours
+returned per course per week is then
+
+\begin{equation}
+  \label{eval:eq:hours}
+  H_{\mathrm{returned}}
+    \;=\;
+  \frac{1}{W} \sum_{q \,\in\, Q_{\mathrm{deflected}}} t_{\mathrm{handle}}(q),
+\end{equation}
+
+where $Q_{\mathrm{deflected}}$ is the set of deflected queries logged over an
+observation window of $W$ weeks and $t_{\mathrm{handle}}(q)$ is the time an
+instructor or teaching assistant would have spent answering query $q$
+manually. Routine queries are assigned a deliberately conservative handling
+time of 2--5 minutes, so $H_{\mathrm{returned}}$ is reported as a range whose
+lower bound understates the true relief (it excludes context-switching costs
+and out-of-hours response burden). Because every interaction is logged by the
+deployed system, the metric reduces to a single aggregation over the
+assistant's query logs.
+
+% TODO: implement the aggregation as a PostgreSQL query over the production
+% bot logs and report per-course results as a table in
+% \autoref{eval:sec:results}.
+
+A secondary, complementary signal is question-topic clustering over the same
+logs: the distribution of what students actually ask provides an objective,
+behaviour-based teaching signal that complements student evaluations of
+teaching, whose limitations (expected-grade bias, perceived rather than
+actual learning) were noted in \autoref{review:subsec:quality}.
+
+% TODO: decide whether topic clustering is reported in this thesis or listed
+% as future work in \autoref{ch:concl}.
+
 \section{Results}
 \label{eval:sec:results}
 

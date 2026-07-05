@@ -1,15 +1,58 @@
 \chapter{Introduction}
+\label{ch:intro}
 \vspace{2em}
 
-Placeholder for introduction content.
+% TODO: One or two opening paragraphs setting the scene before the overview.
 
 \section{Overview}
+\label{intro:sec:overview}
 
-Placeholder for overview content.
+% TODO: Overview of the thesis -- the virtual teaching assistant, its
+% deployment context (NUS Canvas course materials), and the structure of the
+% document.
 
 \section{Problem Statement}
-Placeholder for problem statement content.
+\label{intro:sec:problem}
+
+Educators operate under a fixed time budget divided across teaching,
+preparation, marking, administration, and --- in higher education ---
+research. Survey evidence shows that non-teaching duties consume a large and
+stable share of this budget: Singapore teachers report four hours per week of
+administrative work (above the OECD average of three) within a 47.3-hour
+working week of which only 17.7 hours is teaching, and 53\% rank excessive
+administrative work as their foremost source of occupational
+stress~\cite{oecd25:TalisSG}. Panel evidence from higher education shows that
+this burden is a quality problem, not merely a workload problem: non-teaching
+duties that carry no compensating load relief measurably reduce teaching
+quality, while research time feeds back positively into teaching quality over
+most of its observed range~\cite{apec15:GarciaGallego}. The AI-in-education
+literature has long proposed intelligent systems --- chatbots, automated
+assessment, learning analytics --- as the remedy, arguing that such
+applications \enquote{minimize the administrative tasks of a teacher to
+invest more in teaching and guiding students}~\cite{sust22:Ahmad}; yet that
+same literature concedes that its claims remain qualitative and
+quantitatively unverified, and the systems it surveys predate modern
+retrieval-augmented large language models~\cite{sust22:Ahmad,
+ijethe19:ZawackiRichter}.
+
+This thesis presents a retrieval-augmented virtual teaching assistant built
+over NUS Canvas course materials that absorbs routine student-support load
+--- clarification, content navigation, and logistics queries --- and, unlike
+prior work, instruments the interaction telemetry required to quantify the
+instructor-hours it returns, connecting the workload-measurement,
+teaching-quality, and AI-intervention literatures for the first time
+(\autoref{ch:review}).
+
 \section{Objectives}
-Placeholder for objectives content.
+\label{intro:sec:objectives}
+
+% TODO: Concrete objectives -- e.g. (i) build a RAG-based teaching assistant
+% over institutional course materials, (ii) make it deployable on modest
+% hardware (context compression), (iii) instrument query deflection to
+% estimate instructor-hours returned.
+
 \section{Summary of Contributions}
-Placeholder for summary of contributions content.
+\label{intro:sec:contributions}
+
+% TODO: Summary of contributions, mirroring the gap statement in
+% \autoref{review:subsec:gap}.
