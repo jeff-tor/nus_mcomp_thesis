@@ -6,3 +6,29 @@
 Placeholder for conclusion content.
 
 \section{Future Research Directions}
+
+% TODO: fold the items below into the full future-work narrative once the
+% conclusion is drafted.
+
+\paragraph{Adaptive, evidentiality-guided compression.}
+The extractive compression stage adopted from
+\textsc{Recomp}~\cite{iclr24:Xu} carries two known limitations, identified
+by~\citet{facl25:Jeong}~\cite{facl25:Jeong}: as the number of retrieved
+documents grows, the compressor struggles to filter the increasing share of
+irrelevant content, and a fixed compression ratio (here, the static threshold
+$\tau$ and cap $k$ of \autoref{impl:sec:compression}) is suboptimal
+per-question --- this system's own evaluation observed exactly this failure
+mode when an equation-bearing sentence fell below the retention cut-off
+(\autoref{eval:sec:results:compression}). Evidentiality-guided compression
+with an adaptive per-query ratio, as in ECoRAG~\cite{facl25:Jeong}, is the
+natural upgrade path, at the cost of an LLM-in-the-loop labelling pipeline
+that the present system's hardware budget excluded
+(\autoref{design:subsec:compression-choice}).
+
+\paragraph{Broader evaluation of the compression stage.}
+The token-reduction and latency results of
+\autoref{eval:sec:results:compression} derive from a small probe over a
+single course corpus; a larger course-material QA set across multiple
+courses, with P50/P95 latency and answer-quality scoring
+(\autoref{eval:subsec:tokenmetrics}), is required before the reductions can
+be claimed as general.

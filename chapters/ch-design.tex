@@ -111,6 +111,81 @@ across the dimensions most relevant to a virtual teaching assistant.
 % TODO: Research methodology, data sources, and the approach taken to
 % evaluate the system.
 
+\subsection{Baseline Token Audit}
+\label{design:subsec:tokenaudit}
+
+The literature reviewed in \autoref{review:subsec:tokens} establishes in
+general that a RAG pipeline's input token count is dominated by retrieved
+context~\cite{femnlp23:Liu}; this section establishes it for \emph{this}
+system, in its own data, because that measured share --- not the citation ---
+is the design motivation for the compression stage. The audit decomposes the
+uncompressed pipeline's prompt into its four components:
+
+\begin{equation}
+  \label{design:eq:tokenaudit}
+  T_{\mathrm{input}}
+    \;=\;
+  \underbrace{k \cdot \bar{t}_{\mathrm{chunk}}}_{\text{retrieved context}}
+  \;+\; t_{\mathrm{system}}
+  \;+\; t_{\mathrm{history}}
+  \;+\; t_{\mathrm{query}},
+\end{equation}
+
+where $k$ is the number of retrieved chunks per query,
+$\bar{t}_{\mathrm{chunk}}$ the mean tokens per chunk under the deployed
+Canvas-material chunking configuration, and $t_{\mathrm{system}}$,
+$t_{\mathrm{history}}$, and $t_{\mathrm{query}}$ the system prompt,
+conversation history, and student question respectively. The quantities of
+interest are the baseline input tokens per query and the share attributable
+to the retrieved-context term. This baseline anchors the thesis's coherence
+loop: the problem statement quantifies cost in tokens per query
+(\autoref{intro:sec:problem}), this audit measures the system's baseline in
+the same units, and the evaluation reports compression's effect in the same
+units again (\autoref{eval:sec:metrics}).
+
+% TODO: run the audit on the actual pipeline (measure tokens per chunk and k
+% from the deployed chunking config; take system prompt / history / query
+% tokens from production logs) and report the numbers and the
+% retrieved-context share here.
+
+\subsection{Selection of the Compression Method}
+\label{design:subsec:compression-choice}
+
+Among the compression methods surveyed in \autoref{review:subsec:compression},
+this thesis adopts the extractive, sentence-level variant of
+\textsc{Recomp}~\cite{iclr24:Xu}, for four reasons.
+
+First, fit to the data: course materials are sentence-dense expository text,
+and extractive sentence selection preserves the instructor's exact wording
+--- important for a study assistant that must not paraphrase away technical
+definitions --- whereas abstractive summarisation risks hallucinated
+rewording of precisely the content students ask about.
+
+Second, fit to the deployment target: the extractive compressor requires only
+dual-encoder sentence scoring, which is feasible on consumer-grade local
+hardware alongside the generation model itself. The alternatives embed a
+language model in the compression loop --- the LLMLingua family uses an
+auxiliary LM for perplexity scoring~\cite{emnlp23:Jiang, acl24:Jiang}, and
+ECoRAG relies on LLM-mined evidentiality labels~\cite{facl25:Jeong} --- which
+the memory- and compute-constrained host of this system cannot afford.
+
+Third, fit to the pipeline: compression is architecturally a drop-in stage
+between retriever and generator, leaving both untouched --- matching the
+modular design of \autoref{design:sec:architecture} and enabling the
+feature-flagged A/B comparison used in \autoref{ch:evaluation}.
+
+Fourth, evidence of headroom: across the surveyed methods, QA-style workloads
+consistently admit 50--95\% token reduction at negligible quality
+cost~\cite{femnlp23:Liu, iclr24:Xu, emnlp23:Jiang, acl24:Jiang, emnlp23:Li},
+and the material-grounded question answering of a VTA is exactly that
+workload shape.
+
+Finally, the choice carries the novelty position stated in
+\autoref{review:subsec:compression}: no published work evaluates
+\textsc{Recomp} in a deployed educational VTA, so evaluating it here is
+itself a contribution rather than a re-implementation. The realisation of
+the stage is described in \autoref{impl:sec:compression}.
+
 \section{Summary}
 \label{design:sec:summary}
 

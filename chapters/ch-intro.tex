@@ -43,13 +43,46 @@ quantitatively unverified, and the systems it surveys predate modern
 retrieval-augmented large language models~\cite{sust22:Ahmad,
 ijethe19:ZawackiRichter}.
 
+The modern form of the proposed intervention has meanwhile moved from
+prototype to production. LLM-based virtual teaching assistants are now
+deployed at real institutional scale: Ethel, a retrieval-augmented assistant
+at ETH Zurich, served over 1\,500 students across six courses in a single
+semester~\cite{tpt24:Kortemeyer}; an LLM-based assistant at KAIST handled
+3\,869 interactions from 477 graduate students in one introductory
+course~\cite{acl25:Kweon}; and the LLM-powered Jill Watson has been deployed
+across multiple institutions and disciplines~\cite{arxiv24:JillWatson}. These
+systems share a common architecture --- retrieval-augmented generation (RAG)
+over course materials --- and therefore share a common cost structure: every
+student query is answered by injecting retrieved course content into the
+model's prompt, so the input token count per query is dominated by retrieved
+context rather than by the question itself, and that per-query overhead is
+multiplied across thousands of interactions per course per
+semester~\cite{femnlp23:Liu, acl25:Kweon}.
+
+These costs are material at institutional scale. ETH Zurich reports that
+operating Ethel cost US\$7.50 per student per course per semester in cloud
+AI-service charges --- at its Spring 2024 scale, five figures per semester for
+a handful of courses --- and its team identifies migration toward open-weight,
+locally hosted models as a priority for cost
+reduction~\cite{tpt24:Kortemeyer}. Local hosting, however, does not make the
+cost pressure disappear; it converts it into latency and hardware constraints,
+where prompt length directly determines prefill compute on resource-limited
+devices. In both regimes, the number of input tokens per query is the primary
+controllable cost driver.
+
 This thesis presents a retrieval-augmented virtual teaching assistant built
 over NUS Canvas course materials that absorbs routine student-support load
 --- clarification, content navigation, and logistics queries --- and, unlike
 prior work, instruments the interaction telemetry required to quantify the
 instructor-hours it returns, connecting the workload-measurement,
 teaching-quality, and AI-intervention literatures for the first time
-(\autoref{ch:review}).
+(\autoref{ch:review}). The system is built for low-cost, locally hosted
+deployment: an extractive, sentence-level
+retrieval-compression stage adapted from
+\textsc{Recomp}~\cite{iclr24:Xu} attacks the input token count at its source,
+and the problem, the design, and the evaluation are all measured in the same
+units --- tokens, cost, and latency per query
+(Chapters~\ref{ch:design} and~\ref{ch:evaluation}).
 
 \section{Objectives}
 \label{intro:sec:objectives}

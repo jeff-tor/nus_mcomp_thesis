@@ -1,35 +1,50 @@
 \begin{abstract}
 
-    University faculty are increasingly burdened by administrative
-    ``task-drift,'' spending an estimated 20--40\% of their working hours
-    answering routine inquiries such as module logistics and general
-    administrative questions. This overhead detracts from high-value research
-    and pedagogical innovation, and creates a ``feedback gap'' in which
-    professors lack the bandwidth to analyse individual student performance,
-    leaving course development stagnant. Students, in turn, experience a
-    ``clarity deficit'': delayed or ambiguous digital communication breeds
-    confusion and dissatisfaction. High student-to-faculty ratios compound the
-    problem by limiting personalised consultation, ultimately stifling student
-    creativity and the development of higher-order thinking skills.
+    Educators' working time is heavily taxed by non-teaching duties. In
+    Singapore, teachers report that only 17.7 hours of a 47.3-hour working
+    week is spent teaching, with four hours consumed by administrative work
+    --- their top-ranked source of occupational stress --- and faculty in US
+    higher education devote roughly a fifth of a 53-hour week to
+    administrative and other non-instructional duties. Econometric evidence
+    shows this is a quality problem, not merely a workload problem: when the
+    time such duties consume goes uncompensated, teaching quality measurably
+    declines. AI-based assistants have long been proposed as the remedy, but
+    the workload relief they promise has never been quantified. Meanwhile,
+    the modern form of that remedy --- the LLM-based virtual teaching
+    assistant, now deployed to thousands of students per semester --- carries
+    a cost structure of its own: retrieval-augmented generation answers every
+    student query by injecting retrieved course material into the model's
+    prompt, so input-token volume, and with it cost and latency, becomes the
+    price of deployment at scale.
 
-    This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant}, a
-    system that leverages large language models to address these gaps along two
-    fronts. First, it automates the handling of routine administrative and
-    module-logistics inquiries through retrieval-augmented generation grounded
-    in course materials, reclaiming faculty time for research and teaching.
-    Second, it surfaces analytics on student questions and performance, giving
-    instructors actionable insight to close the feedback gap while providing
-    students with timely, consistent, and personalised responses at scale.
+    This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant},
+    a retrieval-augmented virtual teaching assistant built over NUS Canvas
+    course materials and designed for low-cost, locally hosted deployment.
+    It contributes along three fronts. First, it absorbs routine
+    clarification, content-navigation, and logistics queries and --- unlike
+    prior deployments --- instruments every deflected query, yielding a
+    direct, hour-denominated estimate of the instructor time returned per
+    course per week. Second, it surfaces analytics over the questions
+    students actually ask, giving instructors an objective, behaviour-based
+    teaching signal alongside timely and consistent responses for students at
+    scale. Third, it integrates an extractive, sentence-level
+    retrieval-compression stage, adapted from \textsc{Recomp}, between
+    retrieval and generation --- attacking the input-token count at its
+    source, in what is, to our knowledge, the first evaluation of retrieval
+    compression in a deployed educational assistant.
 
-    % TODO: replace the bracketed placeholders below with your actual
-    % evaluation setup and findings once the experiments are complete.
-    We evaluated the system on [dataset / course cohort], measuring [response
-    accuracy, latency, faculty time saved, and student satisfaction]. The
-    results show that [the assistant resolved X\% of routine inquiries without
-    human intervention and improved Y over the baseline]. These findings
-    demonstrate that an AI teaching assistant can meaningfully reduce
-    administrative task-drift, narrow the feedback and clarity gaps, and support
-    more personalised, higher-order learning even under high
-    student-to-faculty ratios.
+    In a controlled probe on the deployed system, compression removed roughly
+    two-thirds of prompt tokens on in-syllabus questions and cut end-to-end
+    latency by up to 55\% despite its own overhead, while selective
+    augmentation correctly withheld context from an out-of-syllabus query.
+    % TODO: replace the bracketed placeholders below with the actual
+    % evaluation setup and findings once the cohort experiments are complete.
+    We further evaluated the system on [dataset / course cohort], measuring
+    [answer quality, latency, and instructor-hours returned]. The results
+    show that [the assistant resolved X\% of routine inquiries without human
+    intervention and returned Y instructor-hours per course per week]. These
+    findings demonstrate that an AI teaching assistant can meaningfully
+    relieve uncompensated administrative load --- and can do so affordably,
+    on modest local hardware, at the scale universities actually operate.
 
 \end{abstract}
