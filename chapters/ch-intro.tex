@@ -1,28 +1,64 @@
 \chapter{Introduction}
+\label{ch:intro}
 \vspace{2em}
 
 Introduction to the thesis, providing context and motivation for the research. This chapter outlines the challenges faced
 by university faculty in managing administrative tasks and providing personalized feedback to students.
 It also introduces the concept of retrieval-augmented generative AI systems as a potential solution to these challenges,
 aiming to improve faculty efficiency and enhance student learning experiences.
+% TODO: One or two opening paragraphs setting the scene before the overview.
 
 \section{Overview}
+\label{intro:sec:overview}
 
+% TODO: Overview of the thesis -- the virtual teaching assistant, its
+% deployment context (NUS Canvas course materials), and the structure of the
+% document.
 The overview section provides a brief introduction to the context and motivation for this thesis. It outlines the challenges
 faced by university faculty in managing administrative tasks and providing personalized feedback to students.
 The section also highlights the potential of retrieval-augmented generative AI systems to address these challenges,
 improve faculty efficiency, and enhance student learning experiences.
 
 \section{Problem Statement}
-University faculty are increasingly burdened by administrative 'task-drift,' spending 20-40% of their working hours on
-routine inquiries, such as module logistics and general administrative questions, which detracts from high-value research
-and pedagogical innovation. This creates a 'feedback gap' where professors lack the bandwidth to analyze individual student
-performance, leading to stagnant course development. Consequently, students experience a 'clarity deficit' where delayed or
-ambiguous digital communication results in confusion and dissatisfaction.
-This is further exacerbated by high student-to-faculty ratios that limit personalized consultation, ultimately stifling
-student creativity and the development of higher-order thinking skills
+\label{intro:sec:problem}
+
+Educators operate under a fixed time budget divided across teaching,
+preparation, marking, administration, and --- in higher education ---
+research. Survey evidence shows that non-teaching duties consume a large and
+stable share of this budget: Singapore teachers report four hours per week of
+administrative work (above the OECD average of three) within a 47.3-hour
+working week of which only 17.7 hours is teaching, and 53\% rank excessive
+administrative work as their foremost source of occupational
+stress~\cite{oecd25:TalisSG}. Panel evidence from higher education shows that
+this burden is a quality problem, not merely a workload problem: non-teaching
+duties that carry no compensating load relief measurably reduce teaching
+quality, while research time feeds back positively into teaching quality over
+most of its observed range~\cite{apec15:GarciaGallego}. The AI-in-education
+literature has long proposed intelligent systems --- chatbots, automated
+assessment, learning analytics --- as the remedy, arguing that such
+applications \enquote{minimize the administrative tasks of a teacher to
+invest more in teaching and guiding students}~\cite{sust22:Ahmad}; yet that
+same literature concedes that its claims remain qualitative and
+quantitatively unverified, and the systems it surveys predate modern
+retrieval-augmented large language models~\cite{sust22:Ahmad,
+ijethe19:ZawackiRichter}.
+
+This thesis presents a retrieval-augmented virtual teaching assistant built
+over NUS Canvas course materials that absorbs routine student-support load
+--- clarification, content navigation, and logistics queries --- and, unlike
+prior work, instruments the interaction telemetry required to quantify the
+instructor-hours it returns, connecting the workload-measurement,
+teaching-quality, and AI-intervention literatures for the first time
+(\autoref{ch:review}).
 
 \section{Objectives}
+\label{intro:sec:objectives}
+
+% TODO: Concrete objectives -- e.g. (i) build a RAG-based teaching assistant
+% over institutional course materials, (ii) make it deployable on modest
+% hardware (context compression), (iii) instrument query deflection to
+% estimate instructor-hours returned.
+
 
 The objective of this thesis is to design and implement a retrieval-augmented generative AI system that addresses the
 administrative and pedagogical challenges faced by university faculty. The system aims to automate routine inquiries,
@@ -43,6 +79,11 @@ engaging and effective learning environment. The specific objectives include:
 \end{itemize}
 
 \section{Summary of Contributions}
+\label{intro:sec:contributions}
+
+% TODO: Summary of contributions, mirroring the gap statement in
+% \autoref{review:subsec:gap}.
+
 
 Overall contribution to this thesis is the development of a retrieval-augmented generative AI system that addresses the administrative and pedagogical challenges faced by university faculty.
 The system automates routine inquiries, provides personalized feedback to students, and facilitates data-driven course development.
