@@ -1,0 +1,122 @@
+[
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 1,
+  "topic": "recursion",
+  "ms": 821,
+  "text": "{\n  \"question\": \"Given the recursive function f(n) defined as: if n <= 1 return 1; else return n * f(n-1); what is the value returned by f(4)?\",\n  \"options\": [\"6\", \"24\", \"120\", \"256\"],\n  \"correct_index\": 1,\n  \"exp\": \"f(4) = 4 * f(3) = 4 * 3 * f(2) = 4 * 3 * 2 * f(1) = 4 * 3 * 2 * 1 = 24.\"\n}",
+  "inTok": 233,
+  "outTok": 155,
+  "reasonTok": 18,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 2,
+  "topic": "list comprehensions",
+  "ms": 956,
+  "text": "{\n  \"question\": \"Given the list nums = [1, 2, 3, 4, 5], which list comprehension produces a list of the squares of the even numbers only?\",\n  \"options\": [\n    \"[x**2 for x in nums if x % 2 == 0]\",\n    \"[x**2 for x in nums if x % 2]\",\n    \"[x for x in nums if x**2 % 2 == 0]\",\n    \"[x**2 for x in nums]\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"The comprehension filters with x % 2 == 0 (even numbers) and then squares each selected element.\"\n}",
+  "inTok": 234,
+  "outTok": 179,
+  "reasonTok": 25,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 3,
+  "topic": "hash tables",
+  "ms": 890,
+  "text": "{\n  \"question\": \"A program stores employee IDs (integers) as keys and their names as values in a hash table using separate chaining. If the table has 10 buckets and the hash function is h(k) = k mod 10, which bucket will the ID 237 be placed in?\",\n  \"options\": [\"7\", \"2\", \"3\", \"0\"],\n  \"correct_index\": 2,\n  \"exp\": \"237 mod 10 = 7, so the correct bucket index is 7, which corresponds to the third option.\"\n}",
+  "inTok": 233,
+  "outTok": 162,
+  "reasonTok": 37,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 4,
+  "topic": "TCP congestion control",
+  "ms": 814,
+  "text": "{\n  \"question\": \"A TCP sender is in the congestion avoidance phase with a congestion window (cwnd) of 60 KB and a slow‑start threshold (ssthresh) of 80 KB. If the sender detects a packet loss via three duplicate ACKs, what will be the new values of cwnd and ssthresh after the fast‑recovery algorithm is applied?\",\n  \"options\": [\n    \"cwnd = 30 KB, ssthresh = 30 KB\",\n    \"cwnd = 40 KB, ssthresh = 30 KB\",\n    \"cwnd = 30 KB, ssthresh = 80 KB\",\n    \"cwnd = 60 KB, ssthresh = 30 KB\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"On triple duplicate ACKs, TCP halves cwnd (60 KB → 30 KB) and sets ssthresh to the new cwnd value (30 KB).\"\n}",
+  "inTok": 234,
+  "outTok": 241,
+  "reasonTok": 17,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 5,
+  "topic": "ray tracing",
+  "ms": 1114,
+  "text": "{\n  \"question\": \"Given a scene with a point light source, a reflective sphere, and a diffuse plane, which of the following steps correctly applies the recursive ray tracing algorithm to compute the color of a pixel that sees the sphere's reflection of the plane?\",\n  \"options\": [\n    \"Cast a primary ray to the sphere, compute the local illumination, then cast a secondary ray from the sphere's surface toward the light source to add specular highlights.\",\n    \"Cast a primary ray to the sphere, compute the reflection direction, cast a reflected ray from the hit point, and recursively evaluate the color returned by the plane intersected by that reflected ray.\",\n    \"Cast a primary ray directly to the plane, compute its color, and then add the sphere's color using additive blending based on distance.\",\n    \"Cast a primary ray to the sphere, ignore the reflection, and compute only the sphere's diffuse shading using the light source.\"\n  ],\n  \"correct_index\": 1,\n  \"exp\": \"The algorithm requires casting a reflected ray from the sphere's hit point and recursively tracing it to capture the plane's contribution in the sphere's reflection.\"\n}",
+  "inTok": 233,
+  "outTok": 265,
+  "reasonTok": 22,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 6,
+  "topic": "recursion",
+  "ms": 742,
+  "text": "{\n  \"question\": \"Given the recursive function \\\\(f(n) = n * f(n-1)\\\\) with base case \\\\(f(1) = 1\\\\), what is the value returned by \\\\(f(5)\\\\)?\",\n  \"options\": [\"120\", \"60\", \"24\", \"720\"],\n  \"correct_index\": 0,\n  \"exp\": \"Applying the recursion yields 5*4*3*2*1 = 120.\"\n}",
+  "inTok": 233,
+  "outTok": 127,
+  "reasonTok": 16,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 7,
+  "topic": "list comprehensions",
+  "ms": 1024,
+  "text": "{\n  \"question\": \"Given the list numbers = [1, 2, 3, 4, 5], which list comprehension correctly produces a list of the squares of the even numbers only?\",\n  \"options\": [\n    \"[x**2 for x in numbers if x % 2 == 0]\",\n    \"[x**2 for x in numbers]\",\n    \"[x for x in numbers if x % 2 == 0]\",\n    \"[x**2 for x in numbers if x % 2]\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"The comprehension filters with x % 2 == 0 (even) and squares each selected element.\"\n}",
+  "inTok": 234,
+  "outTok": 156,
+  "reasonTok": 5,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 8,
+  "topic": "hash tables",
+  "ms": 916,
+  "text": "{\n  \"question\": \"A university library wants to store book records in a hash table of size 11 using the hash function h(key) = (sum of ASCII codes of the title characters) mod 11. If the titles \\\"DataStructures\\\" and \\\"Algorithms\\\" both hash to the same index, which collision‑resolution method will guarantee that both records can still be retrieved in O(1) average time?\",\n  \"options\": [\n    \"Separate chaining with linked lists\",\n    \"Linear probing with a step size of 1\",\n    \"Quadratic probing with c1=1 and c2=3\",\n    \"Double hashing using h2(key) = 7 – (sum of ASCII codes mod 7)\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"Separate chaining stores colliding items in a list at the same bucket, preserving O(1) average lookup regardless of collisions.\"\n}",
+  "inTok": 233,
+  "outTok": 227,
+  "reasonTok": 30,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 9,
+  "topic": "TCP congestion control",
+  "ms": 803,
+  "text": "{\n  \"question\": \"A TCP sender using Reno detects three duplicate ACKs and then receives a timeout before the next ACK arrives. How should the sender adjust its congestion window (cwnd) and slow‑start threshold (ssthresh) according to the Reno algorithm?\",\n  \"options\": [\n    \"Set ssthresh to half of the current cwnd, reset cwnd to 1 MSS, and re‑enter slow start\",\n    \"Leave ssthresh unchanged, halve cwnd, and continue in congestion avoidance\",\n    \"Set ssthresh to the current cwnd, keep cwnd unchanged, and stay in fast recovery\",\n    \"Double cwnd, keep ssthresh unchanged, and remain in slow start\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"Reno halves ssthresh on a timeout, resets cwnd to 1 MSS, and re‑enters slow start.\"\n}",
+  "inTok": 234,
+  "outTok": 221,
+  "reasonTok": 22,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "rep": 10,
+  "topic": "ray tracing",
+  "ms": 830,
+  "text": "{\n  \"question\": \"A point light source is located at (2, 3, 1) and a planar mirror lies in the xy‑plane (z = 0). Using ray tracing, what are the coordinates of the virtual image of the light source as seen in the mirror?\",\n  \"options\": [\"(2, 3, ‑1)\", \"(‑2, ‑3, 1)\", \"(2, 3, ‑1)\", \"(‑2, ‑3, ‑1)\"],\n  \"correct_index\": 0,\n  \"exp\": \"Reflecting across the plane z=0 inverts the z‑coordinate while keeping x and y unchanged, giving (2, 3, ‑1).\"\n}",
+  "inTok": 233,
+  "outTok": 186,
+  "reasonTok": 21,
+  "valid": true
+ }
+]

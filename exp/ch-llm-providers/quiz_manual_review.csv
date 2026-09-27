@@ -1,0 +1,31 @@
+model,rep,topic,schema_valid,verdict,note
+llama3.2,1,recursion,no,invalid,options returned as one comma-joined string
+llama3.2,2,list comprehensions,yes,correct,
+llama3.2,3,hash tables,yes,wrong_key,"keyed 'false negatives'; poor hashing degrades performance, none of the options states it"
+llama3.2,4,TCP congestion control,yes,wrong_key,keyed 'fixed rate regardless of congestion'; correct is the loss/RTT-driven option
+llama3.2,5,ray tracing,yes,ambiguous,all four options are genuine applications
+llama3.2,6,recursion,yes,correct,keyed answer right; 'solve the problem directly' is arguably also right
+llama3.2,7,list comprehensions,yes,malformed,refers to a nested loop the question never shows; option 1 is not a comprehension
+llama3.2,8,hash tables,no,invalid,options returned as one comma-joined string
+llama3.2,9,TCP congestion control,yes,correct,
+llama3.2,10,ray tracing,yes,wrong_key,depth buffer stores per-pixel distance (option 2); also a rasterisation concept
+openai/gpt-oss-20b,1,recursion,yes,ambiguous,"n==1 base case is also correct for positive n, so two options are right"
+openai/gpt-oss-20b,2,list comprehensions,yes,correct,
+openai/gpt-oss-20b,3,hash tables,yes,correct,chaining is the conventional answer; 'should' is slightly loose
+openai/gpt-oss-20b,4,TCP congestion control,yes,wrong_key,Reno timeout resets cwnd to 1 segment; keyed 'halved to 6'
+openai/gpt-oss-20b,5,ray tracing,yes,wrong_key,keyed answer sends the secondary ray to the light; translucency needs a refracted ray through the sphere
+openai/gpt-oss-20b,6,recursion,yes,correct,
+openai/gpt-oss-20b,7,list comprehensions,yes,correct,near-duplicate of rep 2
+openai/gpt-oss-20b,8,hash tables,yes,correct,
+openai/gpt-oss-20b,9,TCP congestion control,yes,wrong_key,triple-dup-ACK in Reno halves cwnd (fast recovery); keyed 'reduce to one segment'
+openai/gpt-oss-20b,10,ray tracing,yes,correct,
+openai/gpt-oss-120b,1,recursion,yes,correct,
+openai/gpt-oss-120b,2,list comprehensions,yes,correct,
+openai/gpt-oss-120b,3,hash tables,yes,wrong_key,237 mod 10 = 7; keyed 3
+openai/gpt-oss-120b,4,TCP congestion control,yes,correct,ssthresh=cwnd/2=30; cwnd=ssthresh after deflation
+openai/gpt-oss-120b,5,ray tracing,yes,correct,
+openai/gpt-oss-120b,6,recursion,yes,correct,
+openai/gpt-oss-120b,7,list comprehensions,yes,correct,
+openai/gpt-oss-120b,8,hash tables,yes,correct,
+openai/gpt-oss-120b,9,TCP congestion control,yes,correct,
+openai/gpt-oss-120b,10,ray tracing,yes,malformed,correct value keyed but options 1 and 3 are identical
