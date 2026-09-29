@@ -1,0 +1,122 @@
+[
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 1,
+  "topic": "recursion",
+  "ms": 864,
+  "text": "{\"question\":\"Which of the following code snippets correctly computes the factorial of a positive integer n using recursion?\",\"options\":[\"def fact(n):\\n    if n==0:\\n        return 1\\n    else:\\n        return n*fact(n-1)\",\"def fact(n):\\n    if n==1:\\n        return 1\\n    else:\\n        return n*fact(n-1)\",\"def fact(n):\\n    if n<1:\\n        return 1\\n    else:\\n        return n*fact(n-2)\",\"def fact(n):\\n    if n==0:\\n        return 0\\n    else:\\n        return n*fact(n-1)\"],\"correct_index\":0,\"exp\":\"The first function correctly handles the base case for n=0 and multiplies n by the factorial of n-1, yielding the proper factorial value.\"}",
+  "inTok": 233,
+  "outTok": 213,
+  "reasonTok": 13,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 2,
+  "topic": "list comprehensions",
+  "ms": 728,
+  "text": "{\"question\":\"You have a list of integers `nums = [1, 2, 3, 4, 5]`. Which list comprehension correctly creates a new list containing the squares of only the even numbers from `nums`?\",\"options\":[\"[x**2 for x in nums if x%2==0]\",\"[x**2 for x in nums]\",\"[x**2 for x in nums if x%2!=0]\",\"[x**2 for x in nums if x%2==1]\"],\"correct_index\":0,\"exp\":\"The comprehension squares each element `x` and includes it only when `x%2==0`, i.e., when `x` is even, producing the squares of the even numbers.\"}",
+  "inTok": 234,
+  "outTok": 174,
+  "reasonTok": 8,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 3,
+  "topic": "hash tables",
+  "ms": 638,
+  "text": "{\n  \"question\": \"A company stores employee records in a hash table using employee ID as the key. If the hash function occasionally produces the same hash value for different IDs, which collision resolution technique should the company use to efficiently handle the insertions while maintaining fast lookups?\",\n  \"options\": [\n    \"Linear probing, where the next available slot in the array is used\",\n    \"Separate chaining, where each bucket holds a linked list of entries\",\n    \"Quadratic probing, where the probe sequence follows a quadratic formula\",\n    \"Rehashing the entire table whenever a collision occurs\"\n  ],\n  \"correct_index\": 1,\n  \"exp\": \"Separate chaining keeps all colliding entries in a linked list at the same bucket, ensuring constant‑time average lookups without costly probe sequences.\"\n}",
+  "inTok": 233,
+  "outTok": 195,
+  "reasonTok": 22,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 4,
+  "topic": "TCP congestion control",
+  "ms": 638,
+  "text": "{\n  \"question\": \"A sender using TCP Reno is in congestion avoidance when the congestion window is 12 segments. If the receiver sends an ACK for every segment and the network experiences a single packet loss, what will be the congestion window size after the retransmission and the subsequent ACKs assuming the loss is detected by a timeout?\",\n  \"options\": [\n    \"6 segments, because the window is halved after a timeout\",\n    \"13 segments, because the window increases by one after the retransmission\",\n    \"12 segments, because the window stays the same during a timeout\",\n    \"4 segments, because the window is reduced to one-quarter of its size after a timeout\"\n  ],\n  \"correct_index\": 0,\n  \"exp\": \"In TCP Reno, a timeout triggers congestion avoidance to restart with slow start, halving the congestion window; 12 ÷ 2 = 6.\"\n}",
+  "inTok": 234,
+  "outTok": 204,
+  "reasonTok": 10,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 5,
+  "topic": "ray tracing",
+  "ms": 633,
+  "text": "{\"question\":\"A 3D graphics engine needs to compute the color of a pixel that is visible from the camera but lies behind a translucent glass sphere. Which ray tracing technique should be applied to correctly render the pixel's color?\",\"options\":[\"Use a simple visibility test that ignores transparency.\",\"Perform a secondary ray from the point of intersection to the light source and blend the glass's refracted color.\",\"Trace a shadow ray from the camera to the light source and apply a fixed transparency factor.\",\"Render the pixel twice, once with and once without the glass, then average the results.\"],\"correct_index\":1,\"exp\":\"Ray tracing handles transparency by spawning a secondary ray at the intersection point to compute the refracted color, which is then blended with the surface color to achieve correct rendering.\"}",
+  "inTok": 233,
+  "outTok": 189,
+  "reasonTok": 22,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 6,
+  "topic": "recursion",
+  "ms": 633,
+  "text": "{\"question\":\"A function `f(n)` is defined recursively as `f(1)=1` and for all `n>1`, `f(n)=n*f(n-1)`. Which of the following is the correct value of `f(5)`?\",\"options\":[\"120\",\"60\",\"24\",\"720\"],\"correct_index\":0,\"exp\":\"The function computes factorial; 5! equals 120.\"}",
+  "inTok": 233,
+  "outTok": 114,
+  "reasonTok": 19,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 7,
+  "topic": "list comprehensions",
+  "ms": 689,
+  "text": "{\"question\":\"You have a list of integers `nums = [1, 2, 3, 4, 5]`. Which list comprehension correctly creates a new list containing the squares of only the even numbers from `nums`?\",\"options\":[\"[x**2 for x in nums if x % 2 == 0]\",\"[x**2 for x in nums if x % 2 != 0]\",\"[x**2 for x in nums if x % 2 == 1]\",\"[x**2 for x in nums if x % 2 == 0 or x % 2 == 1]\"],\"correct_index\":0,\"exp\":\"The comprehension filters with `x % 2 == 0` to keep evens, then squares them with `x**2`.\"}",
+  "inTok": 234,
+  "outTok": 188,
+  "reasonTok": 10,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 8,
+  "topic": "hash tables",
+  "ms": 452,
+  "text": "{\"question\":\"A hash table uses a hash function to map keys to array indices. If a hash function for integer keys is defined as h(k) = k mod 10 and the table size is 10, what is the most likely collision resolution strategy that would be efficient for a small set of keys with many duplicates?\",\"options\":[\"Open addressing with linear probing\",\"Chaining with linked lists\",\"Open addressing with quadratic probing\",\"Chaining with balanced binary search trees\"],\"correct_index\":1,\"exp\":\"Chaining with linked lists efficiently handles collisions when many duplicate keys map to the same bucket, and it is simple for small tables.\"}",
+  "inTok": 233,
+  "outTok": 155,
+  "reasonTok": 17,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 9,
+  "topic": "TCP congestion control",
+  "ms": 682,
+  "text": "{\"question\":\"A sender using TCP Reno has just detected a packet loss via triple duplicate ACKs. To recover, which of the following actions should the sender take immediately?\",\"options\":[\"Reduce the congestion window to one segment and retransmit the lost packet, then enter slow start.\",\"Halve the congestion window, retransmit the lost packet, and enter congestion avoidance.\",\"Reduce the congestion window to one segment, retransmit the lost packet, and enter congestion avoidance.\",\"Reduce the congestion window to half, retransmit the lost packet, and stay in fast recovery until the next timeout.\"],\"correct_index\":2,\"exp\":\"In TCP Reno, a triple duplicate ACK triggers fast retransmit and fast recovery, where the congestion window is halved, the lost packet is retransmitted, and the sender stays in congestion avoidance until the next timeout.\"}",
+  "inTok": 234,
+  "outTok": 191,
+  "reasonTok": 15,
+  "valid": true
+ },
+ {
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "rep": 10,
+  "topic": "ray tracing",
+  "ms": 635,
+  "text": "{\n  \"question\": \"A computer graphics program needs to determine the color of a pixel that lies on the surface of a shiny sphere. Which of the following steps should the ray tracing algorithm perform first to accurately calculate the pixel color?\",\n  \"options\": [\n    \"Cast a shadow ray from the light source to the sphere to test for occlusion\",\n    \"Compute the intersection point of a primary ray from the camera with the sphere\",\n    \"Apply a texture map to the sphere before any ray calculations\",\n    \"Calculate the reflection ray from the sphere’s surface and trace it immediately\"\n  ],\n  \"correct_index\": 1,\n  \"exp\": \"The algorithm must first find the intersection of the primary camera ray with the sphere to know where to evaluate lighting and shading.\"\n}",
+  "inTok": 233,
+  "outTok": 179,
+  "reasonTok": 12,
+  "valid": true
+ }
+]
