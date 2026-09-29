@@ -92,12 +92,55 @@ across the dimensions most relevant to a virtual teaching assistant.
   \end{tabular}
 \end{table}
 
-% TODO: Follow the table with a justified decision. State which deployment model
-% was chosen and tie each deciding factor back to a specific requirement in
-% \autoref{design:sec:requirements} (e.g. data privacy of student records,
-% limited budget, need for managed LLM services). Explicitly acknowledge the
-% trade-offs of the rejected options -- in particular, engage with why hybrid
-% (sensitive data on-premises, LLM inference in cloud) was or was not adopted.
+The system adopts a \textbf{hybrid} deployment. Response generation is served
+by open-weight models (OpenAI's gpt-oss family) on a hosted inference
+provider~\cite{groq26:Models}. Embedding and retrieval remain local, using the
+BGE-M3 embedder~\cite{arxiv24:Chen} on the operator's own hardware. A small local
+model (Llama~3.2, 3B parameters) serves as a generation fallback. Student records,
+course material and the vector index stay in the system's own database throughout.
+The decision rests on measurements taken on the deployed system rather than on
+the generic properties in \autoref{design:tab:deployment}; the full comparison is
+reported in \autoref{eval:sec:results:providers}.
+
+\paragraph{Why hosted generation.} On the system's flagship multi-part
+interaction (look up the student's progress, then set a practice question),
+hosted generation reduced median turn latency from 11.2\,s with the most capable
+local model (Qwen3 14B) to 1.7\,s. Grounding fidelity did not suffer: the
+assistant reported the student's actual figures in 10 of 10 turns in both cases.
+Hosted generation also produced correct quiz answer keys more than twice as often
+as the local quiz model. Its marginal cost is small: US\$0.0003--0.0005 per agent
+turn, an estimated US\$0.10--0.27 per student per semester.
+
+\paragraph{Why not fully on-premises.} On the 32\,GB host, the only local model
+that grounded reliably (Qwen3 14B, 10.4\,GB resident) competed with the retriever
+for memory. When loaded alongside the embedding model it evicted it, so every
+subsequent retrieval paid a cold reload. The smaller local model that fits beside
+the retriever grounded less reliably (8 of 10 turns) and produced correct quiz
+answer keys in only 3 of 10 generated questions. A fully local deployment would
+therefore have forced a choice between latency, retrieval performance and answer
+quality.
+
+\paragraph{Why not fully cloud.} The chosen inference provider offers no embedding
+models, so retrieval cannot move without also changing the embedder, and with it
+re-indexing the corpus. More importantly, a local fallback turns provider-side
+failures into a drop in quality rather than an outage. Such failures include
+outages, rate limiting and the retirement of hosted model identifiers, which
+disabled quiz generation in production once during development. The fallback
+only engages before any output has been streamed, so a student never receives an
+answer spliced together from two models.
+
+\paragraph{Trade-offs accepted.} Two costs of this choice are acknowledged.
+First, the \emph{data-privacy} advantage of on-premises deployment is only
+partly retained. Stored student records never leave the system's own database,
+but each generation request carries the prompt for that turn to the inference
+provider. That prompt includes the retrieved course excerpts and, when the
+assistant consults the student's progress, figures such as quiz scores. Second,
+the fallback path depends on a single local host being reachable, so the
+redundancy it provides is limited to that host's availability.
+
+% TODO: tie these deciding factors to the specific requirements in
+% \autoref{design:sec:requirements} once that section is written (latency,
+% grounding fidelity, budget, and data handling map directly onto them).
 
 \section{System Architecture}
 \label{design:sec:architecture}
