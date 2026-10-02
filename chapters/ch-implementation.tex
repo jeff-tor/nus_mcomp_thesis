@@ -90,6 +90,57 @@ dimensions that drive this system's implementation.
 % solo developer, cost), tying them back to the requirements in
 % \autoref{design:sec:requirements}.
 
+\subsection{Inference Provider and Model Selection}
+\label{impl:subsec:inference}
+
+Generation in the deployed system runs on a hosted inference provider, following
+the hybrid decision in \autoref{design:sec:deployment}. All generation calls pass
+through a provider abstraction that assigns a provider \emph{per role}. The
+\emph{chat} role covers student chat, the tool-calling agent loop and short
+generated notes. The \emph{quiz} role covers question generation and end-of-quiz
+feedback. Each provider implements the same four operations: streamed chat with
+tool calls, one-shot generation with an optional JSON mode, model listing, and
+configuration. Call sites are therefore independent of where a model runs. Two
+providers are implemented:
+\begin{itemize}[nosep]
+  \item a \emph{local} provider for Ollama, which also serves the embedder;
+  \item a \emph{hosted} provider for Groq's OpenAI-compatible
+        API~\cite{groq26:Models}.
+\end{itemize}
+
+Bridging the two exposed protocol differences. Hosted tool calls carry their
+arguments as a JSON string rather than an object. Each tool result must also name
+the call it answers, whereas the local runtime matches results to calls by
+position. The hosted provider therefore assigns identifiers to tool calls in call
+order.
+
+\paragraph{Models and settings.} The agent loop runs gpt-oss-20b and question
+generation runs gpt-oss-120b. The assignment follows the evaluation in
+\autoref{eval:sec:results:providers}: the smaller model matched the larger on
+grounding at half the per-turn cost, while the larger produced correct quiz
+answer keys more often. Placing the two roles on different models also gives each
+its own rate-limit budget, since the provider's limits apply per model. Both
+models always perform a reasoning phase, and its tokens are billed as output.
+Reasoning effort is therefore set to \emph{low}: in a pilot, \emph{medium} effort
+consumed 400--650 reasoning tokens per quiz question against 10--50 at
+\emph{low}, with equally valid output. Completions are capped at 1{,}024 tokens,
+reasoning included.
+
+\paragraph{Local fallback.} A wrapper around each role retries a failed hosted
+call on the local provider, using Llama~3.2 (3B). The wrapper follows three
+rules:
+\begin{itemize}[nosep]
+  \item a response that has already begun streaming is never switched;
+  \item a call whose caller-side deadline has passed is not retried;
+  \item after an availability failure (rate limit, server error or network
+        failure), subsequent calls bypass the hosted provider for a cooldown
+        period, rather than each waiting for it to fail first.
+\end{itemize}
+The fallback model was deliberately kept small. At 3.1\,GB it remains resident
+alongside the embedder, whereas a larger fallback evicted the embedder in
+testing. A cold load of the fallback (27.7\,s) would far exceed the quiz latency
+budget, so the model is kept loaded permanently.
+
 \section{Knowledge Base and Retrieval}
 \label{impl:sec:retrieval}
 
@@ -105,9 +156,12 @@ dimensions that drive this system's implementation.
 \section{Context Compression for Token Reduction}
 \label{impl:sec:compression}
 
-A practical constraint of the deployed system is that response generation runs on a
-small, locally hosted language model (Llama~3.2, 3B parameters, served through
-Ollama on an 8\,GB consumer laptop). Under standard retrieval-augmented generation
+A practical constraint of the deployed system at the time of this study was that
+response generation ran on a small, locally hosted language model (Llama~3.2, 3B
+parameters, served through Ollama on an 8\,GB consumer laptop). Generation has since
+moved to a hosted provider (\autoref{impl:subsec:inference}). The compression results
+in \autoref{eval:sec:results:compression} were measured on the local configuration
+described here. Under standard retrieval-augmented generation
 (RAG)~\cite{neurips20:Lewis}, the top-$N$ retrieved chunks of course material are
 prepended to the prompt in full, even though each chunk is typically only
 partially relevant to the student's question. This inflates prompt length --- the
