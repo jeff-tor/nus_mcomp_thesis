@@ -19,7 +19,9 @@
 
     This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant},
     a retrieval-augmented virtual teaching assistant built over NUS Canvas
-    course materials and designed for low-cost, locally hosted deployment.
+    course materials and designed for low-cost deployment: open-weight
+    models generate answers on a hosted inference provider, while retrieval
+    and a fallback model run locally.
     It contributes along three fronts. First, it absorbs routine
     clarification, content-navigation, and logistics queries and --- unlike
     prior deployments --- instruments every deflected query, yielding a
@@ -37,6 +39,10 @@
     two-thirds of prompt tokens on in-syllabus questions and cut end-to-end
     latency by up to 55\% despite its own overhead, while selective
     augmentation correctly withheld context from an out-of-syllabus query.
+    A benchmark of local against hosted inference on the same tasks showed
+    hosted generation to be 1.5--6.6 times faster with equal grounding,
+    at a projected generation cost of US\$0.11--0.27 per student per
+    semester.
     % TODO: replace the bracketed placeholders below with the actual
     % evaluation setup and findings once the cohort experiments are complete.
     We further evaluated the system on [dataset / course cohort], measuring
@@ -45,6 +51,6 @@
     intervention and returned Y instructor-hours per course per week]. These
     findings demonstrate that an AI teaching assistant can meaningfully
     relieve uncompensated administrative load --- and can do so affordably,
-    on modest local hardware, at the scale universities actually operate.
+    at the scale universities actually operate.
 
 \end{abstract}

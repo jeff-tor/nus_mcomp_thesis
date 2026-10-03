@@ -291,8 +291,9 @@ round-the-clock LLM inference at scale currently requires commercial cloud
 platforms, since university HPC clusters are batch-oriented and ill-suited to
 interactive serving~\cite{tpt24:Kortemeyer}. The same report states an
 explicit intent to explore open-weight models and on-premises hosting to
-reduce cost --- precisely the deployment posture of the system built in this
-thesis. Notably, none of these deployed-VTA studies applies prompt or context
+reduce cost --- a posture this thesis shares in part: its generation uses
+open-weight models, served by a hosted inference provider, while retrieval
+runs locally (\autoref{design:subsec:deployment-decision}). Notably, none of these deployed-VTA studies applies prompt or context
 compression: the token overhead of retrieval is documented as a cost but not
 treated as a design variable.
 
@@ -410,8 +411,8 @@ question answering in a deployable VTA is therefore this thesis's empirical
 contribution on the technical side, complementing the workload measurement of
 \autoref{review:subsec:gap}: the RAG pipeline is deployed as the intervention
 that \autoref{review:subsec:ai} identified, instrumented to yield the
-missing hour-denominated measurement, and made viable on low-cost local
-hardware by the compression stage described in \autoref{impl:sec:compression}
+missing hour-denominated measurement, and made cheaper to operate --- in
+both the hosted and local regimes --- by the compression stage described in \autoref{impl:sec:compression}
 and evaluated in \autoref{eval:sec:results:compression}.
 
 \section{Summary}

@@ -10,15 +10,48 @@
 \label{impl:sec:stack}
 
 % TODO: Languages, frameworks, models, and infrastructure used.
-\draftnote{languages, frameworks, models, and infrastructure.}
+\draftnote{languages, frameworks, and libraries (Node.js server, PostgreSQL with pgvector, Ollama, Groq).}
+
+\subsection{Deployment Configurations}
+\label{impl:subsec:configs}
+
+The system's inference configuration changed during the project, and the
+results in \autoref{ch:evaluation} were measured on different configurations.
+\autoref{impl:tab:configs} records each configuration and the results
+measured on it.
+
+\begin{table}[htb]
+  \centering
+  \caption{Inference configurations used during the project.}
+  \label{impl:tab:configs}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.14\textwidth} L{0.37\textwidth} L{0.37\textwidth}}
+    \hline
+    \textbf{Period} & \textbf{Configuration} & \textbf{Results measured} \\
+    \hline
+    Development &
+      Fully local: Llama~3.2 (3B) via Ollama on an 8\,GB consumer laptop &
+      Compression probe (\autoref{eval:sec:results:compression}) \\
+    Aug 2026 &
+      Fully local: Qwen3 14B (agent) and Llama~3.2 (quiz) via Ollama on a
+      32\,GB M1 Max, reached from EC2 over a reverse SSH tunnel &
+      Local rows of the provider benchmark
+      (\autoref{eval:sec:results:providers}) \\
+    From 27 Sep 2026 &
+      Hybrid: gpt-oss-20b (agent) and gpt-oss-120b (quiz) on Groq; BGE-M3
+      embeddings and Llama~3.2 fallback local &
+      Hosted rows of the provider benchmark; cost projection
+      (\autoref{eval:subsec:results:cost}) \\
+    \hline
+  \end{tabular}
+\end{table}
 
 \subsection{Cloud Provider Selection}
 \label{impl:subsec:provider}
 
-% TODO: One or two sentences linking back to the deployment model chosen in
-% \autoref{design:sec:deployment} -- given that decision, a concrete provider
-% must be selected for the cloud-hosted components.
-\draftnote{link to the deployment decision in Chapter 3.}
+The hybrid deployment chosen in \autoref{design:subsec:deployment-decision}
+needs a cloud platform for the application server and database.
 
 \autoref{impl:tab:providers} compares the three major cloud providers across the
 dimensions that drive this system's implementation.
@@ -88,11 +121,13 @@ dimensions that drive this system's implementation.
   \end{tabular}
 \end{table}
 
-% TODO: Conclude with the chosen provider and the two or three dimensions that
-% actually drove the decision (e.g. managed AI services, learning curve as a
-% solo developer, cost), tying them back to the requirements in
-% \autoref{design:sec:requirements}.
-\draftnote{chosen provider and the deciding factors.}
+The application server runs on AWS EC2 (us-east-1).
+% TODO: state the two or three dimensions that actually drove the AWS choice,
+% tying them back to the requirements in \autoref{design:sec:requirements}.
+\draftnote{the dimensions that drove the AWS choice.}
+Generation, however, is not served by any of the three platforms' managed AI
+services but by a dedicated inference provider, selected separately
+(\autoref{impl:subsec:llm-providers}).
 
 \section{Knowledge Base and Retrieval}
 \label{impl:sec:retrieval}
@@ -106,14 +141,61 @@ dimensions that drive this system's implementation.
 
 % TODO: The LLM integration, prompting/RAG strategy, and personalisation
 % logic.
-\draftnote{LLM integration, prompting, and tool-calling agent loop.}
+\draftnote{prompting, the tool-calling agent loop, and personalisation.}
+
+\subsection{LLM Provider Layer and Local Fallback}
+\label{impl:subsec:llm-providers}
+
+All text generation goes through a single provider layer that selects a
+provider and model \emph{per role}: the \emph{chat} role covers student chat,
+the tool-calling agent loop, and generated notes; the \emph{quiz} role covers
+question generation and end-of-quiz feedback. Each provider implements the
+same four operations --- streaming chat with tool calls, one-shot JSON
+completion, model listing, and configuration --- so the call sites (chat,
+quiz, recommendations, analytics) do not depend on which provider serves
+them. Two providers are implemented: Ollama for local models (which also
+serves embeddings), and Groq through its OpenAI-compatible chat-completions
+endpoint. A third, Gemini, was removed after the vendor retired the model the
+system used.
+
+The Groq provider bridges two protocol differences. Tool-call arguments are
+an object in the system's internal format but a JSON string on the
+OpenAI-compatible wire format. Tool replies must carry the identifier of the
+call they answer, whereas Ollama matches replies by position; the provider
+therefore assigns identifiers from the preceding assistant turn in call
+order.
+
+Hosted validation also exposed a latent bug. Groq checks tool-call arguments
+against the declared JSON schema; gpt-oss-120b sent \texttt{null} for an
+optional parameter, and every multi-part turn was rejected (10/10). Ollama
+had silently accepted the same calls. Declaring optional parameters as
+nullable removed the errors (0/10) and was verified in production.
+
+A fallback wrapper retries a failed hosted call on the local model, under
+three rules: it never switches a stream that has already emitted tokens,
+which would splice two different answers together; it never retries after
+the caller's own deadline; and after an availability failure (rate limiting,
+a server error, or a network error) it skips the hosted provider for a
+cooldown period. The fallback model is Llama~3.2 (3B) rather than the more
+capable Qwen3 14B, because only the smaller model stays resident in memory
+beside the embedding model; a cold load of the fallback (27.7\,s under
+memory pressure) would exceed the quiz latency budget by an order of
+magnitude, so the fallback model is kept permanently loaded. With the hosted
+provider forced unreachable in production, quiz generation fell back in
+1.28\,s and an agent pass in 0.81\,s.
+
+The deployed configuration assigns gpt-oss-20b to the chat role and
+gpt-oss-120b to the quiz role, both at low reasoning effort with a
+1\,024-token completion cap; the evidence for this split is reported in
+\autoref{eval:sec:results:providers}. Keeping the two roles on different
+models also gives each its own rate-limit budget on the provider.
 
 \section{Context Compression for Token Reduction}
 \label{impl:sec:compression}
 
-A practical constraint of the deployed system is that response generation runs on a
-small, locally hosted language model (Llama~3.2, 3B parameters, served through
-Ollama on an 8\,GB consumer laptop). Under standard retrieval-augmented generation
+When the compression stage was developed and evaluated, response generation
+ran on a small, locally hosted language model (Llama~3.2, 3B parameters, served
+through Ollama on an 8\,GB consumer laptop; \autoref{impl:tab:configs}). Under standard retrieval-augmented generation
 (RAG)~\cite{neurips20:Lewis}, the top-$N$ retrieved chunks of course material are
 prepended to the prompt in full, even though each chunk is typically only
 partially relevant to the student's question. This inflates prompt length --- the
@@ -153,6 +235,12 @@ JavaScript), which matters on the memory-constrained host described in
 (\texttt{RAG\_COMPRESS}, with $\tau$ and $k$ configurable), which both protects
 the production path and enables the controlled A/B comparison reported in
 \autoref{eval:sec:results}.
+
+The stage remains relevant under the later hybrid configuration, for a
+different reason. With hosted generation, retrieved context is billed per
+token rather than paid for in prefill latency, and in the tool-calling agent
+loop it is re-sent on every pass, so the tokens compression removes are
+saved several times per turn (\autoref{eval:subsec:results:cost}).
 
 \section{Analytics and Feedback Loop}
 \label{impl:sec:analytics}
