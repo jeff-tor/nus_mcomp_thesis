@@ -3,7 +3,17 @@
 
 \section{Conclusion}
 
-Placeholder for conclusion content.
+This thesis set out to measure, rather than assert, the workload relief that
+an AI teaching assistant delivers, and to make such an assistant affordable
+to operate at institutional scale. It presented a retrieval-augmented virtual
+teaching assistant over NUS Canvas course materials, instrumented to estimate
+the instructor-hours it returns, and integrated an extractive retrieval-
+compression stage that, in an initial probe, removed roughly two-thirds of
+prompt tokens on in-syllabus questions and correctly withheld context from an
+out-of-syllabus query (\autoref{eval:sec:results:compression}).
+
+\draftnote{final conclusion, once the instructor-hours and full
+compression evaluations in \autoref{ch:evaluation} are complete.}
 
 \section{Future Research Directions}
 
@@ -22,7 +32,7 @@ mode when an equation-bearing sentence fell below the retention cut-off
 (\autoref{eval:sec:results:compression}). Evidentiality-guided compression
 with an adaptive per-query ratio, as in ECoRAG~\cite{facl25:Jeong}, is the
 natural upgrade path, at the cost of an LLM-in-the-loop labelling pipeline
-that the present system's hardware budget excluded
+that the present system's design excluded
 (\autoref{design:subsec:compression-choice}).
 
 \paragraph{Broader evaluation of the compression stage.}

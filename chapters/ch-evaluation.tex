@@ -4,18 +4,55 @@
 
 % TODO: Introduce the chapter -- state what is being evaluated and the
 % research questions it answers.
+\draftnote{chapter introduction and research questions.}
 
 \section{Experimental Setup}
 \label{eval:sec:setup}
 
 % TODO: Dataset / course cohort, baselines, hardware, and evaluation
 % protocol.
+\draftnote{dataset, course cohort, and protocol for the instructor-hours and answer-quality evaluations.}
+
+\subsection{Local versus Hosted Inference Benchmark}
+\label{eval:subsec:setup:providers}
+
+To choose a deployment model (\autoref{design:subsec:deployment-decision}),
+local and hosted inference were compared on the same prompts, tools, and
+tasks. The local runs used a MacBook Pro M1 Max (32\,GB) running Ollama with
+4-bit quantised models (Llama~3.2 3B, Qwen3 8B, Qwen3 14B; thinking
+disabled). The hosted runs used Groq's on-demand free tier (gpt-oss-20b,
+gpt-oss-120b, Qwen3.8 27B) at low reasoning effort with a 1\,024-token
+completion cap. Local agent runs were made in August 2026; hosted runs and
+the local quiz run on 27 September 2026.
+
+\paragraph{Agent benchmark.} A harness replicates the production agent loop
+--- the same tool definitions and persona, a five-iteration cap, and tools
+withheld on the final pass --- with tool results stubbed so that every model
+receives byte-identical inputs. Four scenarios were run: a concept
+explanation with no tool expected, a single tool lookup, a course-material
+retrieval ($n=3$ each), and the headline multi-part turn --- a progress
+lookup followed by a practice question ($n=10$). A turn is scored
+\emph{grounded} if the answer states the student's stubbed score and names a
+stubbed weak topic. The same rubric was applied to both regimes, and
+re-scoring the earlier local runs reproduced their original hand-coded
+grounding results exactly. Hosted latency is the sum of HTTP request times
+per turn, excluding rate-limit pauses.
+
+\paragraph{Quiz benchmark.} The production multiple-choice prompt was run
+unchanged over five rotating topics ($n=10$ per model, temperature 0.7),
+with the same parse and schema check as production. Answer-key correctness
+was then judged by an AI model rather than a human rater: a single,
+unblinded LLM-based review of each question against its keyed answer. The
+correct-key rates are therefore indicative only, and a human-rated,
+course-specific item set is required before they can be relied on.
+% TODO: name the AI model (and version) that judged answer-key correctness.
 
 \section{Evaluation Metrics}
 \label{eval:sec:metrics}
 
 % TODO: Metrics used (e.g. answer accuracy, latency, faculty time saved,
 % student satisfaction).
+\draftnote{overview of the evaluation metrics.}
 
 \subsection{Instructor-Hours Returned}
 \label{eval:subsec:hours}
@@ -47,6 +84,7 @@ assistant's query logs.
 % TODO: implement the aggregation as a PostgreSQL query over the production
 % bot logs and report per-course results as a table in
 % \autoref{eval:sec:results}.
+\draftnote{per-course instructor-hours results.}
 
 A secondary, complementary signal is question-topic clustering over the same
 logs: the distribution of what students actually ask provides an objective,
@@ -71,10 +109,10 @@ metric language as the problem statement
   \item \textbf{Input tokens per query}, before versus after compression,
         reported with the compression ratio --- the direct measure of the
         token inflation identified in \autoref{review:subsec:tokens};
-  \item \textbf{Cost per query and per student per semester}, computed for
-        the cloud-API analytics path; for the locally hosted generation path,
-        where no per-token charge exists, latency and hardware-utilisation
-        proxies are reported instead;
+  \item \textbf{Cost per query and per student per semester}, computed from
+        the hosted provider's per-token list prices; for locally hosted
+        generation, where no per-token charge exists, latency and
+        memory-residency effects are reported instead;
   \item \textbf{End-to-end latency} (retrieval $\rightarrow$ compression
         $\rightarrow$ generation), including the compression stage's own
         overhead --- compression adds an inference step, and its cost is
@@ -92,19 +130,18 @@ US\$7.50 per student per course per semester observed for
 Ethel~\cite{tpt24:Kortemeyer} --- connects the evaluation directly back to
 the institutional cost evidence of \autoref{intro:sec:problem}.
 
-% TODO: report latency as P50/P95 once a larger probe set exists; the
-% three-question probe in \autoref{eval:sec:results:compression} covers
-% dimensions 1 and 3 only.
+% TODO: report P95 latency once larger samples exist; current samples
+% (n=10 and n=3) support medians and ranges only.
 % TODO: decide the course-material QA evaluation set (n questions over the
 % ingested Canvas corpus) for dimension 4.
-% TODO: compute the per-student-per-semester cost projection (baseline vs
-% compressed) for the cloud analytics path and chart it against the Ethel
-% benchmark.
+% TODO: replace the assumed usage rates in the cost projection
+% (\autoref{eval:subsec:results:cost}) with rates from production logs.
 
 \section{Results}
 \label{eval:sec:results}
 
 % TODO: Quantitative and qualitative results, with tables and figures.
+\draftnote{overview of results.}
 
 \subsection{Context Compression: Token Reduction and Latency}
 \label{eval:sec:results:compression}
@@ -171,13 +208,176 @@ statistically robust: they derive from a three-question probe over a single
 course corpus, and a larger question set across multiple courses is required
 before the reductions can be claimed as general.
 
+\subsection{Local versus Hosted Inference}
+\label{eval:sec:results:providers}
+
+\autoref{eval:tab:providers} reports the headline multi-part agent turn
+under the setup of \autoref{eval:subsec:setup:providers}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Multi-part agent turn (progress lookup, then a practice question),
+           local versus hosted inference ($n=10$, medians). Hosted latencies
+           were measured from a client in Singapore and include trans-Pacific
+           round trips.}
+  \label{eval:tab:providers}
+  \footnotesize
+  \begin{tabular}{l l r r r r r}
+    \hline
+    \textbf{Model} & \textbf{Regime} & \textbf{Latency (s)} & \textbf{Passes}
+      & \textbf{Input tok.} & \textbf{Grounded} & \textbf{US\$/turn} \\
+    \hline
+    Llama~3.2 3B   & local  & 3.3  & 2 & 1\,156 & 8/10  & --- \\
+    Qwen3 8B       & local  & 1.3  & 1 & 760    & 3/10  & --- \\
+    Qwen3 14B      & local  & 11.2 & 2 & 1\,595 & 10/10 & --- \\
+    gpt-oss-20b    & hosted & 1.7  & 3 & 2\,248 & 10/10 & 0.00025 \\
+    gpt-oss-120b$^{a}$ & hosted & 2.2 & 3 & 2\,277 & 10/10 & 0.00049 \\
+    Qwen3.8 27B$^{b}$  & hosted & 1.4  & 3 & 3\,249 & 2/7   & 0.00360 \\
+    \hline
+    \multicolumn{7}{L{0.9\textwidth}}{\scriptsize $^{a}$With optional tool
+      parameters declared nullable; under the original schema all 10 turns
+      were rejected by the provider (\autoref{impl:subsec:llm-providers}).
+      $^{b}$3/10 turns failed with malformed tool calls; rates are over the
+      remaining 7.}
+  \end{tabular}
+\end{table}
+
+The two gpt-oss models were 1.5--6.6 times faster end to end than the local
+models usable for production (Llama~3.2 and Qwen3 14B) and matched the best
+of them on grounding (10/10). The only faster local model, Qwen3 8B, never
+called the expected tools and grounded only 3/10 turns. Generation throughput differed by 6--50 times: about
+19--75 tokens per second locally against 475--965 hosted. These hosted
+latencies are conservative for production: the same calls made from the
+application server on EC2 took 229--256\,ms per agent pass, two to five
+times faster than from the benchmark client. In the local regime, by
+contrast, latency in production was dominated not by generation but by cold
+model loads and by embedding over the SSH tunnel (1.2--1.7\,s, against
+0.12\,s on the host itself).
+
+Two further observations matter for the token argument of this thesis.
+First, the hosted gpt-oss models took three passes per multi-part turn where
+the local models took two, chaining the two tools sequentially; each pass
+re-sends the full prompt, which is why their input-token counts are higher.
+Second, the gpt-oss models always reason, and reasoning is billed as output:
+at medium reasoning effort a quiz question consumed 400--650 reasoning tokens
+against 10--50 at low effort, for equally valid output --- a hidden
+output-token multiplier with no visible benefit, which is why the deployment
+uses low effort.
+
+\autoref{eval:tab:quiz} reports quiz generation with the production prompt.
+
+\begin{table}[htb]
+  \centering
+  \caption{Quiz generation with the production prompt ($n=10$ per model,
+           medians). Answer-key correctness was judged by an AI model, not a
+           human rater (\autoref{eval:subsec:setup:providers}).}
+  \label{eval:tab:quiz}
+  \footnotesize
+  \begin{tabular}{l l r r r r}
+    \hline
+    \textbf{Model} & \textbf{Regime} & \textbf{Latency (s)} & \textbf{Parse-valid}
+      & \textbf{Correct key} & \textbf{US\$/question} \\
+    \hline
+    Llama~3.2 3B  & local (warm) & 1.76 & 8/10  & 3/10 & --- \\
+    gpt-oss-20b   & hosted       & 0.64 & 10/10 & 6/10 & 0.000074 \\
+    gpt-oss-120b  & hosted       & 0.86 & 10/10 & 8/10 & 0.000145 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Parse validity overstated quality for every model: questions that passed
+the production schema check still had wrong answer keys, duplicate options,
+or two correct options. Reported quiz quality therefore needs an
+answer-correctness check, not only schema validity. These results set the
+deployed role split: gpt-oss-20b for the agent (1.3 times faster than
+gpt-oss-120b, half the cost per turn, equally grounded, and unaffected by the
+nullable-argument bug), and gpt-oss-120b for quizzes (8/10 correct keys
+against 6/10, for US\$0.00007 more per question).
+
+\subsection{Cost per Query and per Student}
+\label{eval:subsec:results:cost}
+
+The benchmark prompts carry no retrieved context, so production cost is
+modelled by adding about 1\,000 tokens of retrieved context per pass, with
+and without the 65\% reduction measured in the compression probe
+(\autoref{eval:sec:results:compression}). Costs use Groq's list prices
+(gpt-oss-20b: US\$0.075 input and US\$0.30 output per million tokens;
+gpt-oss-120b: US\$0.15 and US\$0.60; retrieved 27 September 2026). The
+per-semester projection assumes 20 chat turns, 10 quiz questions, and one
+quiz-feedback note per student per week over 13 weeks. These are
+round-number assumptions, not measured usage.
+
+\begin{table}[htb]
+  \centering
+  \caption{Projected generation cost per student per semester (US\$).}
+  \label{eval:tab:cost}
+  \footnotesize
+  \begin{tabular}{l r r r}
+    \hline
+    \textbf{Model split} & \textbf{No retrieval} & \textbf{+ RAG}
+      & \textbf{+ RAG + compression} \\
+    \hline
+    Agent 20b, quiz 120b (deployed) & 0.090 & 0.148 & 0.110 \\
+    Agent 120b, quiz 20b            & 0.141 & 0.258 & 0.182 \\
+    All 120b                        & 0.152 & 0.269 & 0.193 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+With retrieved context included, projected cost is US\$0.11--0.27 per
+student per semester, against the US\$7.50 per student per course per
+semester reported for Ethel~\cite{tpt24:Kortemeyer}. The comparison is
+indicative only: Ethel used a different model class, different usage
+patterns, and 2024 pricing, and a single institution's figure should not be
+read as a general benchmark.
+
+The agent loop adds a mechanism the literature reviewed in
+\autoref{review:subsec:tokens} does not isolate: \emph{tool use multiplies the
+prompt}. Each pass re-sends the system prompt, the retrieved context, and the
+tool schemas, so context injected once per turn is billed once per pass ---
+three times on the multi-part turn. Compressing a 1\,000-token context by
+65\% therefore cuts the cost of a gpt-oss-20b agent turn by about 30\%
+(US\$0.00049 to US\$0.00034), more than the same compression saves in
+single-pass RAG. Token counts are not comparable across model families ---
+the same prompt counted 1\,093 tokens under Llama~3.2, 758 under Qwen3, and
+672 under gpt-oss --- so compression ratios are compared within a model only.
+
+Rate limits are a separate capacity constraint. The free tier allows 8\,000
+tokens per minute per model; at about 5\,500 tokens per retrieval-augmented
+agent turn, one model serves roughly 1.4 turns per minute across all users,
+so a production deployment at course scale requires a paid tier.
+
 \section{Discussion}
 \label{eval:sec:discussion}
 
 % TODO: Interpret the results against the problem statement and threats to
 % validity.
+\draftnote{overall discussion against the problem statement.}
+
+Both inference regimes reward fewer input tokens, for different reasons. In
+the hosted regime, tokens are billed directly and multiplied by agent passes;
+in the local regime, they appear as prefill latency and, more acutely, as
+memory pressure on a host shared with the retriever. This supports the claim
+in \autoref{intro:sec:problem} that input tokens per query are the primary
+controllable cost driver in both regimes.
+
+\paragraph{Threats to validity of the provider benchmark.}
+Samples are small ($n=10$ for the headline scenario and quizzes, $n=3$
+otherwise): enough to rank models, not to support P95 latencies or
+fine-grained claims. The local and hosted agent runs were five weeks apart, on
+different Ollama versions, although prompts, stubs, and loop were identical.
+Hosted latencies include trans-Pacific round trips from the benchmark client.
+Quiz correctness was judged by an AI model rather than a human, in a single
+unblinded pass over five computer science topics; the judge may share
+failure modes with the models it rated, and a second, human rater is
+needed. Stubbed tool results measure model behaviour rather than
+live-data effects, and no complete production turn (retrieval, live tools,
+and streaming) was timed on the hosted provider. Free-tier throttling was
+excluded from latency, and queueing on paid tiers may differ. Finally, the
+cost projection rests on assumed usage rates.
 
 \section{Summary}
 \label{eval:sec:summary}
 
 % TODO: Recap the key findings.
+\draftnote{chapter summary.}

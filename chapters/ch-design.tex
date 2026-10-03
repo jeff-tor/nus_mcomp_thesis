@@ -5,20 +5,23 @@
 % TODO: Introduce the chapter -- summarise the design goals of the
 % AI-Powered Omniscient Teacher Assistant and how they address the problem
 % statement (administrative task-drift, feedback gap, clarity deficit).
+\draftnote{chapter introduction --- design goals and how they address the problem statement.}
 
 \section{Design Goals and Requirements}
 \label{design:sec:requirements}
 
 % TODO: Functional and non-functional requirements derived from the problem
 % statement and stakeholder needs (faculty, students, administrators).
+\draftnote{functional and non-functional requirements (faculty, students, administrators).}
 
 \section{Deployment Model Analysis}
 \label{design:sec:deployment}
 
-% TODO: Frame the analysis -- before committing to an architecture, the system's
-% deployment model must be chosen. Introduce the three candidates (fully cloud,
-% fully on-premises, hybrid) and state that they are assessed against the
-% requirements from \autoref{design:sec:requirements}.
+Before committing to an architecture, the system's deployment model must be
+chosen: where language-model generation runs, where embedding and retrieval
+run, and what happens when either is unavailable. Three candidates are
+considered --- fully cloud-hosted, fully on-premises (local), and hybrid ---
+and assessed against the requirements of \autoref{design:sec:requirements}.
 
 \autoref{design:tab:deployment} compares the three candidate deployment models
 across the dimensions most relevant to a virtual teaching assistant.
@@ -92,24 +95,87 @@ across the dimensions most relevant to a virtual teaching assistant.
   \end{tabular}
 \end{table}
 
-% TODO: Follow the table with a justified decision. State which deployment model
-% was chosen and tie each deciding factor back to a specific requirement in
-% \autoref{design:sec:requirements} (e.g. data privacy of student records,
-% limited budget, need for managed LLM services). Explicitly acknowledge the
-% trade-offs of the rejected options -- in particular, engage with why hybrid
-% (sensitive data on-premises, LLM inference in cloud) was or was not adopted.
+% TODO: tie each deciding factor below back to a specific requirement in
+% \autoref{design:sec:requirements} once that section is written.
+
+\subsection{Deployment Decision}
+\label{design:subsec:deployment-decision}
+
+The system adopts a \emph{hybrid} deployment: generation is served by an
+open-weight model family (gpt-oss) on a hosted inference provider (Groq),
+embedding and retrieval remain local, and a small local model serves as a
+generation fallback. The decision was made empirically. The system first ran
+fully locally, and was moved to the hybrid model after a benchmark comparing
+local and hosted inference on the same prompts, tools, and tasks
+(\autoref{eval:sec:results:providers}).
+
+\paragraph{Why hosted generation.} On this system, hosted generation was
+better on every measured dimension except marginal cost. On the flagship
+multi-part interaction --- a progress lookup followed by a practice question
+--- it reduced median turn latency from 11.2\,s (the local model then in
+production) to 1.7\,s, with no loss of grounding fidelity (10/10 turns in
+both cases, $n=10$). Hosted models also produced correct quiz answer keys
+two to three times as often as the local quiz model, as judged by an AI
+model (\autoref{eval:sec:results:providers}). The marginal cost is
+US\$0.0003--0.0005 per agent turn, or an estimated US\$0.11--0.27 per
+student per semester once retrieved context is included
+(\autoref{eval:subsec:results:cost}).
+
+\paragraph{Why not fully local.} The local model capable of reliable
+grounding (Qwen3, 14B parameters) was five to seven times slower than hosted
+generation and, on the 32\,GB host, competed with the retriever for memory:
+loading it evicted the embedding model, so every subsequent retrieval paid a
+cold reload. The small local model that fits beside the retriever
+(Llama~3.2, 3B) is fast enough but weaker, grounding 8/10 multi-part turns
+and producing correct quiz keys in 3/10 cases.
+
+\paragraph{Why not fully hosted.} The chosen inference provider offers no
+embedding models, so retrieval with the system's embedder (BGE-M3) must stay
+local. A local fallback also converts provider outages, rate limits, and
+model retirements into a degradation in answer quality rather than an
+outage --- a real risk, since a hosted model the system had previously used
+was retired by its vendor and broke quiz generation in production.
+
+The trade-off accepted is a dependency on an external provider for the
+primary generation path, and a continued dependency on the local host for
+retrieval: if the local host is unavailable, the system cannot retrieve
+course material even though hosted generation remains reachable.
 
 \section{System Architecture}
 \label{design:sec:architecture}
 
-% TODO: High-level architecture diagram and component overview
-% (e.g. retrieval-augmented generation pipeline, knowledge base, analytics).
+% TODO: add the architecture diagram.
+\draftnote{architecture diagram.}
+
+The deployed system has three tiers:
+
+\begin{itemize}
+  \item \textbf{Application server} (AWS EC2): hosts the web application,
+        the tool-calling agent loop, quiz generation, and analytics, together
+        with a PostgreSQL database whose pgvector extension stores
+        course-material chunks and their embeddings.
+  \item \textbf{Local inference host} (a 32\,GB Apple M1 Max laptop running
+        Ollama, reached from the application server over a reverse SSH
+        tunnel): serves the BGE-M3 embedding model used for retrieval and a
+        small fallback generation model (Llama~3.2, 3B).
+  \item \textbf{Hosted inference provider} (Groq): serves the primary
+        generation models, assigned per role --- gpt-oss-20b for the student
+        chat agent and gpt-oss-120b for quiz generation
+        (\autoref{impl:subsec:llm-providers}).
+\end{itemize}
+
+A student query flows through retrieval (the query is embedded with BGE-M3
+and matched against course chunks in pgvector), an optional, feature-flagged
+compression stage (\autoref{impl:sec:compression}), and generation through a
+provider-agnostic layer that routes each call to the hosted provider and
+falls back to the local model on failure.
 
 \section{Methodology}
 \label{design:sec:methodology}
 
 % TODO: Research methodology, data sources, and the approach taken to
 % evaluate the system.
+\draftnote{research methodology and data sources.}
 
 \subsection{Baseline Token Audit}
 \label{design:subsec:tokenaudit}
@@ -147,6 +213,7 @@ units again (\autoref{eval:sec:metrics}).
 % from the deployed chunking config; take system prompt / history / query
 % tokens from production logs) and report the numbers and the
 % retrieved-context share here.
+\draftnote{baseline token-audit measurements from the deployed pipeline.}
 
 \subsection{Selection of the Compression Method}
 \label{design:subsec:compression-choice}
@@ -162,12 +229,17 @@ definitions --- whereas abstractive summarisation risks hallucinated
 rewording of precisely the content students ask about.
 
 Second, fit to the deployment target: the extractive compressor requires only
-dual-encoder sentence scoring, which is feasible on consumer-grade local
-hardware alongside the generation model itself. The alternatives embed a
-language model in the compression loop --- the LLMLingua family uses an
-auxiliary LM for perplexity scoring~\cite{emnlp23:Jiang, acl24:Jiang}, and
-ECoRAG relies on LLM-mined evidentiality labels~\cite{facl25:Jeong} --- which
-the memory- and compute-constrained host of this system cannot afford.
+dual-encoder sentence scoring, and can reuse the embedding model already
+resident on the local host for retrieval, adding no new model. The
+alternatives embed a language model in the compression loop --- the
+LLMLingua family uses an auxiliary LM for perplexity
+scoring~\cite{emnlp23:Jiang, acl24:Jiang}, and ECoRAG relies on LLM-mined
+evidentiality labels~\cite{facl25:Jeong}. On this system, such a model would
+either compete for memory on the local host, which already cannot hold a
+second large model beside the embedder
+(\autoref{design:subsec:deployment-decision}), or add a further billed call
+to every query on the hosted provider, eroding the saving compression is
+meant to deliver.
 
 Third, fit to the pipeline: compression is architecturally a drop-in stage
 between retriever and generator, leaving both untouched --- matching the
@@ -190,3 +262,4 @@ the stage is described in \autoref{impl:sec:compression}.
 \label{design:sec:summary}
 
 % TODO: Recap the design decisions that the following chapter implements.
+\draftnote{chapter summary.}
