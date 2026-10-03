@@ -41,10 +41,11 @@ per turn, excluding rate-limit pauses.
 \paragraph{Quiz benchmark.} The production multiple-choice prompt was run
 unchanged over five rotating topics ($n=10$ per model, temperature 0.7),
 with the same parse and schema check as production. Answer-key correctness
-was then judged by a single, unblinded rater.
-% TODO: state who rated answer-key correctness. The findings note says the
-% review was done by "the author's agent"; if that was an LLM, disclose it
-% here and treat the percentages as indicative only.
+was then judged by an AI model rather than a human rater: a single,
+unblinded LLM-based review of each question against its keyed answer. The
+correct-key rates are therefore indicative only, and a human-rated,
+course-specific item set is required before they can be relied on.
+% TODO: name the AI model (and version) that judged answer-key correctness.
 
 \section{Evaluation Metrics}
 \label{eval:sec:metrics}
@@ -268,7 +269,8 @@ uses low effort.
 \begin{table}[htb]
   \centering
   \caption{Quiz generation with the production prompt ($n=10$ per model,
-           medians).}
+           medians). Answer-key correctness was judged by an AI model, not a
+           human rater (\autoref{eval:subsec:setup:providers}).}
   \label{eval:tab:quiz}
   \footnotesize
   \begin{tabular}{l l r r r r}
@@ -365,8 +367,10 @@ otherwise): enough to rank models, not to support P95 latencies or
 fine-grained claims. The local and hosted agent runs were five weeks apart, on
 different Ollama versions, although prompts, stubs, and loop were identical.
 Hosted latencies include trans-Pacific round trips from the benchmark client.
-Quiz correctness was judged by a single, unblinded rater over five computer
-science topics. Stubbed tool results measure model behaviour rather than
+Quiz correctness was judged by an AI model rather than a human, in a single
+unblinded pass over five computer science topics; the judge may share
+failure modes with the models it rated, and a second, human rater is
+needed. Stubbed tool results measure model behaviour rather than
 live-data effects, and no complete production turn (retrieval, live tools,
 and streaming) was timed on the hosted provider. Free-tier throttling was
 excluded from latency, and queueing on paid tiers may differ. Finally, the

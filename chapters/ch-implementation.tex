@@ -122,9 +122,11 @@ dimensions that drive this system's implementation.
 \end{table}
 
 The application server runs on AWS EC2 (us-east-1).
-% TODO: state the two or three dimensions that actually drove the AWS choice,
-% tying them back to the requirements in \autoref{design:sec:requirements}.
-\draftnote{the dimensions that drove the AWS choice.}
+% TODO: AWS was chosen as the industry-standard platform for deploying
+% cloud-based components. Replace this placeholder once the comparison of
+% service level, cost, and related factors against GCP and Azure is done,
+% tying the deciding dimensions back to \autoref{design:sec:requirements}.
+\draftnote{rationale for AWS --- currently chosen as the industry-standard platform for cloud-based components; a comparison of service level, cost, and related factors against GCP and Azure is in progress.}
 Generation, however, is not served by any of the three platforms' managed AI
 services but by a dedicated inference provider, selected separately
 (\autoref{impl:subsec:llm-providers}).
