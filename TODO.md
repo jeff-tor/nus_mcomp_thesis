@@ -1,5 +1,9 @@
 # Next-Session TODOs
 
+Status as of 2026-10-03 (after PR #9). Part C records what is done; Part D
+lists the writing still to do. Items in Parts A and B are still open unless
+marked otherwise.
+
 ## Part A — Token-Cost Research Follow-ups
 
 Carried over from the token-cost research integration (2026-07-05, source:
@@ -36,14 +40,21 @@ Context (`emnlp23:Li`).
 Decide the QA set (n questions over the ingested Canvas materials) for the
 answer-quality dimension; the current probe is three questions on CS3241.
 
-### A4. Cost-per-student projection ("money chart")
+### A4. Cost-per-student projection ("money chart") — PARTLY DONE
 
-**Where:** `chapters/ch-evaluation.tex`, §5.2.2 and §5.3.
+**Where:** `chapters/ch-evaluation.tex`, §5.3.3
+(`eval:subsec:results:cost`).
 
-Compute cost/query and per-student-per-semester projections for the cloud
-analytics path, baseline vs compressed, extrapolated to a realistic
-enrolment, charted against Ethel's US$7.50 benchmark. For the local path,
-report latency/utilisation proxies instead.
+**Done (PR #9):** cost/query and per-student-per-semester projection for
+the hosted (Groq) path — baseline, +RAG, +RAG+compression, three model
+splits — as table `eval:tab:cost` (US$0.11–0.27 with retrieval), set against
+Ethel's US$7.50 with caveats. Local path reported as latency/memory
+residency instead.
+
+**Still to do:**
+- Replace the assumed usage rates (20 chat turns, 10 quiz questions, 1 note
+  per student per week, 13 weeks) with rates from production logs.
+- Optionally turn the table into a chart.
 
 ### A5. Keep the novelty claim current
 
@@ -112,3 +123,63 @@ behaviour-based teaching signal (the answer to the SET-limitations caveat in
   time/burden numbers → TALIS only; quality effects → García-Gallego et al.;
   AI-intervention framing → Ahmad et al. (never for numbers); no time
   mechanism claimed from García-Gallego; keep the SET-limitations sentence.
+
+## Part C — Done (2026-10-03, PR #9)
+
+- **Draft prepared for first supervisor review:** Ch 1 opening, Overview,
+  Objectives (4) and Contributions (3) rewritten; Ch 6 placeholder replaced
+  with a short conclusion; `\degreeyear` → 2026; template publications
+  appendix removed; `\draftnote{}` macro added for visible placeholders.
+- **Hosted (Groq) vs local (Ollama) findings integrated** from
+  `groq-vs-ollama-findings.md`:
+  - Ch 3: hybrid deployment decision (`design:subsec:deployment-decision`)
+    and architecture overview.
+  - Ch 4: deployment-configuration table (`impl:tab:configs`), LLM provider
+    layer and fallback (`impl:subsec:llm-providers`).
+  - Ch 5: benchmark setup, agent and quiz results
+    (`eval:sec:results:providers`), cost projection, threats to validity.
+  - Abstract, Ch 1, Ch 2, Ch 3 (RECOMP rationale), Ch 6: "locally hosted"
+    framing replaced with the hybrid deployment.
+- **AI-judged quiz correctness disclosed** in Ch 5 (setup, table caption,
+  threats to validity) and qualified in Ch 3.
+
+## Part D — Remaining Writing and Open Items
+
+Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
+
+### D1. Open items from PR #9
+
+- **Name the AI model (and version)** that judged quiz answer-key
+  correctness — `ch-evaluation.tex`, §5.1.1.
+- **AWS rationale:** keep the placeholder until the comparison of service
+  level, cost, and related factors against GCP and Azure is done; then tie
+  the deciding dimensions to §3.1 — `ch-implementation.tex`, §4.1.2.
+- **Tie the deployment decision to requirements** once §3.1 exists —
+  `ch-design.tex`, §3.2.1.
+- **Report P95 latency** once larger samples exist (current: n=10 / n=3).
+- **Time a full production turn on Groq** (retrieval + live tools +
+  streaming); the benchmark used stubbed tools.
+
+### D2. Empty sections
+
+- **Abstract:** bracketed placeholders (`[dataset / course cohort]`, `X%`,
+  `Y` instructor-hours).
+- **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
+- **Ch 3:** chapter intro; Design Goals and Requirements (§3.1);
+  architecture diagram (§3.3); Methodology (§3.4); Summary.
+- **Ch 4:** chapter intro; Technology Stack (Node.js, PostgreSQL/pgvector,
+  Ollama, Groq); Knowledge Base and Retrieval; prompting, agent loop and
+  personalisation; Analytics and Feedback Loop; Summary.
+- **Ch 5:** chapter intro and research questions; dataset/cohort setup;
+  metrics overview; instructor-hours results (B2); overall discussion;
+  Summary.
+- **Ch 6:** full conclusion once B2 and A3 results exist; fold the future-work
+  items into a narrative.
+- **Appendices:** prompt templates; survey instruments (or drop the survey
+  appendix if no surveys are run).
+
+### D3. Build
+
+- Biber fails on the author's Mac (`extracting arm64 binary with lipo
+  failed`), so local builds have undefined citations. Fix the TeX Live Biber
+  install, or build in the devcontainer.
