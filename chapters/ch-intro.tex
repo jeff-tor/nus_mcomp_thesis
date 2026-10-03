@@ -2,22 +2,32 @@
 \label{ch:intro}
 \vspace{2em}
 
-Introduction to the thesis, providing context and motivation for the research. This chapter outlines the challenges faced
-by university faculty in managing administrative tasks and providing personalized feedback to students.
-It also introduces the concept of retrieval-augmented generative AI systems as a potential solution to these challenges,
-aiming to improve faculty efficiency and enhance student learning experiences.
-% TODO: One or two opening paragraphs setting the scene before the overview.
+University educators work within a fixed time budget, and a large and
+persistent share of it is consumed by duties other than teaching. At the same
+time, large language models (LLMs) combined with retrieval over course
+materials have made it practical to answer routine student questions
+automatically, at scale. This chapter sets out why that combination matters,
+what it costs, and what this thesis contributes.
 
 \section{Overview}
 \label{intro:sec:overview}
 
-% TODO: Overview of the thesis -- the virtual teaching assistant, its
-% deployment context (NUS Canvas course materials), and the structure of the
-% document.
-The overview section provides a brief introduction to the context and motivation for this thesis. It outlines the challenges
-faced by university faculty in managing administrative tasks and providing personalized feedback to students.
-The section also highlights the potential of retrieval-augmented generative AI systems to address these challenges,
-improve faculty efficiency, and enhance student learning experiences.
+This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant}, a
+retrieval-augmented virtual teaching assistant built over NUS Canvas course
+materials. It answers routine clarification, content-navigation, and
+logistics questions; logs every interaction so that the instructor time it
+returns can be measured; and compresses retrieved context before generation
+so that it can be operated affordably.
+
+The remainder of the document is organised as follows.
+\autoref{ch:review} reviews the literature on educator workload, teaching
+quality, AI-assisted education, and the cost structure of
+retrieval-augmented generation. \autoref{ch:design} sets out the system's
+requirements, deployment model, architecture, and methodology.
+\autoref{ch:implementation} describes how the system was built, including the
+context-compression stage. \autoref{ch:evaluation} defines the evaluation
+metrics and reports results, and \autoref{ch:concl} concludes and outlines
+future work.
 
 \section{Problem Statement}
 \label{intro:sec:problem}
@@ -87,37 +97,44 @@ units --- tokens, cost, and latency per query
 \section{Objectives}
 \label{intro:sec:objectives}
 
-% TODO: Concrete objectives -- e.g. (i) build a RAG-based teaching assistant
-% over institutional course materials, (ii) make it deployable on modest
-% hardware (context compression), (iii) instrument query deflection to
-% estimate instructor-hours returned.
-
-
-The objective of this thesis is to design and implement a retrieval-augmented generative AI system that addresses the
-administrative and pedagogical challenges faced by university faculty. The system aims to automate routine inquiries,
-provide personalized feedback to students, and facilitate data-driven course development. By leveraging advanced AI
-techniques, the system seeks to enhance faculty efficiency, improve student satisfaction, and foster a more
-engaging and effective learning environment. The specific objectives include:
-\begin{itemize}
-    \item To develop a retrieval-augmented generative AI system capable of handling routine administrative
-    \item To implement personalized feedback mechanisms for students based on their performance data
-    \item To create a feedback loop that allows faculty to analyze student performance and course effectiveness
-    \item To evaluate the system's impact on faculty workload, student satisfaction, and overall course
-    \item To provide recommendations for future research and development in the field of AI-assisted education
-    \item To ensure the system adheres to ethical guidelines and data privacy standards in educational settings
-    \item To explore the scalability and adaptability of the system across different courses and educational contexts
-    \item To assess the long-term sustainability and maintenance requirements of the AI system in an academic environment
-    \item To investigate the potential for integrating the AI system with existing educational technologies and platforms
-    \item To analyze the cost-benefit ratio of implementing the AI system in terms of faculty efficiency and student outcomes
-\end{itemize}
+The objectives of this thesis are to:
+\begin{enumerate}[label=(\roman*)]
+    \item design and build a retrieval-augmented virtual teaching assistant
+          over institutional (NUS Canvas) course materials that answers
+          routine clarification, content-navigation, and logistics queries
+          without instructor involvement;
+    \item instrument the assistant so that every deflected query is logged,
+          and use those logs to estimate the instructor-hours returned per
+          course per week;
+    \item surface analytics over the questions students actually ask, as a
+          behaviour-based teaching signal for instructors;
+    \item reduce the input-token cost of each query by integrating an
+          extractive retrieval-compression stage between retrieval and
+          generation, and evaluate its effect on tokens, cost, latency, and
+          answer quality.
+\end{enumerate}
 
 \section{Summary of Contributions}
 \label{intro:sec:contributions}
 
-% TODO: Summary of contributions, mirroring the gap statement in
-% \autoref{review:subsec:gap}.
-
-
-Overall contribution to this thesis is the development of a retrieval-augmented generative AI system that addresses the administrative and pedagogical challenges faced by university faculty.
-The system automates routine inquiries, provides personalized feedback to students, and facilitates data-driven course development.
-The specific contributions include:
+This thesis makes three contributions, mirroring the gap stated in
+\autoref{review:subsec:gap}:
+\begin{enumerate}
+    \item \textbf{A deployed retrieval-augmented teaching assistant} over NUS
+          Canvas course materials --- the modern form of the AI intervention
+          that the AI-in-education literature has long proposed
+          (Chapters~\ref{ch:design} and~\ref{ch:implementation}).
+    \item \textbf{An hour-denominated measure of workload relief.} Unlike
+          prior deployments, the assistant logs every deflected query,
+          yielding a direct estimate of the instructor-hours returned per
+          course per week (\autoref{eval:subsec:hours}), together with
+          analytics over the questions students ask.
+    \item \textbf{An evaluation of retrieval compression in a deployed
+          educational assistant.} An extractive, sentence-level compression
+          stage adapted from \textsc{Recomp}~\cite{iclr24:Xu} is evaluated
+          on real course-material questions in the same units as the problem
+          statement --- tokens, cost, and latency per query
+          (\autoref{impl:sec:compression} and
+          \autoref{eval:sec:results:compression}); to our knowledge, this is
+          the first such evaluation.
+\end{enumerate}

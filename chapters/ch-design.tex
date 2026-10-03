@@ -5,12 +5,14 @@
 % TODO: Introduce the chapter -- summarise the design goals of the
 % AI-Powered Omniscient Teacher Assistant and how they address the problem
 % statement (administrative task-drift, feedback gap, clarity deficit).
+\draftnote{chapter introduction --- design goals and how they address the problem statement.}
 
 \section{Design Goals and Requirements}
 \label{design:sec:requirements}
 
 % TODO: Functional and non-functional requirements derived from the problem
 % statement and stakeholder needs (faculty, students, administrators).
+\draftnote{functional and non-functional requirements (faculty, students, administrators).}
 
 \section{Deployment Model Analysis}
 \label{design:sec:deployment}
@@ -19,6 +21,7 @@
 % deployment model must be chosen. Introduce the three candidates (fully cloud,
 % fully on-premises, hybrid) and state that they are assessed against the
 % requirements from \autoref{design:sec:requirements}.
+\draftnote{introduction of the three candidate deployment models.}
 
 \autoref{design:tab:deployment} compares the three candidate deployment models
 across the dimensions most relevant to a virtual teaching assistant.
@@ -98,18 +101,21 @@ across the dimensions most relevant to a virtual teaching assistant.
 % limited budget, need for managed LLM services). Explicitly acknowledge the
 % trade-offs of the rejected options -- in particular, engage with why hybrid
 % (sensitive data on-premises, LLM inference in cloud) was or was not adopted.
+\draftnote{justified deployment decision (hybrid: hosted generation, local embeddings, local fallback).}
 
 \section{System Architecture}
 \label{design:sec:architecture}
 
 % TODO: High-level architecture diagram and component overview
 % (e.g. retrieval-augmented generation pipeline, knowledge base, analytics).
+\draftnote{architecture diagram and component overview.}
 
 \section{Methodology}
 \label{design:sec:methodology}
 
 % TODO: Research methodology, data sources, and the approach taken to
 % evaluate the system.
+\draftnote{research methodology and data sources.}
 
 \subsection{Baseline Token Audit}
 \label{design:subsec:tokenaudit}
@@ -147,6 +153,7 @@ units again (\autoref{eval:sec:metrics}).
 % from the deployed chunking config; take system prompt / history / query
 % tokens from production logs) and report the numbers and the
 % retrieved-context share here.
+\draftnote{baseline token-audit measurements from the deployed pipeline.}
 
 \subsection{Selection of the Compression Method}
 \label{design:subsec:compression-choice}
@@ -190,3 +197,4 @@ the stage is described in \autoref{impl:sec:compression}.
 \label{design:sec:summary}
 
 % TODO: Recap the design decisions that the following chapter implements.
+\draftnote{chapter summary.}
