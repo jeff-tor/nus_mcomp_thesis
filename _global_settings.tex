@@ -167,3 +167,33 @@
 
 % visible placeholder for sections still to be written (draft builds only)
 \newcommand{\draftnote}[1]{\par\noindent\textcolor{Gray}{\textit{[Draft --- to be written: #1]}}\par}
+
+% architecture and flow diagrams (pic/ch-*/fig-*.tex)
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds, calc}
+\definecolor{dgBlue}{HTML}{DCE8F5}   \definecolor{dgBlueLine}{HTML}{2F5C8F}
+\definecolor{dgGreen}{HTML}{E1F0DD}  \definecolor{dgGreenLine}{HTML}{3D7A33}
+\definecolor{dgAmber}{HTML}{FBEBD0}  \definecolor{dgAmberLine}{HTML}{9A6412}
+\definecolor{dgGrey}{HTML}{F2F2F2}   \definecolor{dgGreyLine}{HTML}{6B6B6B}
+\definecolor{dgViolet}{HTML}{ECE4F5} \definecolor{dgVioletLine}{HTML}{5E4391}
+\tikzset{
+  dg/.style={font=\linespread{1}\fontsize{8}{9.6}\selectfont, >={Stealth[length=2mm]},
+             node distance=4mm and 5mm,
+             every node/.append style={execute at begin node=\setlength{\parindent}{0pt}}},
+  box/.style={draw=dgGreyLine, fill=white, rounded corners=1.5pt, align=center,
+              inner sep=3pt, minimum height=8mm, text width=#1},
+  box/.default=24mm,
+  blue/.style={draw=dgBlueLine, fill=dgBlue},
+  green/.style={draw=dgGreenLine, fill=dgGreen},
+  amber/.style={draw=dgAmberLine, fill=dgAmber},
+  violet/.style={draw=dgVioletLine, fill=dgViolet},
+  grp/.style={draw=#1, rounded corners=3pt, inner sep=2.5mm, thick},
+  grp/.default=dgGreyLine,
+  grplabel/.style={font=\linespread{1}\fontsize{8}{9.6}\selectfont\bfseries, anchor=north west, inner sep=1.5pt},
+  flow/.style={->, thick, draw=black!75},
+  bidi/.style={<->, thick, draw=black!75},
+  fallback/.style={->, thick, dashed, draw=black!55},
+  lbl/.style={font=\linespread{1}\fontsize{6.5}{7.5}\selectfont, fill=white, inner sep=1pt, align=center},
+  step/.style={circle, fill=black!80, text=white, font=\fontsize{6.5}{7.5}\selectfont\bfseries,
+               inner sep=0pt, minimum size=3.6mm},
+}

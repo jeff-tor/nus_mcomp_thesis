@@ -1,0 +1,42 @@
+% Deployed system architecture (hybrid configuration, from 27 Sep 2026).
+% Simplified from cp5105-master-architecture.drawio, View 1, with the Groq
+% migration applied (the drawio predates it and still shows Gemini).
+\begin{tikzpicture}[dg]
+  % users
+  \node[box=17mm] (users) at (0.35,1.3) {\textbf{Students,}\\\textbf{instructors}\\[1pt] web browser};
+
+  % AWS EC2 host
+  \node[box=44mm, blue] (nginx) at (4.95,3.0)
+    {\textbf{Nginx}\\ serves the web app, proxies \texttt{/api}};
+  \node[box=44mm, blue] (backend) at (4.95,1.3)
+    {\textbf{Node.js backend} (Docker)\\ auth, chat agent, quiz, analytics,\\ LLM provider router};
+  \node[box=44mm, blue] (db) at (4.95,-0.45)
+    {\textbf{Postgres + pgvector} (Docker)\\ users, question bank, attempts,\\ course-material vectors};
+  \begin{scope}[on background layer]
+    \node[grp=dgBlueLine, fit=(nginx)(backend)(db), inner ysep=3mm,
+          yshift=1.5mm] (ec2) {};
+  \end{scope}
+  \node[grplabel, text=dgBlueLine] at (ec2.north west) {AWS EC2 host};
+
+  % right-hand column
+  \node[box=43mm, violet] (groq) at (11.85,3.0)
+    {\textbf{Groq} (hosted inference)\\ gpt-oss-20b: chat agent\\ gpt-oss-120b: quizzes, notes};
+  \node[box=43mm, green] (mac) at (11.85,1.3)
+    {\textbf{Local host} (Ollama)\\ BGE-M3: embeddings\\ Llama~3.2 3B: fallback};
+  \node[box=43mm] (ext) at (11.85,-0.45)
+    {\textbf{Third-party services}\\ Canvas LMS, Google Classroom,\\ web search, MCP servers};
+
+  % offline ingestion
+  \node[box=44mm, amber] (ingest) at (4.95,-2.65)
+    {\textbf{Offline ingestion} (manual)\\ chunk, embed, and store\\ course materials};
+
+  % request path
+  \draw[bidi] (users.east) -- node[lbl, below=1pt] {HTTPS} (users.east -| ec2.west);
+  \draw[flow] (nginx) -- node[lbl, right=1pt] {\texttt{/api}} (backend);
+  \draw[bidi] (backend) -- node[lbl, right=1pt] {SQL, vector\\search} (db);
+  \draw[flow] (backend.east) -- ++(0.5,0) |- node[lbl, pos=0.75, above=1pt] {primary generation} (groq.west);
+  \draw[flow] (backend.east) -- node[lbl, pos=0.6, above=1pt] {embeddings, fallback}
+                                node[lbl, pos=0.6, below=1pt] {via SSH tunnel} (mac.west);
+  \draw[flow] (backend.east) ++(0.5,0) |- node[lbl, pos=0.75, below=1pt] {OAuth, HTTPS} (ext.west);
+  \draw[fallback] (ingest) -- node[lbl, right=1pt] {writes chunks\\and vectors} (db);
+\end{tikzpicture}

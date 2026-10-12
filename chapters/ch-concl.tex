@@ -42,3 +42,17 @@ single course corpus; a larger course-material QA set across multiple
 courses, with P50/P95 latency and answer-quality scoring
 (\autoref{eval:subsec:tokenmetrics}), is required before the reductions can
 be claimed as general.
+\paragraph{Production-hardened deployment.}
+The deployed prototype runs on a single application host
+(\autoref{design:sec:architecture}). A production target on AWS has been
+designed but not provisioned: Aurora PostgreSQL (Serverless~v2, with
+pgvector) in place of the containerised database; the same backend image on
+ECS Fargate behind an Application Load Balancer, chosen over AWS Lambda
+because chat responses stream and the tool-calling loop can outlast a
+Lambda timeout; a GPU auto-scaling group in place of the local inference
+host; Cognito in place of application-managed sessions; scheduled ingestion
+through EventBridge and Lambda; and CloudFront, a web application firewall,
+a cache, managed secrets, and multi-availability-zone deployment. Building
+and costing this target, and re-running the cost projection of
+\autoref{eval:subsec:results:cost} against it, would test whether the
+system's per-student cost holds at institutional scale.

@@ -166,10 +166,18 @@ Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
   `Y` instructor-hours).
 - **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
 - **Ch 3:** chapter intro; Design Goals and Requirements (§3.1);
-  architecture diagram (§3.3); Methodology (§3.4); Summary.
-- **Ch 4:** chapter intro; Technology Stack (Node.js, PostgreSQL/pgvector,
-  Ollama, Groq); Knowledge Base and Retrieval; prompting, agent loop and
-  personalisation; Analytics and Feedback Loop; Summary.
+  Methodology (§3.4); Summary. (Architecture diagram done: Fig 3.1.)
+- **Ch 4:** chapter intro; Technology Stack prose (Node.js,
+  PostgreSQL/pgvector, Ollama, Groq); retrieval parameters and LMS data
+  fetching; prompt design and personalisation; Analytics and Feedback Loop;
+  Summary. (Figs 4.1–4.3 and their descriptions done: components,
+  ingestion, chat turn.)
+- **Diagrams:** the figures are TikZ sources in `pic/ch-*/fig-*.tex`,
+  simplified from `cp5105-master-architecture.drawio` (20 Sep 2026). That
+  drawio predates the Groq migration; update it to show Groq, not Gemini,
+  and gpt-oss-20b as the agent model. Optional further figures: the
+  adaptive-quiz flow (fuzzy engine → Bloom level → bank or generate) and the
+  instructor course-analysis flow.
 - **Ch 5:** chapter intro and research questions; dataset/cohort setup;
   metrics overview; instructor-hours results (B2); overall discussion;
   Summary.

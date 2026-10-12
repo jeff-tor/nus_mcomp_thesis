@@ -144,15 +144,26 @@ course material even though hosted generation remains reachable.
 \section{System Architecture}
 \label{design:sec:architecture}
 
-% TODO: add the architecture diagram.
-\draftnote{architecture diagram.}
+\autoref{design:fig:architecture} shows the deployed system, which has three
+tiers:
 
-The deployed system has three tiers:
+\begin{figure}[htb]
+  \centering
+  \input{pic/ch-design/fig-architecture}
+  \caption{Deployed architecture of the AI-Powered Omniscient Teacher
+           Assistant (hybrid configuration). Solid arrows are live request
+           paths; the dashed arrow is the offline ingestion of course
+           materials.}
+  \label{design:fig:architecture}
+\end{figure}
 
 \begin{itemize}
-  \item \textbf{Application server} (AWS EC2): hosts the web application,
-        the tool-calling agent loop, quiz generation, and analytics, together
-        with a PostgreSQL database whose pgvector extension stores
+  \item \textbf{Application server} (AWS EC2): runs three components on
+        one host. Nginx serves the web application and forwards API
+        requests to a Node.js backend (in a Docker container), which handles
+        authentication, the tool-calling chat agent, quiz generation, and
+        analytics. A PostgreSQL database with the pgvector extension (also
+        in Docker) stores users, the question bank, quiz attempts, and the
         course-material chunks and their embeddings.
   \item \textbf{Local inference host} (a 32\,GB Apple M1 Max laptop running
         Ollama, reached from the application server over a reverse SSH
@@ -168,7 +179,17 @@ A student query flows through retrieval (the query is embedded with BGE-M3
 and matched against course chunks in pgvector), an optional, feature-flagged
 compression stage (\autoref{impl:sec:compression}), and generation through a
 provider-agnostic layer that routes each call to the hosted provider and
-falls back to the local model on failure.
+falls back to the local model on failure. Course materials are ingested
+ahead of time by an offline job that chunks, embeds, and stores them
+(\autoref{impl:sec:retrieval}); the system also connects to Canvas and
+Google Classroom over OAuth for course, assignment, and grade data.
+
+The prototype is deliberately minimal: one application host, with the
+database in a container rather than a managed service, and sessions managed
+by the application. A production-hardened target --- managed database,
+container orchestration, a content-delivery network, managed identity, and
+scheduled ingestion --- has been designed but not provisioned
+(\autoref{ch:concl}).
 
 \section{Methodology}
 \label{design:sec:methodology}

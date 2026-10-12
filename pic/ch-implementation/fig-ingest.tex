@@ -1,0 +1,15 @@
+% Offline ingestion of course materials. Simplified from
+% cp5105-master-architecture.drawio, View 2 (Offline band) and View 3.
+\begin{tikzpicture}[dg]
+  \node[box=27mm, amber] (src) at (1.55,0)
+    {\textbf{Course materials}\\ one folder per course code (slides, notes)};
+  \node[box=27mm, amber] (chunk) at (5.25,0)
+    {\textbf{Chunk}\\ \mbox{900-character} pieces,\\ overlapping by 150};
+  \node[box=27mm, amber] (embed) at (8.95,0)
+    {\textbf{Embed}\\ \mbox{BGE-M3}, the same model the chat path uses};
+  \node[box=27mm, blue] (store) at (12.65,0)
+    {\textbf{Store}\\ pgvector with an HNSW index; chunks replaced, not duplicated};
+  \draw[flow] (src) -- (chunk);
+  \draw[flow] (chunk) -- (embed);
+  \draw[flow] (embed) -- (store);
+\end{tikzpicture}

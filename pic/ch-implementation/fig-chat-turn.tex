@@ -1,0 +1,44 @@
+% One chat turn (POST /api/chat), including the optional compression detour.
+% Simplified from cp5105-master-architecture.drawio, View 3.
+\begin{tikzpicture}[dg]
+  % main path
+  \node[box=27mm, blue] (q) at (1.55,0)
+    {\textbf{1\,$\cdot$\,Question}\\ identity taken from the session, not the browser};
+  \node[box=27mm, blue] (ret) at (5.25,0)
+    {\textbf{2\,$\cdot$\,Retrieve}\\ embed with \mbox{BGE-M3}, vector search, keep the 5 closest excerpts};
+  \node[box=27mm, blue] (per) at (8.95,0)
+    {\textbf{3\,$\cdot$\,Persona}\\ Socratic and integrity-bound; told to cite the excerpts};
+  \node[box=27mm, violet] (loop) at (12.65,0)
+    {\textbf{4\,$\cdot$\,Agent loop}\\ up to 5 passes: call tools, read results, then answer};
+
+  \draw[flow] (q) -- (ret);
+  \draw[flow] (ret) -- node[lbl, above=1pt] {flag off} (per);
+  \draw[flow] (per) -- (loop);
+
+  % answer streams back
+  \draw[flow] (loop.north) -- ++(0,0.45) -| node[lbl, pos=0.25, fill=white]
+    {\textbf{5}\,$\cdot$ answer streams back to the browser, token by token (SSE)} (q.north);
+
+  % compression detour
+  \node[box=15mm, green] (split) at (3.9,-2.3) {\textbf{Split}\\ into sentences};
+  \node[box=15mm, green] (score) at (5.9,-2.3) {\textbf{Score}\\ against query};
+  \node[box=15mm, green] (keep)  at (7.9,-2.3) {\textbf{Keep}\\ top 6, $\geq 0.5$};
+  \node[box=15mm, green] (none)  at (9.9,-2.3) {\textbf{None left}\\ no context};
+  \begin{scope}[on background layer]
+    \node[grp=dgGreenLine, fit=(split)(none), inner ysep=2.5mm] (rc) {};
+  \end{scope}
+  \node[grplabel, text=dgGreenLine, anchor=north west] at (rc.south west)
+    {RECOMP-lite compression: optional, off by default};
+  \draw[flow] (split) -- (score);
+  \draw[flow] (score) -- (keep);
+  \draw[fallback] (keep) -- (none);
+
+  \draw[flow] ($(ret.south)+(-0.6,0)$) coordinate (a)
+    -- node[lbl, left=1pt] {flag on} (a |- rc.north);
+  \draw[flow] (keep.north) -- node[lbl, left=1pt, pos=0.55] {compressed\\context} (keep.north |- per.south);
+
+  % tools
+  \node[box=25mm, violet] (tools) at (12.75,-2.3)
+    {\textbf{Tools}\\ practice questions, student progress, course search, MCP docs};
+  \draw[bidi] (loop) -- node[lbl, right=1pt] {call,\\result} (tools);
+\end{tikzpicture}

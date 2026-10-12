@@ -12,6 +12,28 @@
 % TODO: Languages, frameworks, models, and infrastructure used.
 \draftnote{languages, frameworks, and libraries (Node.js server, PostgreSQL with pgvector, Ollama, Groq).}
 
+\autoref{impl:fig:components} shows how the application is organised. The
+browser client is a set of plain JavaScript modules, one per feature, over a
+single shared state. Every request passes through Nginx and an
+authentication gate that checks the session cookie and the user's role, so
+instructor-only routes are refused on the server rather than merely hidden
+in the interface. Each feature then has one request handler, and the
+handlers share a set of services: retrieval, embeddings, the agent's tools,
+an MCP client for external documentation servers, the LLM provider router,
+a single database-access module, a fuzzy-inference feedback engine
+(in Python) for the adaptive quiz, and web search. Each service is loaded
+independently, so one that fails to load disables only the feature that
+depends on it.
+
+\begin{figure}[htb]
+  \centering
+  \input{pic/ch-implementation/fig-components}
+  \caption{Application components, by layer. Each feature has one browser
+           module and one request handler; the handlers share the services
+           in the fourth layer.}
+  \label{impl:fig:components}
+\end{figure}
+
 \subsection{Deployment Configurations}
 \label{impl:subsec:configs}
 
@@ -136,14 +158,57 @@ services but by a dedicated inference provider, selected separately
 
 % TODO: How course materials and administrative data were ingested,
 % indexed, and retrieved.
-\draftnote{ingestion, indexing, and retrieval of course materials.}
+\draftnote{remaining detail: retrieval parameters, and how Canvas and Google Classroom data are fetched and normalised.}
+
+Course materials are ingested offline, never on the request path
+(\autoref{impl:fig:ingest}). Files are organised in one folder per course
+code, split into chunks of about 900 characters with 150 characters of
+overlap, embedded with BGE-M3, and stored in pgvector under an HNSW index.
+Re-ingesting a document replaces its chunks rather than duplicating them.
+Because the ingestion job uses the same embedding module and the same
+database module as the live application, the vectors it writes are exactly
+those that retrieval reads. At query time, the question is embedded with the
+same model and the five closest chunks are retrieved.
+
+\begin{figure}[htb]
+  \centering
+  \input{pic/ch-implementation/fig-ingest}
+  \caption{Offline ingestion of course materials into the retrieval index.}
+  \label{impl:fig:ingest}
+\end{figure}
 
 \section{Question Answering and Personalisation}
 \label{impl:sec:qa}
 
 % TODO: The LLM integration, prompting/RAG strategy, and personalisation
 % logic.
-\draftnote{prompting, the tool-calling agent loop, and personalisation.}
+\draftnote{prompt design and personalisation.}
+
+\autoref{impl:fig:chatturn} traces one chat turn. The student's identity is
+taken from the server-side session, never from the browser. The question is
+embedded and the five closest course excerpts are retrieved, optionally
+passing through the compression stage of \autoref{impl:sec:compression}. A
+persona prompt then frames the excerpts: the assistant is Socratic, bound by
+academic-integrity rules, and told to cite the excerpts it uses. The agent
+loop runs for up to five passes, calling tools --- a practice-question
+generator, a lookup of the student's progress, a search over other courses,
+and external documentation servers via MCP --- and feeding their results
+back before answering. The answer streams to the browser token by token
+over server-sent events.
+
+The turn is designed so that no single failure fails the request. If
+retrieval fails, the turn continues with the persona alone; a tool that
+fails returns an error that the model explains; a missing search key simply
+disables search.
+
+\begin{figure}[htb]
+  \centering
+  \input{pic/ch-implementation/fig-chat-turn}
+  \caption{One chat turn. The lower row is the optional compression stage
+           (\autoref{impl:sec:compression}), switched on by the
+           \texttt{RAG\_COMPRESS} flag.}
+  \label{impl:fig:chatturn}
+\end{figure}
 
 \subsection{LLM Provider Layer and Local Fallback}
 \label{impl:subsec:llm-providers}
@@ -214,8 +279,8 @@ extractive variant: instead of the paper's fine-tuned contrastive compressor, it
 selects existing sentences by embedding similarity, making it faithful by
 construction (the compressor cannot introduce content that was not retrieved).
 
-The stage is inserted between the existing retriever and the generation call, and
-proceeds as follows:
+The stage is inserted between the existing retriever and the generation call
+(\autoref{impl:fig:chatturn}, lower row), and proceeds as follows:
 
 \begin{enumerate}[nosep]
   \item retrieved chunks are segmented into candidate sentences, with markdown
