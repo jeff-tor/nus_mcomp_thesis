@@ -1,0 +1,60 @@
+% Application components, in layers. Simplified from
+% cp5105-master-architecture.drawio, View 2 (per-feature wiring omitted),
+% with the Groq provider in place of Gemini.
+\begin{tikzpicture}[dg]
+  \def\cA{1.55} \def\cB{4.4} \def\cC{7.25} \def\cD{10.1} \def\cE{12.95}
+
+  % browser
+  \foreach \x/\n/\t/\f in {\cA/u1/Sign-in/auth.js, \cB/u2/Courses (LMS)/lms.js,
+      \cC/u3/Chat/chat.js, \cD/u4/Quiz/quiz.js, \cE/u5/Dashboards/stats.js}
+    \node[box=25mm, blue] (\n) at (\x,0) {\textbf{\t}\\ \texttt{\f}};
+  \begin{scope}[on background layer]
+    \node[grp, fit=(u1)(u5), inner ysep=3mm, yshift=1.5mm] (b1) {};
+  \end{scope}
+  \node[grplabel] at (b1.north west) {Browser: plain JavaScript modules over one shared state};
+
+  % HTTP boundary
+  \node[box=53mm] (ngx) at ($(\cA,-1.95)!0.5!(\cB,-1.95)$)
+    {\textbf{Nginx}: serves the app, proxies \texttt{/api}};
+  \node[box=81mm] (gate) at ($(\cC,-1.95)!0.5!(\cE,-1.95)$)
+    {\textbf{Auth gate}: session cookie and role on every \texttt{/api} route};
+  \begin{scope}[on background layer]
+    \node[grp, fit=(ngx)(gate), inner ysep=3mm, yshift=1.5mm] (b2) {};
+  \end{scope}
+  \node[grplabel] at (b2.north west) {HTTP boundary};
+
+  % request handlers
+  \foreach \x/\n/\t/\f in {\cA/h1/Auth/auth.js, \cB/h2/LMS connectors/{canvas, classroom},
+      \cC/h3/Chat agent/chat.js, \cD/h4/Adaptive quiz/quiz.js, \cE/h5/Analytics/stats.js}
+    \node[box=25mm, violet] (\n) at (\x,-3.9) {\textbf{\t}\\ \texttt{\f}};
+  \begin{scope}[on background layer]
+    \node[grp, fit=(h1)(h5), inner ysep=3mm, yshift=1.5mm] (b3) {};
+  \end{scope}
+  \node[grplabel] at (b3.north west) {Request handlers: one module per feature};
+
+  % shared services (two rows)
+  \foreach \x/\n/\t/\f in {2.0/s1/Retrieval/rag.js, 5.6/s2/Embeddings/embeddings.js,
+      9.2/s3/Agent tools/agentTools.js, 12.8/s4/MCP client/mcpClient.js}
+    \node[box=31mm, green] (\n) at (\x,-5.85) {\textbf{\t}\\ \texttt{\f}};
+  \foreach \x/\n/\t/\f in {2.0/s5/LLM router/{llm/index.js}, 5.6/s6/SQL access/db\_index.js,
+      9.2/s7/Fuzzy feedback/feedbackEngine.py, 12.8/s8/Web search/search.js}
+    \node[box=31mm, green] (\n) at (\x,-6.95) {\textbf{\t}\\ \texttt{\f}};
+  \begin{scope}[on background layer]
+    \node[grp, fit=(s1)(s8), inner ysep=3mm, yshift=1.5mm] (b4) {};
+  \end{scope}
+  \node[grplabel] at (b4.north west) {Shared services: each loads on its own; a failure disables only its feature};
+
+  % data and external systems
+  \foreach \x/\n/\t/\f in {1.25/x1/Postgres/+ pgvector, 3.65/x2/Ollama/local, 6.05/x3/Groq/hosted,
+      8.45/x4/{Canvas,}/Classroom, 10.85/x5/MCP/servers, 13.25/x6/Web search/API}
+    \node[box=19mm, amber] (\n) at (\x,-8.8) {\textbf{\t}\\ \f};
+  \begin{scope}[on background layer]
+    \node[grp, fit=(x1)(x6), inner ysep=3mm, yshift=1.5mm] (b5) {};
+  \end{scope}
+  \node[grplabel] at (b5.north west) {Data and external systems};
+
+  % layer-to-layer flow
+  \foreach \a/\b/\l in {b1/b2/\texttt{fetch('/api/...')}, b2/b3/dispatch by route,
+      b3/b4/calls, b4/b5/{SQL, HTTP}}
+    \draw[flow] (\a.south -| \cC,0) ++(1.6,0) -- node[lbl, right=1pt] {\l} ($(\b.north -| \cC,0)+(1.6,0)$);
+\end{tikzpicture}
