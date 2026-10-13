@@ -165,8 +165,9 @@ Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
 - **Abstract:** bracketed placeholders (`[dataset / course cohort]`, `X%`,
   `Y` instructor-hours).
 - **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
-- **Ch 3:** chapter intro; Design Goals and Requirements (§3.1);
-  Methodology (§3.4); Summary. (Architecture diagram done: Fig 3.1.)
+- **Ch 3:** done apart from the token-audit numbers (A1) and an ethics
+  note: state whether NUS IRB approval was obtained or needed for using
+  student interaction logs, and how they were anonymised (§3.4).
 - **Ch 4:** chapter intro; Technology Stack prose (Node.js,
   PostgreSQL/pgvector, Ollama, Groq); retrieval parameters and LMS data
   fetching; prompt design and personalisation; Analytics and Feedback Loop;
@@ -178,16 +179,10 @@ Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
   and gpt-oss-20b as the agent model. Optional further figures: the
   adaptive-quiz flow (fuzzy engine → Bloom level → bank or generate) and the
   instructor course-analysis flow.
-- **Ch 5:** chapter intro and research questions; dataset/cohort setup;
+- **Ch 5:** chapter intro (reuse RQ1–RQ3 from §3.4); dataset/cohort setup;
   metrics overview; instructor-hours results (B2); overall discussion;
   Summary.
 - **Ch 6:** full conclusion once B2 and A3 results exist; fold the future-work
   items into a narrative.
 - **Appendices:** prompt templates; survey instruments (or drop the survey
   appendix if no surveys are run).
-
-### D3. Build
-
-- Biber fails on the author's Mac (`extracting arm64 binary with lipo
-  failed`), so local builds have undefined citations. Fix the TeX Live Biber
-  install, or build in the devcontainer.
