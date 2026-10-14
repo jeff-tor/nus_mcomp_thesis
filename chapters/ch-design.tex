@@ -2,17 +2,84 @@
 \label{ch:design}
 \vspace{2em}
 
-% TODO: Introduce the chapter -- summarise the design goals of the
-% AI-Powered Omniscient Teacher Assistant and how they address the problem
-% statement (administrative task-drift, feedback gap, clarity deficit).
-\draftnote{chapter introduction --- design goals and how they address the problem statement.}
+This chapter turns the problem of \autoref{ch:intro} into a design. The
+assistant must answer routine student queries well enough to return
+instructor time, make that time measurable, and do so cheaply enough to operate at
+institutional scale. \autoref{design:sec:requirements} states these needs as
+requirements. \autoref{design:sec:deployment} chooses where the system's models
+run, \autoref{design:sec:architecture} describes the resulting architecture,
+and \autoref{design:sec:methodology} sets out the research questions and how
+they are evaluated, including the choice of compression method.
 
 \section{Design Goals and Requirements}
 \label{design:sec:requirements}
 
-% TODO: Functional and non-functional requirements derived from the problem
-% statement and stakeholder needs (faculty, students, administrators).
-\draftnote{functional and non-functional requirements (faculty, students, administrators).}
+The requirements follow from the problem statement (\autoref{intro:sec:problem})
+and the objectives (\autoref{intro:sec:objectives}), and from the needs of the
+system's two user groups: students, who ask questions and practise, and
+instructors, whose time the system is meant to return.
+\autoref{design:tab:requirements} lists them. Functional requirements (FR)
+state what the system must do; non-functional requirements (NFR) state the
+constraints it must do it under. Later sections refer to them by identifier.
+
+\begin{table}[htb]
+  \centering
+  \caption{Functional and non-functional requirements.}
+  \label{design:tab:requirements}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{l L{0.62\textwidth} L{0.17\textwidth}}
+    \hline
+    \textbf{ID} & \textbf{Requirement} & \textbf{Source} \\
+    \hline
+    FR1 & Answer students' course questions from the course materials,
+          citing the material used, and say so when a question falls outside
+          them. & Objective (i) \\
+    FR2 & Answer routine logistics and navigation questions (courses,
+          assignments, deadlines, grades) from the institution's learning
+          management system. & Objective (i) \\
+    FR3 & Log every interaction so that deflected queries, and the
+          instructor time they represent, can be measured. & Objective (ii) \\
+    FR4 & Give instructors analytics over their students' quiz and
+          assignment results, restricted to instructors of that course. & Objective (iii) \\
+    FR5 & Personalise practice to each student's progress, through practice
+          questions and adaptive quizzes. & Objectives (i), (iii) \\
+    FR6 & Allow retrieval compression to be switched on and off without code
+          changes, so that its effect can be compared directly. &
+          Objective (iv) \\
+    \hline
+    NFR1 & \textbf{Cost.} Keep the cost per query, and per student per
+           semester, low enough for institutional scale; minimise input
+           tokens per query, the main controllable cost driver. &
+           \autoref{intro:sec:problem} \\
+    NFR2 & \textbf{Latency.} Respond interactively: stream chat answers as
+           they are generated, and return quiz questions within a few
+           seconds. & Students \\
+    NFR3 & \textbf{Privacy and access control.} Take identity from the
+           server-side session, never from the client; enforce roles on the
+           server; protect student records and credentials. & Students,
+           instructors \\
+    NFR4 & \textbf{Availability.} Degrade gracefully: no single component
+           failure (retrieval, a tool, a model provider) should fail a
+           student's request. & Students \\
+    NFR5 & \textbf{Academic integrity.} Guide students towards answers
+           rather than completing assessed work for them. & Instructors \\
+    NFR6 & \textbf{Portability.} Avoid lock-in to a single model or provider;
+           allow models to be swapped per role. & NFR1, NFR4 \\
+    NFR7 & \textbf{Modest resources.} Be buildable and operable by a single
+           developer on a student-project budget. & Project scope \\
+    \hline
+  \end{tabular}
+\end{table}
+
+These requirements pull against each other in two places, and the design
+choices that follow are largely about resolving them. Cost (NFR1) and
+latency (NFR2) both favour shorter prompts, but answer quality (FR1) favours
+more retrieved context; this tension motivates the compression stage
+(\autoref{design:subsec:compression-choice}). Cost and modest resources
+(NFR1, NFR7) favour running models locally, but latency and quality favour
+larger hosted models; this tension is resolved by the deployment decision
+(\autoref{design:subsec:deployment-decision}).
 
 \section{Deployment Model Analysis}
 \label{design:sec:deployment}
@@ -95,9 +162,6 @@ across the dimensions most relevant to a virtual teaching assistant.
   \end{tabular}
 \end{table}
 
-% TODO: tie each deciding factor below back to a specific requirement in
-% \autoref{design:sec:requirements} once that section is written.
-
 \subsection{Deployment Decision}
 \label{design:subsec:deployment-decision}
 
@@ -110,7 +174,8 @@ local and hosted inference on the same prompts, tools, and tasks
 (\autoref{eval:sec:results:providers}).
 
 \paragraph{Why hosted generation.} On this system, hosted generation was
-better on every measured dimension except marginal cost. On the flagship
+better on every measured dimension except marginal cost, so it best serves
+latency (NFR2) and answer quality (FR1, FR5) at an acceptable cost (NFR1). On the flagship
 multi-part interaction --- a progress lookup followed by a practice question
 --- it reduced median turn latency from 11.2\,s (the local model then in
 production) to 1.7\,s, with no loss of grounding fidelity (10/10 turns in
@@ -121,19 +186,20 @@ US\$0.0003--0.0005 per agent turn, or an estimated US\$0.11--0.27 per
 student per semester once retrieved context is included
 (\autoref{eval:subsec:results:cost}).
 
-\paragraph{Why not fully local.} The local model capable of reliable
-grounding (Qwen3, 14B parameters) was five to seven times slower than hosted
+\paragraph{Why not fully local.} A fully local deployment best serves cost
+and modest resources (NFR1, NFR7) but fails latency and quality. The local
+model capable of reliable grounding (Qwen3, 14B parameters) was five to seven times slower than hosted
 generation and, on the 32\,GB host, competed with the retriever for memory:
 loading it evicted the embedding model, so every subsequent retrieval paid a
 cold reload. The small local model that fits beside the retriever
 (Llama~3.2, 3B) is fast enough but weaker, grounding 8/10 multi-part turns
 and producing correct quiz keys in 3/10 cases.
 
-\paragraph{Why not fully hosted.} The chosen inference provider offers no
-embedding models, so retrieval with the system's embedder (BGE-M3) must stay
+\paragraph{Why not fully hosted.} Two requirements rule it out. The chosen
+inference provider offers no embedding models, so retrieval with the system's embedder (BGE-M3) must stay
 local. A local fallback also converts provider outages, rate limits, and
 model retirements into a degradation in answer quality rather than an
-outage --- a real risk, since a hosted model the system had previously used
+outage (NFR4, NFR6) --- a real risk, since a hosted model the system had previously used
 was retired by its vendor and broke quiz generation in production.
 
 The trade-off accepted is a dependency on an external provider for the
@@ -194,9 +260,67 @@ scheduled ingestion --- has been designed but not provisioned
 \section{Methodology}
 \label{design:sec:methodology}
 
-% TODO: Research methodology, data sources, and the approach taken to
-% evaluate the system.
-\draftnote{research methodology and data sources.}
+\paragraph{Research approach.} The thesis follows a build-and-evaluate
+approach: it designs and builds the assistant as an artefact, deploys it on
+real course materials, and evaluates it empirically. The
+system was developed iteratively, and design decisions were revised when
+measurements contradicted them --- the move from a fully local to a hybrid
+deployment (\autoref{design:subsec:deployment-decision}) is the clearest
+example. Throughout, the problem, the design, and the evaluation are
+expressed in the same units --- tokens, cost, and latency per query, and
+instructor-hours per course per week --- so that each result can be read
+directly against the problem it addresses.
+
+\paragraph{Research questions.} The evaluation answers three questions,
+which map onto the objectives in \autoref{intro:sec:objectives}:
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=*, nosep]
+  \item How can the instructor time the assistant returns be measured in
+        hours per course per week, and what must the system record to
+        measure it? (Objectives (i)--(ii); FR1--FR3.)
+  \item How much does extractive retrieval compression reduce input tokens,
+        cost, and latency per query, and at what cost to answer quality?
+        (Objective (iv); NFR1, NFR2, FR6.)
+  \item Which deployment model --- local, hosted, or hybrid --- best meets
+        the cost, latency, and quality requirements? (NFR1, NFR2, NFR4,
+        NFR7.)
+\end{enumerate}
+
+\paragraph{Data sources.} Four sources feed the evaluation:
+\begin{itemize}[nosep]
+  \item \textbf{Course materials} from NUS Canvas courses, ingested into the
+        retrieval index (\autoref{impl:sec:retrieval}); the compression probe
+        uses the CS3241 (computer graphics) corpus.
+  \item \textbf{Interaction logs} in the production database. Quiz answers
+        and feedback notes are already stored; chat turns, which the
+        instructor-hours measure needs, are not yet stored on the server
+        (\autoref{impl:sec:analytics}).
+  \item \textbf{Inference-runtime counters}: prompt and output token counts
+        reported by the model runtime for each call, and timings measured
+        around each request.
+  \item \textbf{Benchmark harnesses} that replay the production prompts and
+        agent loop with stubbed tool results, so that models and deployment
+        configurations can be compared on identical inputs.
+\end{itemize}
+
+\paragraph{Evaluation methods.} Each research question has its own method,
+detailed in \autoref{ch:evaluation}. RQ1 is answered by defining a measure that
+aggregates deflected queries and multiplies them by a conservative handling
+time per query (\autoref{eval:subsec:hours}), and by identifying the data it
+needs; applying it to the deployed system requires chat turns to be stored,
+which is left to future work (\autoref{concl:sec:limitations}). RQ2 is a controlled comparison: the same
+questions over the same retrieved chunks, with compression switched on and
+off by its feature flag, measured on input tokens, cost, end-to-end latency,
+and answer quality (\autoref{eval:subsec:tokenmetrics}); the baseline it is
+compared against is established by the token audit below. RQ3 is a benchmark
+of local and hosted models on identical prompts, tools, and tasks, scored on
+latency, grounding fidelity, quiz-answer correctness, and cost
+(\autoref{eval:subsec:setup:providers}).
+
+% TODO: state whether ethics approval (NUS IRB) was obtained or required for
+% using student interaction logs in the evaluation, and how the logs were
+% anonymised.
+\draftnote{ethics approval and anonymisation of student interaction logs.}
 
 \subsection{Baseline Token Audit}
 \label{design:subsec:tokenaudit}
@@ -282,5 +406,16 @@ the stage is described in \autoref{impl:sec:compression}.
 \section{Summary}
 \label{design:sec:summary}
 
-% TODO: Recap the design decisions that the following chapter implements.
-\draftnote{chapter summary.}
+The design rests on three decisions. First, the assistant is a
+retrieval-augmented, tool-calling agent over NUS Canvas course materials that
+answers routine queries, with a defined measure of the instructor time it
+returns (FR1--FR5). Second, it is deployed as
+a hybrid: open-weight models on a hosted provider generate answers, while
+retrieval and a fallback model run locally --- a choice made on measured
+latency, quality, and cost (NFR1--NFR4). Third, an extractive,
+\textsc{Recomp}-style compression stage sits between retrieval and generation,
+behind a feature flag, to cut input tokens per query and to allow a direct
+comparison with and without it (NFR1, FR6). \autoref{ch:implementation}
+describes how these decisions were built, and \autoref{ch:evaluation}
+evaluates them against the three research questions of
+\autoref{design:sec:methodology}.

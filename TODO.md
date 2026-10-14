@@ -92,7 +92,10 @@ report as a whole. Before submission:
   confirm them.
 - Add the specific table numbers to the `oecd25:Talis` citation or in-text.
 
-### B2. Implement the instructor-hours-returned aggregation
+### B2. Implement the instructor-hours-returned aggregation — MOVED TO FUTURE WORK
+
+Not possible in this thesis: chat turns are not stored (see D0). Kept here
+for reference only.
 
 **Where:** `chapters/ch-evaluation.tex`, §5.2.1 (Instructor-Hours Returned),
 and results in §5.3.
@@ -145,49 +148,47 @@ behaviour-based teaching signal (the answer to the SET-limitations caveat in
 
 ## Part D — Remaining Writing and Open Items
 
-Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
+Status as of 2026-10-14 (PR #12). Ch 3–5 and Appendix A are drafted from
+the system's source (`fyp-virtual-teaching-assistant`, origin/main at PR
+#114). Ten grey `\draftnote{}` placeholders remain; each needs data or a
+decision from the author.
 
-### D1. Open items from PR #9
+### D0. Findings from the source code — decide first
+
+- **Chat turns are not logged on the server.** DECIDED (2026-10-14): stated
+  as a limitation (§6.2), with storing chat histories as future work (§6.3).
+  The instrumentation claims are softened throughout: the thesis now
+  *defines* the instructor-hours measure and the data it needs, rather than
+  claiming to measure it. RQ1 is reworded to "how can instructor time be
+  measured, and what must the system record", and is answered in §5.2.1.
+- **Analytics source.** DECIDED (2026-10-14): analytics are described as
+  built on quiz and assignment results, not chat questions — aligned in the
+  abstract, Ch 1, FR4, Ch 4, Ch 5 and Ch 6.
+- **Fuzzy rule table citation.** `feedbackEngine.py` calls it "Table III —
+  validated by 15 faculty members". Cite the source paper in §4.5, or drop
+  the claim.
+
+### D1. Open items
 
 - **Name the AI model (and version)** that judged quiz answer-key
-  correctness — `ch-evaluation.tex`, §5.1.1.
-- **AWS rationale:** keep the placeholder until the comparison of service
-  level, cost, and related factors against GCP and Azure is done; then tie
-  the deciding dimensions to §3.1 — `ch-implementation.tex`, §4.1.2.
-- **Tie the deployment decision to requirements** once §3.1 exists —
-  `ch-design.tex`, §3.2.1.
+  correctness — §5.1.1.
+- **AWS rationale:** placeholder until the GCP/Azure comparison is done —
+  §4.1.2.
 - **Report P95 latency** once larger samples exist (current: n=10 / n=3).
 - **Time a full production turn on Groq** (retrieval + live tools +
   streaming); the benchmark used stubbed tools.
 
-### D2. Empty sections
+### D2. Grey placeholders still in the draft
 
-- **Abstract:** bracketed placeholders (`[dataset / course cohort]`, `X%`,
-  `Y` instructor-hours).
+- **Abstract:** bracketed answer-quality results (`[n]`, `[result]`).
 - **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
-- **Ch 3:** chapter intro; Design Goals and Requirements (§3.1);
-  Methodology (§3.4); Summary. (Architecture diagram done: Fig 3.1.)
-- **Ch 4:** chapter intro; Technology Stack prose (Node.js,
-  PostgreSQL/pgvector, Ollama, Groq); retrieval parameters and LMS data
-  fetching; prompt design and personalisation; Analytics and Feedback Loop;
-  Summary. (Figs 4.1–4.3 and their descriptions done: components,
-  ingestion, chat turn.)
-- **Diagrams:** the figures are TikZ sources in `pic/ch-*/fig-*.tex`,
-  simplified from `cp5105-master-architecture.drawio` (20 Sep 2026). That
-  drawio predates the Groq migration; update it to show Groq, not Gemini,
-  and gpt-oss-20b as the agent model. Optional further figures: the
-  adaptive-quiz flow (fuzzy engine → Bloom level → bank or generate) and the
-  instructor course-analysis flow.
-- **Ch 5:** chapter intro and research questions; dataset/cohort setup;
-  metrics overview; instructor-hours results (B2); overall discussion;
-  Summary.
-- **Ch 6:** full conclusion once B2 and A3 results exist; fold the future-work
-  items into a narrative.
-- **Appendices:** prompt templates; survey instruments (or drop the survey
-  appendix if no surveys are run).
-
-### D3. Build
-
-- Biber fails on the author's Mac (`extracting arm64 binary with lipo
-  failed`), so local builds have undefined citations. Fix the TeX Live Biber
-  install, or build in the devcontainer.
+- **Ch 3 (§3.4):** ethics approval / anonymisation of student logs;
+  token-audit numbers (A1).
+- **Ch 4 (§4.1.2):** AWS rationale (D1).
+- **Ch 5:** question set and scoring protocol for the RQ2 answer-quality
+  evaluation (§5.1); update the summary with those results (§5.5).
+- **Ch 6:** final conclusion once the answer-quality results exist.
+- **Appendix B (surveys):** fill in if surveys are run; otherwise drop the
+  appendix (remove `\input{chapters/ap-survey.tex}` from `main.tex`).
+- **Diagrams:** the drawio (20 Sep) predates the Groq migration; update it.
+  Optional further figures: adaptive-quiz flow, instructor course analysis.
