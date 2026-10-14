@@ -343,9 +343,11 @@ saved several times per turn (\autoref{eval:subsec:results:cost}).
 \section{Analytics and Feedback Loop}
 \label{impl:sec:analytics}
 
-The instructor analytics are built on the adaptive quiz, which is also the
-system's main personalisation mechanism (FR5), so the quiz is described
-first.
+The analytics are built on two sources: quiz results, which the system
+stores, and assignment results, which it fetches from the learning management
+system. They do not use the questions students ask in chat, which are not
+stored (\autoref{concl:sec:limitations}). The quiz is also the system's main
+personalisation mechanism (FR5), so it is described first.
 
 \paragraph{Adaptive quiz.} Each student has a running performance score per
 course: an exponential moving average of their answers ($\alpha = 0.2$, with
@@ -368,7 +370,9 @@ the questions of that attempt. Every answer and every note is stored.
 \paragraph{Student analytics.} From the stored attempts, each student sees
 their accuracy per Bloom's level, the trajectory of their running score, the
 questions they first missed and later recovered, and the themes that recur
-across their feedback notes.
+across their feedback notes. Alongside these, the dashboards and course
+overview show the student's assignment grades and deadlines from the
+learning management system.
 
 \paragraph{Instructor analytics.} Instructors, and only instructors (the role
 is checked on the server, NFR3), see every student's per-course performance
@@ -378,7 +382,7 @@ accuracy, the number of students below 50\%, the questions with the lowest
 class accuracy, and the themes recurring in the feedback notes written for
 the class --- so the figures cannot be altered by the browser. It combines
 them with live web-search results on the subject and the course's
-assignment titles, and asks the note model for concise recommendations:
+assignment titles and due dates from the learning management system, and asks the note model for concise recommendations:
 where students struggle, whether the coursework covers it, what emerging
 topics to add, and one concrete change for the next run. The prompt forbids
 inventing statistics, assignments, or student names; when there is no quiz
