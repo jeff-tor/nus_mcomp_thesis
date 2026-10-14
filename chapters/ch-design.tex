@@ -291,9 +291,10 @@ which map onto the objectives in \autoref{intro:sec:objectives}:
   \item \textbf{Course materials} from NUS Canvas courses, ingested into the
         retrieval index (\autoref{impl:sec:retrieval}); the compression probe
         uses the CS3241 (computer graphics) corpus.
-  \item \textbf{Interaction logs} in the production database: every query,
-        response, tool call, and quiz attempt, which supply the
-        instructor-hours measure.
+  \item \textbf{Interaction logs} in the production database. Quiz answers
+        and feedback notes are already stored; chat turns, which the
+        instructor-hours measure needs, are not yet stored on the server
+        (\autoref{impl:sec:analytics}).
   \item \textbf{Inference-runtime counters}: prompt and output token counts
         reported by the model runtime for each call, and timings measured
         around each request.
@@ -305,7 +306,8 @@ which map onto the objectives in \autoref{intro:sec:objectives}:
 \paragraph{Evaluation methods.} Each research question has its own method,
 detailed in \autoref{ch:evaluation}. RQ1 aggregates deflected queries from the
 interaction logs and multiplies them by a conservative handling time per
-query (\autoref{eval:subsec:hours}). RQ2 is a controlled comparison: the same
+query (\autoref{eval:subsec:hours}); it requires chat-turn logging to be
+added first. RQ2 is a controlled comparison: the same
 questions over the same retrieved chunks, with compression switched on and
 off by its feature flag, measured on input tokens, cost, end-to-end latency,
 and answer quality (\autoref{eval:subsec:tokenmetrics}); the baseline it is

@@ -145,44 +145,52 @@ behaviour-based teaching signal (the answer to the SET-limitations caveat in
 
 ## Part D — Remaining Writing and Open Items
 
-Each item has a visible `\draftnote{}` and/or a `% TODO` in the source.
+Status as of 2026-10-14 (PR #12). Ch 3–5 and Appendix A are drafted from
+the system's source (`fyp-virtual-teaching-assistant`, origin/main at PR
+#114). Ten grey `\draftnote{}` placeholders remain; each needs data or a
+decision from the author.
 
-### D1. Open items from PR #9
+### D0. Findings from the source code — decide first
+
+- **Chat turns are not logged on the server.** Chat history lives only in
+  browser memory (`js/chat.js`, `saveChatHistory`); the database stores quiz
+  answers and feedback notes only. RQ1 (instructor-hours, §5.2.1, B2) and
+  FR3 depend on chat logging. Either add a chat-turn log table to the
+  system, or reframe RQ1. Ch 3, 4 and 5 now say this plainly; the abstract,
+  Ch 1 contributions and Ch 2 gap statement still claim "every deflected
+  query" is instrumented.
+- **Instructor analytics are over quiz performance, not chat questions.**
+  `server/stats.js` builds class signals from quiz accuracy, hardest
+  questions and feedback-note themes, plus web trends. Ch 1 objective (iii),
+  the abstract and FR4 describe analytics "over the questions students ask".
+  Align the framing, or implement chat-question analytics (needs the
+  logging above; see B3).
+- **Fuzzy rule table citation.** `feedbackEngine.py` calls it "Table III —
+  validated by 15 faculty members". Cite the source paper in §4.5, or drop
+  the claim.
+
+### D1. Open items
 
 - **Name the AI model (and version)** that judged quiz answer-key
-  correctness — `ch-evaluation.tex`, §5.1.1.
-- **AWS rationale:** keep the placeholder until the comparison of service
-  level, cost, and related factors against GCP and Azure is done; then tie
-  the deciding dimensions to §3.1 — `ch-implementation.tex`, §4.1.2.
-- **Tie the deployment decision to requirements** once §3.1 exists —
-  `ch-design.tex`, §3.2.1.
+  correctness — §5.1.1.
+- **AWS rationale:** placeholder until the GCP/Azure comparison is done —
+  §4.1.2.
 - **Report P95 latency** once larger samples exist (current: n=10 / n=3).
 - **Time a full production turn on Groq** (retrieval + live tools +
   streaming); the benchmark used stubbed tools.
 
-### D2. Empty sections
+### D2. Grey placeholders still in the draft
 
-- **Abstract:** bracketed placeholders (`[dataset / course cohort]`, `X%`,
-  `Y` instructor-hours).
+- **Abstract:** bracketed results (`[dataset / course cohort]`, `X%`, `Y`).
 - **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
-- **Ch 3:** done apart from the token-audit numbers (A1) and an ethics
-  note: state whether NUS IRB approval was obtained or needed for using
-  student interaction logs, and how they were anonymised (§3.4).
-- **Ch 4:** chapter intro; Technology Stack prose (Node.js,
-  PostgreSQL/pgvector, Ollama, Groq); retrieval parameters and LMS data
-  fetching; prompt design and personalisation; Analytics and Feedback Loop;
-  Summary. (Figs 4.1–4.3 and their descriptions done: components,
-  ingestion, chat turn.)
-- **Diagrams:** the figures are TikZ sources in `pic/ch-*/fig-*.tex`,
-  simplified from `cp5105-master-architecture.drawio` (20 Sep 2026). That
-  drawio predates the Groq migration; update it to show Groq, not Gemini,
-  and gpt-oss-20b as the agent model. Optional further figures: the
-  adaptive-quiz flow (fuzzy engine → Bloom level → bank or generate) and the
-  instructor course-analysis flow.
-- **Ch 5:** chapter intro (reuse RQ1–RQ3 from §3.4); dataset/cohort setup;
-  metrics overview; instructor-hours results (B2); overall discussion;
-  Summary.
-- **Ch 6:** full conclusion once B2 and A3 results exist; fold the future-work
-  items into a narrative.
-- **Appendices:** prompt templates; survey instruments (or drop the survey
-  appendix if no surveys are run).
+- **Ch 3 (§3.4):** ethics approval / anonymisation of student logs;
+  token-audit numbers (A1).
+- **Ch 4 (§4.1.2):** AWS rationale (D1).
+- **Ch 5:** cohort and protocol for RQ1 and the RQ2 answer-quality set
+  (§5.1); per-course instructor-hours results (§5.2.1); update the summary
+  with RQ1 and answer-quality results (§5.5).
+- **Ch 6:** final conclusion once RQ1 and the answer-quality results exist.
+- **Appendix B (surveys):** fill in if surveys are run; otherwise drop the
+  appendix (remove `\input{chapters/ap-survey.tex}` from `main.tex`).
+- **Diagrams:** the drawio (20 Sep) predates the Groq migration; update it.
+  Optional further figures: adaptive-quiz flow, instructor course analysis.

@@ -2,15 +2,29 @@
 \label{ch:implementation}
 \vspace{2em}
 
-% TODO: Introduce the chapter -- describe how the system design from
-% Chapter~\ref{ch:design} was realised in practice.
-\draftnote{chapter introduction.}
+This chapter describes how the design of \autoref{ch:design} was built.
+\autoref{impl:sec:stack} covers the technology stack and the configurations
+the system ran in. \autoref{impl:sec:retrieval} describes the knowledge base,
+\autoref{impl:sec:qa} the chat agent, its prompts, and the model provider
+layer, and \autoref{impl:sec:compression} the compression stage.
+\autoref{impl:sec:analytics} describes the instructor-facing analytics and the
+adaptive quiz that feeds them.
 
 \section{Technology Stack}
 \label{impl:sec:stack}
 
-% TODO: Languages, frameworks, models, and infrastructure used.
-\draftnote{languages, frameworks, and libraries (Node.js server, PostgreSQL with pgvector, Ollama, Groq).}
+The system is deliberately light on dependencies, in keeping with NFR7. The
+backend is a single Node.js~20 service written without a web framework; its
+only runtime dependencies are the PostgreSQL client and the Model Context
+Protocol (MCP) SDK. The browser client is plain HTML, CSS, and JavaScript
+modules, with no framework or build step. The adaptive quiz's fuzzy-inference
+engine is a small Python program that the backend runs per call
+(\autoref{impl:sec:analytics}). Data lives in PostgreSQL~16 with the pgvector
+extension, which serves as both the relational store and the vector index.
+Models are served by Ollama (embeddings and local generation) and Groq
+(hosted generation); web search uses the Tavily API. The backend, the
+database, and Nginx run as Docker containers on one EC2 host, built and
+deployed through continuous integration.
 
 \autoref{impl:fig:components} shows how the application is organised. The
 browser client is a set of plain JavaScript modules, one per feature, over a
@@ -156,10 +170,6 @@ services but by a dedicated inference provider, selected separately
 \section{Knowledge Base and Retrieval}
 \label{impl:sec:retrieval}
 
-% TODO: How course materials and administrative data were ingested,
-% indexed, and retrieved.
-\draftnote{remaining detail: retrieval parameters, and how Canvas and Google Classroom data are fetched and normalised.}
-
 Course materials are ingested offline, never on the request path
 (\autoref{impl:fig:ingest}). Files are organised in one folder per course
 code, split into chunks of about 900 characters with 150 characters of
@@ -168,7 +178,20 @@ Re-ingesting a document replaces its chunks rather than duplicating them.
 Because the ingestion job uses the same embedding module and the same
 database module as the live application, the vectors it writes are exactly
 those that retrieval reads. At query time, the question is embedded with the
-same model and the five closest chunks are retrieved.
+same model, the five nearest chunks for the student's current course are
+retrieved, and any whose cosine distance exceeds 0.6 are discarded. If none
+remain, or if retrieval fails, the turn proceeds without course material
+rather than failing.
+
+Administrative data --- courses, assignments, deadlines, and grades --- is
+not ingested but fetched live from the learning management system. Two
+providers are supported. For Canvas, each user links their own account
+through OAuth~2.0, and the server stores and refreshes their token; where an
+institution issues no developer key, as at NUS, a shared personal access
+token is used instead. For Google Classroom, an OAuth refresh token is held
+server-side. Both providers' responses are normalised to one shape, so the
+dashboards, calendar, and chat agent read the same structure whichever
+provider is connected.
 
 \begin{figure}[htb]
   \centering
@@ -179,10 +202,6 @@ same model and the five closest chunks are retrieved.
 
 \section{Question Answering and Personalisation}
 \label{impl:sec:qa}
-
-% TODO: The LLM integration, prompting/RAG strategy, and personalisation
-% logic.
-\draftnote{prompt design and personalisation.}
 
 \autoref{impl:fig:chatturn} traces one chat turn. The student's identity is
 taken from the server-side session, never from the browser. The question is
@@ -195,6 +214,18 @@ generator, a lookup of the student's progress, a search over other courses,
 and external documentation servers via MCP --- and feeding their results
 back before answering. The answer streams to the browser token by token
 over server-sent events.
+
+The persona prompt is defined on the server, so the browser cannot replace
+it; any system message the client sends is discarded. It casts the assistant
+as a patient teaching assistant that teaches Socratically --- a hint or
+guiding question before a full solution --- and never writes graded work on
+the student's behalf, while encouraging fully worked practice examples
+(NFR5). It instructs the model to treat retrieved excerpts as its primary
+source, to say which excerpt it used, and to say so when the excerpts do not
+cover the question rather than guess (FR1). Personalisation enters through
+the context the persona wraps: the student's courses, deadlines, and grades,
+and, through the progress tool, their per-course quiz performance. The full
+prompts are reproduced in \autoref{append:prompts}.
 
 The turn is designed so that no single failure fails the request. If
 retrieval fails, the turn continues with the persona alone; a tool that
@@ -296,7 +327,7 @@ The stage is inserted between the existing retriever and the generation call
 \end{enumerate}
 
 Reusing the retrieval embedder is a deliberate engineering choice: the compressor
-adds no new model, dependency, or runtime to the stack (approximately 130 lines of
+adds no new model, dependency, or runtime to the stack (about 100 lines of
 JavaScript), which matters on the memory-constrained host described in
 \autoref{impl:sec:stack}. The stage is deployed behind a runtime feature flag
 (\texttt{RAG\_COMPRESS}, with $\tau$ and $k$ configurable), which both protects
@@ -312,12 +343,70 @@ saved several times per turn (\autoref{eval:subsec:results:cost}).
 \section{Analytics and Feedback Loop}
 \label{impl:sec:analytics}
 
-% TODO: How student-question analytics and performance insights are
-% surfaced to faculty.
-\draftnote{instructor-facing analytics.}
+The instructor analytics are built on the adaptive quiz, which is also the
+system's main personalisation mechanism (FR5), so the quiz is described
+first.
+
+\paragraph{Adaptive quiz.} Each student has a running performance score per
+course: an exponential moving average of their answers ($\alpha = 0.2$, with
+a correct answer scored 10 and a wrong one 0). A fuzzy-inference engine maps
+this score to the next question's target. Seven overlapping trapezoidal
+membership functions, from \emph{novice} to \emph{expert}, cover the score
+range; each tier maps to a range of Bloom's taxonomy levels and a complexity
+band from 1 to 5, and the outputs are the membership-weighted averages. The
+overlap means a score near a tier boundary moves the target gradually rather
+than in a step.
+% TODO: cite the source of the fuzzy rule table (feedbackEngine.py calls it
+% "Table III" and says it was "validated by 15 faculty members").
+The question itself is taken from the question bank when one matches the
+target; otherwise the quiz model generates one, grounded in a random excerpt
+of the course's ingested notes, and caches it in the bank. When a sitting
+ends, the model writes one short feedback note for the attempt --- what the
+student did well, what to improve, and one next step --- grounded only in
+the questions of that attempt. Every answer and every note is stored.
+
+\paragraph{Student analytics.} From the stored attempts, each student sees
+their accuracy per Bloom's level, the trajectory of their running score, the
+questions they first missed and later recovered, and the themes that recur
+across their feedback notes.
+
+\paragraph{Instructor analytics.} Instructors, and only instructors (the role
+is checked on the server, NFR3), see every student's per-course performance
+profile. For a chosen course they can also request a course-improvement
+note. The server recomputes the class signals from the database --- overall
+accuracy, the number of students below 50\%, the questions with the lowest
+class accuracy, and the themes recurring in the feedback notes written for
+the class --- so the figures cannot be altered by the browser. It combines
+them with live web-search results on the subject and the course's
+assignment titles, and asks the note model for concise recommendations:
+where students struggle, whether the coursework covers it, what emerging
+topics to add, and one concrete change for the next run. The prompt forbids
+inventing statistics, assignments, or student names; when there is no quiz
+activity or no coursework, it tells the model so explicitly, after testing
+showed that the model otherwise invented both. The note streams back in the
+same format as chat.
+
+\paragraph{What is not yet captured.} Chat turns are not yet stored on the
+server: the conversation history lives only in the browser. Requirement FR3
+is therefore met for quiz interactions but not yet for chat, and analytics
+over the questions students ask in chat --- including the topic clustering
+proposed in \autoref{eval:subsec:hours} --- depend on adding that logging.
+% TODO: add server-side chat-turn logging to the system (needed for RQ1 and
+% for chat-question analytics), then update this paragraph.
 
 \section{Summary}
 \label{impl:sec:summary}
 
-% TODO: Recap what was built, leading into the evaluation.
-\draftnote{chapter summary.}
+The system is a single, lightly dependent Node.js service with a
+PostgreSQL and pgvector store, deployed in containers on one EC2 host. Course
+materials are ingested offline and retrieved per question; administrative
+data is fetched live from Canvas or Google Classroom. A server-defined
+persona and a tool-calling agent loop answer students, generating text
+through a provider layer that routes to hosted models and falls back to a
+local one. An optional compression stage trims retrieved context before
+generation. An adaptive quiz personalises practice through fuzzy inference,
+and its stored attempts feed both student and instructor analytics. The main
+gap is that chat turns are not yet logged on the server, which the
+instructor-hours evaluation requires. \autoref{ch:evaluation} evaluates the
+compression stage and the deployment model, and defines the instructor-hours
+measure.
