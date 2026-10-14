@@ -152,13 +152,11 @@ decision from the author.
 
 ### D0. Findings from the source code — decide first
 
-- **Chat turns are not logged on the server.** Chat history lives only in
-  browser memory (`js/chat.js`, `saveChatHistory`); the database stores quiz
-  answers and feedback notes only. RQ1 (instructor-hours, §5.2.1, B2) and
-  FR3 depend on chat logging. Either add a chat-turn log table to the
-  system, or reframe RQ1. Ch 3, 4 and 5 now say this plainly; the abstract,
-  Ch 1 contributions and Ch 2 gap statement still claim "every deflected
-  query" is instrumented.
+- **Chat turns are not logged on the server.** DECIDED (2026-10-14): stated
+  as a limitation (§6.2), with storing chat histories for analytics as
+  future work (§6.3). Still to align: the abstract, Ch 1 contributions and
+  Ch 2 gap statement claim "every deflected query" is instrumented, and
+  RQ1 (§3.4, §5.2.1) cannot be measured without chat logging.
 - **Instructor analytics are over quiz performance, not chat questions.**
   `server/stats.js` builds class signals from quiz accuracy, hardest
   questions and feedback-note themes, plus web trends. Ch 1 objective (iii),

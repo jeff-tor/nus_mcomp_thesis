@@ -15,10 +15,29 @@ out-of-syllabus query (\autoref{eval:sec:results:compression}).
 \draftnote{final conclusion, once the instructor-hours and full
 compression evaluations in \autoref{ch:evaluation} are complete.}
 
+\section{Limitations}
+\label{concl:sec:limitations}
+
+\paragraph{Chat history is not stored.} The deployed system does not save
+chat conversations on the server; a student's chat history exists only in
+their browser for the duration of the session. The database stores quiz
+answers and the feedback notes written after each quiz, but not chat
+questions or answers. As a result, the instructor analytics are built on
+quiz performance alone, and the instructor-hours measure of
+\autoref{eval:subsec:hours}, which counts deflected chat queries, cannot yet
+be computed from the system's own records.
+
 \section{Future Research Directions}
 
 % TODO: fold the items below into the full future-work narrative once the
 % conclusion is drafted.
+
+\paragraph{Storing chat histories for analytics.}
+Storing each user's chat history on the server --- with appropriate consent
+and anonymisation --- would close the limitation above. It would allow the
+instructor-hours measure to be computed directly from deflected queries, and
+would let the instructor analytics draw on the questions students actually
+ask, for example by clustering them by topic, alongside quiz performance.
 
 \paragraph{Adaptive, evidentiality-guided compression.}
 The extractive compression stage adopted from
