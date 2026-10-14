@@ -3,22 +3,24 @@
 \vspace{2em}
 
 This chapter evaluates the system against the three research questions of
-\autoref{design:sec:methodology}: how many instructor-hours the assistant
-returns (RQ1), what retrieval compression saves and at what cost to answer
+\autoref{design:sec:methodology}: how the instructor time the assistant
+returns can be measured in hours (RQ1), what retrieval compression saves and at what cost to answer
 quality (RQ2), and which deployment model best meets the cost, latency, and
 quality requirements (RQ3). \autoref{eval:sec:setup} describes the
 experimental setup, \autoref{eval:sec:metrics} defines the metrics, and
 \autoref{eval:sec:results} reports the results, which
-\autoref{eval:sec:discussion} interprets. At the time of this draft, RQ2 and
-RQ3 have results; RQ1's metric is defined, but its measurement awaits
-server-side logging of chat turns (\autoref{impl:sec:analytics}).
+\autoref{eval:sec:discussion} interprets. RQ2 and RQ3 are answered by
+measurement. RQ1 is answered by the measure defined in
+\autoref{eval:subsec:hours} and the data it requires; applying it to the
+deployed system is left to future work, because chat turns are not yet
+stored (\autoref{concl:sec:limitations}).
 
 \section{Experimental Setup}
 \label{eval:sec:setup}
 
 % TODO: Dataset / course cohort, baselines, hardware, and evaluation
 % protocol.
-\draftnote{course cohort, observation window, and protocol for RQ1; the question set and scoring protocol for the answer-quality part of RQ2.}
+\draftnote{the question set and scoring protocol for the answer-quality part of RQ2.}
 
 \subsection{Local versus Hosted Inference Benchmark}
 \label{eval:subsec:setup:providers}
@@ -92,10 +94,13 @@ and out-of-hours response burden). Once every chat turn is logged on the server,
 the metric reduces to a single aggregation over the assistant's query logs;
 at present only quiz interactions are stored (\autoref{impl:sec:analytics}).
 
-% TODO: implement the aggregation as a PostgreSQL query over the production
-% bot logs and report per-course results as a table in
-% \autoref{eval:sec:results}.
-\draftnote{per-course instructor-hours results.}
+This definition answers RQ1. Computing it requires the system to record,
+for every chat query, the course it concerns, when it was asked, and its
+text, so that it can be classified as routine and counted as deflected.
+The deployed system records quiz interactions but not chat turns
+(\autoref{impl:sec:analytics}), so no measured instructor-hours are reported
+in this thesis; storing chat histories, which would make the measure
+computable, is future work (\autoref{concl:sec:limitations}).
 
 A secondary, complementary signal, possible once chat turns are logged
 (\autoref{concl:sec:limitations}), is question-topic clustering over the same
@@ -155,8 +160,8 @@ the institutional cost evidence of \autoref{intro:sec:problem}.
 The results below cover RQ2 and RQ3. \autoref{eval:sec:results:compression}
 reports the compression probe, \autoref{eval:sec:results:providers} the
 local-versus-hosted benchmark, and \autoref{eval:subsec:results:cost} the
-resulting cost projection. Results for RQ1 will be added once chat-turn
-logging is in place.
+resulting cost projection. RQ1 is answered by the measure itself
+(\autoref{eval:subsec:hours}), so it has no results table.
 
 \subsection{Context Compression: Token Reduction and Latency}
 \label{eval:sec:results:compression}
@@ -365,6 +370,15 @@ so a production deployment at course scale requires a paid tier.
 \section{Discussion}
 \label{eval:sec:discussion}
 
+\paragraph{RQ1: measuring instructor time.} The measure of
+\autoref{eval:subsec:hours} is simple and deliberately conservative, and it
+can be computed directly from the assistant's own records --- provided those
+records exist. The deployed system does not yet store chat turns, so the
+measure could not be applied. The lesson is a design one: what an assistant
+stores decides what can later be claimed about it, so the data a workload
+measure needs should be specified, as here, before deployment rather than
+after.
+
 \paragraph{RQ2: compression.} On in-syllabus questions, extractive
 compression removed about two-thirds of input tokens and, because a local
 model's latency grows with prompt length, cut end-to-end latency despite its
@@ -407,12 +421,12 @@ cost projection rests on assumed usage rates.
 \section{Summary}
 \label{eval:sec:summary}
 
-Two of the three research questions have results. For RQ2, extractive
+For RQ1, the thesis defines an hour-denominated measure of the instructor
+time the assistant returns, and identifies that computing it requires
+stored chat turns, which the deployed system does not yet keep. For RQ2, extractive
 compression cut input tokens on in-syllabus questions by about two-thirds and
 reduced latency, at the cost of occasionally dropping a needed sentence. For
 RQ3, a hybrid deployment --- hosted generation, local retrieval, and a local
 fallback --- was faster than the local alternatives at equal grounding, at a
 projected US\$0.11--0.27 per student per semester. Both results come from
-small samples and need larger question sets. RQ1, the instructor-hours
-returned, is defined but not yet measured.
-\draftnote{update this summary with the RQ1 results and the answer-quality results for RQ2.}
+small samples and need larger question sets. \draftnote{update this summary with the answer-quality results for RQ2.}

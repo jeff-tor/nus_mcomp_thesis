@@ -4,7 +4,7 @@
 
 This chapter turns the problem of \autoref{ch:intro} into a design. The
 assistant must answer routine student queries well enough to return
-instructor time, measure that time, and do so cheaply enough to operate at
+instructor time, make that time measurable, and do so cheaply enough to operate at
 institutional scale. \autoref{design:sec:requirements} states these needs as
 requirements. \autoref{design:sec:deployment} chooses where the system's models
 run, \autoref{design:sec:architecture} describes the resulting architecture,
@@ -262,7 +262,7 @@ scheduled ingestion --- has been designed but not provisioned
 
 \paragraph{Research approach.} The thesis follows a build-and-evaluate
 approach: it designs and builds the assistant as an artefact, deploys it on
-real course materials, instruments it, and evaluates it empirically. The
+real course materials, and evaluates it empirically. The
 system was developed iteratively, and design decisions were revised when
 measurements contradicted them --- the move from a fully local to a hybrid
 deployment (\autoref{design:subsec:deployment-decision}) is the clearest
@@ -275,9 +275,9 @@ directly against the problem it addresses.
 which map onto the objectives in \autoref{intro:sec:objectives}:
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=*, nosep]
-  \item How many instructor-hours per course per week does the assistant
-        return by answering routine queries? (Objectives (i)--(ii);
-        FR1--FR3.)
+  \item How can the instructor time the assistant returns be measured in
+        hours per course per week, and what must the system record to
+        measure it? (Objectives (i)--(ii); FR1--FR3.)
   \item How much does extractive retrieval compression reduce input tokens,
         cost, and latency per query, and at what cost to answer quality?
         (Objective (iv); NFR1, NFR2, FR6.)
@@ -304,10 +304,11 @@ which map onto the objectives in \autoref{intro:sec:objectives}:
 \end{itemize}
 
 \paragraph{Evaluation methods.} Each research question has its own method,
-detailed in \autoref{ch:evaluation}. RQ1 aggregates deflected queries from the
-interaction logs and multiplies them by a conservative handling time per
-query (\autoref{eval:subsec:hours}); it requires chat-turn logging to be
-added first. RQ2 is a controlled comparison: the same
+detailed in \autoref{ch:evaluation}. RQ1 is answered by defining a measure that
+aggregates deflected queries and multiplies them by a conservative handling
+time per query (\autoref{eval:subsec:hours}), and by identifying the data it
+needs; applying it to the deployed system requires chat turns to be stored,
+which is left to future work (\autoref{concl:sec:limitations}). RQ2 is a controlled comparison: the same
 questions over the same retrieved chunks, with compression switched on and
 off by its feature flag, measured on input tokens, cost, end-to-end latency,
 and answer quality (\autoref{eval:subsec:tokenmetrics}); the baseline it is
@@ -407,8 +408,8 @@ the stage is described in \autoref{impl:sec:compression}.
 
 The design rests on three decisions. First, the assistant is a
 retrieval-augmented, tool-calling agent over NUS Canvas course materials that
-logs every interaction, so that it can both answer routine queries and
-measure the instructor time it returns (FR1--FR5). Second, it is deployed as
+answers routine queries, with a defined measure of the instructor time it
+returns (FR1--FR5). Second, it is deployed as
 a hybrid: open-weight models on a hosted provider generate answers, while
 retrieval and a fallback model run locally --- a choice made on measured
 latency, quality, and cost (NFR1--NFR4). Third, an extractive,

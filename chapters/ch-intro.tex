@@ -15,8 +15,8 @@ what it costs, and what this thesis contributes.
 This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant}, a
 retrieval-augmented virtual teaching assistant built over NUS Canvas course
 materials. It answers routine clarification, content-navigation, and
-logistics questions; logs every interaction so that the instructor time it
-returns can be measured; and compresses retrieved context before generation
+logistics questions; defines how the instructor time it returns can be
+measured in hours; and compresses retrieved context before generation
 so that it can be operated affordably.
 
 The remainder of the document is organised as follows.
@@ -83,9 +83,9 @@ controllable cost driver.
 This thesis presents a retrieval-augmented virtual teaching assistant built
 over NUS Canvas course materials that absorbs routine student-support load
 --- clarification, content navigation, and logistics queries --- and, unlike
-prior work, instruments the interaction telemetry required to quantify the
-instructor-hours it returns, connecting the workload-measurement,
-teaching-quality, and AI-intervention literatures for the first time
+prior work, defines an hour-denominated measure of the instructor time it
+returns, together with the interaction data needed to compute it, connecting
+the workload-measurement, teaching-quality, and AI-intervention literatures
 (\autoref{ch:review}). The system is built for low-cost deployment ---
 open-weight generation on a hosted inference provider, with retrieval and a
 fallback model kept local --- and an extractive, sentence-level
@@ -104,9 +104,9 @@ The objectives of this thesis are to:
           over institutional (NUS Canvas) course materials that answers
           routine clarification, content-navigation, and logistics queries
           without instructor involvement;
-    \item instrument the assistant so that every deflected query is logged,
-          and use those logs to estimate the instructor-hours returned per
-          course per week;
+    \item define an hour-denominated measure of the instructor time the
+          assistant returns per course per week, and identify the
+          interaction data needed to compute it;
     \item surface analytics over students' quiz and assignment results, as a
           behaviour-based teaching signal for instructors;
     \item reduce the input-token cost of each query by integrating an
@@ -126,10 +126,12 @@ This thesis makes three contributions, mirroring the gap stated in
           that the AI-in-education literature has long proposed
           (Chapters~\ref{ch:design} and~\ref{ch:implementation}).
     \item \textbf{An hour-denominated measure of workload relief.} Unlike
-          prior deployments, the assistant logs every deflected query,
-          yielding a direct estimate of the instructor-hours returned per
-          course per week (\autoref{eval:subsec:hours}), together with
-          instructor analytics over quiz and assignment results.
+          prior deployments, the thesis defines a direct measure of the
+          instructor-hours returned per course per week, computed from
+          deflected queries (\autoref{eval:subsec:hours}), and identifies the
+          server-side logging it requires (\autoref{concl:sec:limitations});
+          the system also provides instructor analytics over quiz and
+          assignment results.
     \item \textbf{An evaluation of retrieval compression in a deployed
           educational assistant.} An extractive, sentence-level compression
           stage adapted from \textsc{Recomp}~\cite{iclr24:Xu} is evaluated

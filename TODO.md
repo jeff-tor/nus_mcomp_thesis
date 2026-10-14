@@ -92,7 +92,10 @@ report as a whole. Before submission:
   confirm them.
 - Add the specific table numbers to the `oecd25:Talis` citation or in-text.
 
-### B2. Implement the instructor-hours-returned aggregation
+### B2. Implement the instructor-hours-returned aggregation — MOVED TO FUTURE WORK
+
+Not possible in this thesis: chat turns are not stored (see D0). Kept here
+for reference only.
 
 **Where:** `chapters/ch-evaluation.tex`, §5.2.1 (Instructor-Hours Returned),
 and results in §5.3.
@@ -153,10 +156,11 @@ decision from the author.
 ### D0. Findings from the source code — decide first
 
 - **Chat turns are not logged on the server.** DECIDED (2026-10-14): stated
-  as a limitation (§6.2), with storing chat histories for analytics as
-  future work (§6.3). Still to align: the abstract, Ch 1 contributions and
-  Ch 2 gap statement claim "every deflected query" is instrumented, and
-  RQ1 (§3.4, §5.2.1) cannot be measured without chat logging.
+  as a limitation (§6.2), with storing chat histories as future work (§6.3).
+  The instrumentation claims are softened throughout: the thesis now
+  *defines* the instructor-hours measure and the data it needs, rather than
+  claiming to measure it. RQ1 is reworded to "how can instructor time be
+  measured, and what must the system record", and is answered in §5.2.1.
 - **Analytics source.** DECIDED (2026-10-14): analytics are described as
   built on quiz and assignment results, not chat questions — aligned in the
   abstract, Ch 1, FR4, Ch 4, Ch 5 and Ch 6.
@@ -176,15 +180,14 @@ decision from the author.
 
 ### D2. Grey placeholders still in the draft
 
-- **Abstract:** bracketed results (`[dataset / course cohort]`, `X%`, `Y`).
+- **Abstract:** bracketed answer-quality results (`[n]`, `[result]`).
 - **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
 - **Ch 3 (§3.4):** ethics approval / anonymisation of student logs;
   token-audit numbers (A1).
 - **Ch 4 (§4.1.2):** AWS rationale (D1).
-- **Ch 5:** cohort and protocol for RQ1 and the RQ2 answer-quality set
-  (§5.1); per-course instructor-hours results (§5.2.1); update the summary
-  with RQ1 and answer-quality results (§5.5).
-- **Ch 6:** final conclusion once RQ1 and the answer-quality results exist.
+- **Ch 5:** question set and scoring protocol for the RQ2 answer-quality
+  evaluation (§5.1); update the summary with those results (§5.5).
+- **Ch 6:** final conclusion once the answer-quality results exist.
 - **Appendix B (surveys):** fill in if surveys are run; otherwise drop the
   appendix (remove `\input{chapters/ap-survey.tex}` from `main.tex`).
 - **Diagrams:** the drawio (20 Sep) predates the Groq migration; update it.

@@ -181,11 +181,11 @@ First, it builds the
 modern form of the proposed intervention: a retrieval-augmented virtual
 teaching assistant over institutional (NUS Canvas) course materials
 (Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second --- and unlike
-prior work --- it instruments the intervention, logging every deflected query,
-to produce a direct estimate of the instructor-hours returned per course per
-week: the hour-denominated measurement that all three literatures lack. The
-metric and its results are developed in \autoref{ch:evaluation}
-(\autoref{eval:sec:metrics}). A third, technical contribution --- the first
+prior work --- it defines how to measure the intervention's effect: a direct,
+hour-denominated estimate of the instructor-hours returned per course per
+week, computed from logged deflected queries --- the measurement that all
+three literatures lack. The metric, and the data it requires, are developed
+in \autoref{ch:evaluation} (\autoref{eval:sec:metrics}). A third, technical contribution --- the first
 evaluation of retrieval compression in a deployed educational assistant ---
 is positioned at the end of \autoref{review:subsec:compression}.
 \autoref{review:tab:findings} summarises the
@@ -410,8 +410,8 @@ compression's cost--latency--quality trade-off on real course-material
 question answering in a deployable VTA is therefore this thesis's empirical
 contribution on the technical side, complementing the workload measurement of
 \autoref{review:subsec:gap}: the RAG pipeline is deployed as the intervention
-that \autoref{review:subsec:ai} identified, instrumented to yield the
-missing hour-denominated measurement, and made cheaper to operate --- in
+that \autoref{review:subsec:ai} identified, paired with a defined method for
+the missing hour-denominated measurement, and made cheaper to operate --- in
 both the hosted and local regimes --- by the compression stage described in \autoref{impl:sec:compression}
 and evaluated in \autoref{eval:sec:results:compression}.
 
@@ -438,10 +438,10 @@ long contexts also degrading answer quality~\cite{tacl24:Liu}. A compression
 literature attacks this token count at its source~\cite{emnlp23:Li,
 emnlp23:Jiang, acl24:Jiang, femnlp23:Liu, iclr24:Xu, facl25:Jeong}, but has,
 to our knowledge, never been evaluated in an educational VTA. This thesis supplies both the
-instrumented intervention --- a RAG-based virtual teaching assistant over NUS
+intervention --- a RAG-based virtual teaching assistant over NUS
 Canvas course materials with extractive retrieval
 compression~\cite{neurips20:Lewis, iclr24:Xu} --- and the missing
-measurements: per-query deflection telemetry that estimates instructor-hours
+measurements: a defined, hour-denominated measure of the instructor-hours
 returned, and a token, cost, latency, and answer-quality account of
 compression on real course-material question answering, closing the loop
 between the workload, teaching-quality, AI-intervention, and
