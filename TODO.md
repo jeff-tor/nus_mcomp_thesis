@@ -157,12 +157,9 @@ decision from the author.
   future work (§6.3). Still to align: the abstract, Ch 1 contributions and
   Ch 2 gap statement claim "every deflected query" is instrumented, and
   RQ1 (§3.4, §5.2.1) cannot be measured without chat logging.
-- **Instructor analytics are over quiz performance, not chat questions.**
-  `server/stats.js` builds class signals from quiz accuracy, hardest
-  questions and feedback-note themes, plus web trends. Ch 1 objective (iii),
-  the abstract and FR4 describe analytics "over the questions students ask".
-  Align the framing, or implement chat-question analytics (needs the
-  logging above; see B3).
+- **Analytics source.** DECIDED (2026-10-14): analytics are described as
+  built on quiz and assignment results, not chat questions — aligned in the
+  abstract, Ch 1, FR4, Ch 4, Ch 5 and Ch 6.
 - **Fuzzy rule table citation.** `feedbackEngine.py` calls it "Table III —
   validated by 15 faculty members". Cite the source paper in §4.5, or drop
   the claim.
