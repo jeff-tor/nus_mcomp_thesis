@@ -317,10 +317,17 @@ of local and hosted models on identical prompts, tools, and tasks, scored on
 latency, grounding fidelity, quiz-answer correctness, and cost
 (\autoref{eval:subsec:setup:providers}).
 
-% TODO: state whether ethics approval (NUS IRB) was obtained or required for
-% using student interaction logs in the evaluation, and how the logs were
-% anonymised.
-\draftnote{ethics approval and anonymisation of student interaction logs.}
+\paragraph{Ethics and data protection.} The evaluation in this thesis uses
+no student data. The compression probe uses course materials and questions
+written by the author, and the deployment benchmark replaces real student
+records with stubbed tool results. Approval from the NUS Institutional
+Review Board (IRB) will be sought before any student interaction data --- such
+as the chat histories proposed as future work (\autoref{ch:concl}) --- is
+collected for analysis. Under the planned data-protection scheme, each
+student is registered under a sequential pseudonymous identifier (001, 002,
+003, and so on) mapped to their email address, analyses refer to students
+only by that identifier, and no personal data beyond what the system needs
+to operate is stored.
 
 \subsection{Baseline Token Audit}
 \label{design:subsec:tokenaudit}

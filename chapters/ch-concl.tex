@@ -27,14 +27,21 @@ assignment results rather than on the questions students ask in chat, and the in
 \autoref{eval:subsec:hours}, which counts deflected chat queries, cannot yet
 be computed from the system's own records.
 
+\paragraph{The adaptive quiz's rule table is not validated.} The table that
+maps a student's performance tier to a target Bloom's level and complexity
+(\autoref{impl:sec:analytics}) follows established principles but was set by
+design rather than calibrated against instructors' judgement or student
+outcomes. Whether its targets are the right ones for a given course is
+untested.
+
 \section{Future Research Directions}
 
 % TODO: fold the items below into the full future-work narrative once the
 % conclusion is drafted.
 
 \paragraph{Storing chat histories for analytics.}
-Storing each user's chat history on the server --- with appropriate consent
-and anonymisation --- would close the limitation above. It would allow the
+Storing each user's chat history on the server --- with NUS IRB approval
+and the pseudonymisation scheme of \autoref{design:sec:methodology} --- would close the limitation above. It would allow the
 instructor-hours measure to be computed directly from deflected queries, and
 would let the instructor analytics draw on the questions students actually
 ask, for example by clustering them by topic, alongside quiz and assignment results.
@@ -53,6 +60,12 @@ with an adaptive per-query ratio, as in ECoRAG~\cite{facl25:Jeong}, is the
 natural upgrade path, at the cost of an LLM-in-the-loop labelling pipeline
 that the present system's design excluded
 (\autoref{design:subsec:compression-choice}).
+
+\paragraph{Validating the adaptive quiz.} The quiz's rule table could be
+validated by asking instructors to rate whether its target Bloom's level and
+complexity suit students at each performance tier, and by checking whether
+students who follow its targets improve faster than those given questions at
+random levels.
 
 \paragraph{Broader evaluation of the compression stage.}
 The token-reduction and latency results of

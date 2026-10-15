@@ -164,9 +164,12 @@ decision from the author.
 - **Analytics source.** DECIDED (2026-10-14): analytics are described as
   built on quiz and assignment results, not chat questions — aligned in the
   abstract, Ch 1, FR4, Ch 4, Ch 5 and Ch 6.
-- **Fuzzy rule table citation.** `feedbackEngine.py` calls it "Table III —
-  validated by 15 faculty members". Cite the source paper in §4.5, or drop
-  the claim.
+- **Fuzzy rule table.** DONE (2026-10-15): not validated by faculty; §4.5 now
+  gives a design rationale (revised Bloom's taxonomy, zone of proximal
+  development, Zadeh fuzzy sets, Takagi–Sugeno averaging — 4 new references
+  to check in the final reference pass), §6.2 states it is unvalidated, and
+  §6.3 adds validating it as future work. The FYP repo's `feedbackEngine.py`
+  comment still says "validated by 15 faculty members" — fix it there.
 
 ### D1. Open items
 
@@ -181,9 +184,11 @@ decision from the author.
 ### D2. Grey placeholders still in the draft
 
 - **Abstract:** bracketed answer-quality results (`[n]`, `[result]`).
-- **Ch 1:** `\field{}` specialisation in `main.tex` (confirm).
-- **Ch 3 (§3.4):** ethics approval / anonymisation of student logs;
-  token-audit numbers (A1).
+- **Title page dates:** Research Attachment Period and declaration date say
+  1 Nov 2026; submission is 26 Oct 2026 — confirm what NUS expects.
+- **Ch 3 (§3.4):** token-audit numbers (A1). (Ethics paragraph done
+  2026-10-15: no student data used; IRB to be sought before collecting
+  any; pseudonymous IDs 001, 002, … mapped to emails.)
 - **Ch 4 (§4.1.2):** AWS rationale (D1).
 - **Ch 5:** question set and scoring protocol for the RQ2 answer-quality
   evaluation (§5.1); update the summary with those results (§5.5).
