@@ -184,8 +184,9 @@ decision from the author.
 ### D2. Grey placeholders still in the draft
 
 - **Abstract:** bracketed answer-quality results (`[n]`, `[result]`).
-- **Title page dates:** Research Attachment Period and declaration date say
-  1 Nov 2026; submission is 26 Oct 2026 — confirm what NUS expects.
+- **Title page:** DONE (2026-10-15) — degree "Master of Computing (General
+  Track)" (class prints "in <field>" only when `\field` is set); end date
+  and declaration date 30 October 2026.
 - **Ch 3 (§3.4):** token-audit numbers (A1). (Ethics paragraph done
   2026-10-15: no student data used; IRB to be sought before collecting
   any; pseudonymous IDs 001, 002, … mapped to emails.)
@@ -193,7 +194,7 @@ decision from the author.
 - **Ch 5:** question set and scoring protocol for the RQ2 answer-quality
   evaluation (§5.1); update the summary with those results (§5.5).
 - **Ch 6:** final conclusion once the answer-quality results exist.
-- **Appendix B (surveys):** fill in if surveys are run; otherwise drop the
-  appendix (remove `\input{chapters/ap-survey.tex}` from `main.tex`).
+- **Appendix B (surveys):** DONE (2026-10-15) — no surveys will be run;
+  appendix removed.
 - **Diagrams:** the drawio (20 Sep) predates the Groq migration; update it.
   Optional further figures: adaptive-quiz flow, instructor course analysis.

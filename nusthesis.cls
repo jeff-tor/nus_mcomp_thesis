@@ -299,8 +299,10 @@
     \vspace{28pt minus 8pt}
     \blocklt{In Fulfillment for the Degree of the} \par
     \blocklt{\@degree}\par
-    in \par
-    \blocklt{\@field}\par
+    \ifx\@field\@empty\else
+      in \par
+      \blocklt{\@field}\par
+    \fi
     
     \vspace{28pt minus 8pt}
     \blocklt{\@degreeyear} \par
@@ -379,7 +381,7 @@
     \vspace{.1in}
     \@author\par
     \vspace{.1in}
-    {\@degree} in \@field\par
+    {\@degree}\ifx\@field\@empty\else\ in \@field\fi\par
     \vspace{.1in}
     National University of Singapore\par
   }
