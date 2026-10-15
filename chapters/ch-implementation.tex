@@ -353,13 +353,26 @@ personalisation mechanism (FR5), so it is described first.
 course: an exponential moving average of their answers ($\alpha = 0.2$, with
 a correct answer scored 10 and a wrong one 0). A fuzzy-inference engine maps
 this score to the next question's target. Seven overlapping trapezoidal
-membership functions, from \emph{novice} to \emph{expert}, cover the score
-range; each tier maps to a range of Bloom's taxonomy levels and a complexity
-band from 1 to 5, and the outputs are the membership-weighted averages. The
-overlap means a score near a tier boundary moves the target gradually rather
-than in a step.
-% TODO: cite the source of the fuzzy rule table (feedbackEngine.py calls it
-% "Table III" and says it was "validated by 15 faculty members").
+fuzzy sets~\cite{ic65:Zadeh}, from \emph{novice} to \emph{expert}, cover the
+score range; each tier maps to a range of Bloom's taxonomy levels and a
+complexity band from 1 to 5, and the outputs are the membership-weighted
+averages of the tiers' targets, as in a zero-order Takagi--Sugeno
+system~\cite{smc85:Takagi}. The overlap means a score near a tier boundary
+moves the target gradually rather than in a step.
+
+The rule table that maps tiers to targets is a design heuristic, built on two
+principles from the learning-sciences literature. First, the revised Bloom's
+taxonomy orders cognitive processes from remembering, through understanding,
+applying, analysing, and evaluating, to creating, each building on those
+below it~\cite{book01:Anderson}; a student who has not yet shown reliable
+recall is therefore not given analysis or evaluation questions. Second, the
+target sits just beyond what the student currently demonstrates, in the
+spirit of the zone of proximal development~\cite{book78:Vygotsky}: above the
+lowest tier, each tier spans two adjacent Bloom's levels, the lower one
+consolidating and the upper one stretching. Complexity rises with the tier
+for the same reason, and the top tier keeps the highest two levels but raises
+complexity, since there is no level above creating. The table has not been
+validated with instructors (\autoref{concl:sec:limitations}).
 The question itself is taken from the question bank when one matches the
 target; otherwise the quiz model generates one, grounded in a random excerpt
 of the course's ingested notes, and caches it in the bank. When a sitting
