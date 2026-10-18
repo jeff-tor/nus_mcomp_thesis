@@ -1,0 +1,11 @@
+id,question,type,follow_up_of,measures
+Q1,What is ray tracing?,definition,,baseline in-syllabus retrieval
+Q2,How does a shadow ray decide whether a point is in shadow?,concept,,same as compression probe Q1
+Q3,How do you find where a ray hits a sphere?,equation,,same as compression probe Q2
+Q4,What does the discriminant tell us when intersecting a ray with a sphere?,detail,,retrieval of one specific passage
+Q5,Walk me through the steps of the ray tracing algorithm for a single pixel.,procedural,,long answer across sections
+Q6,"Why is the recursion depth limited in ray tracing, and what values are typical?",concept,,recursion section
+Q7,What is the difference between primary rays and secondary rays?,synthesis,,retrieval across several chunks
+Q8,And what happens if the discriminant is exactly zero?,follow-up,Q3,conversation-history tokens
+Q9,When is my next CS3241 assignment due?,logistics,,LMS context with little or no retrieval
+Q10,How does TCP congestion control work?,off-syllabus,,empty retrieval (same as compression probe Q3)
