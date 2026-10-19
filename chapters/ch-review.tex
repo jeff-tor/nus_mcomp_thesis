@@ -43,13 +43,10 @@ administrative work~\cite{oecd25:TalisSG}. Teaching, in other words, occupies
 a minority of the working week. The burden is also felt as such: 53\% of
 Singapore teachers rank excessive administrative work as their foremost source
 of occupational stress, with marking second at 49\%~\cite{oecd25:TalisSG}.
-Internationally the administrative share varies widely --- from more than six
-hours per week in Korea down to roughly an hour and a half in Finland and
-France --- but it is persistent wherever it is high, having barely moved in
-most systems between 2018 and 2024~\cite{oecd25:Talis}.
-% TODO: verify the cross-system figures (Korea, Finland, France; optionally
-% Japan ~5h, Australia 4.7h) against the published TALIS 2024 tables before
-% submission, and cite the specific table numbers.
+Internationally the administrative load varies widely: about six hours per
+week in Korea, the highest among the participating systems, against about an
+hour and a half in Finland and France, and an OECD average of
+three~\cite{oecd25:Talis}.
 
 TALIS surveys school teachers, whereas this thesis deploys into university
 courses; the two populations must be bridged explicitly rather than silently.
@@ -279,8 +276,8 @@ course materials answered questions from 477 graduate students in an
 introductory AI programming course, with 3\,869 student--assistant interaction
 pairs analysed; retrieval over the course corpus runs in real time for every
 query~\cite{acl25:Kweon}. The LLM-powered Jill Watson answers questions over
-instructor courseware and has been deployed across multiple courses,
-institutions, and disciplines~\cite{arxiv24:JillWatson}.
+instructor courseware and has been deployed across multiple courses and
+colleges~\cite{arxiv24:JillWatson}.
 
 Operating these systems is a live institutional cost. Kortemeyer reports that
 Ethel cost ETH Zurich US\$7.50 per student per course per semester in cloud
@@ -288,10 +285,9 @@ AI-service charges --- an observed per-student figure from one institution,
 one cloud provider, and one model generation, cited here as evidence that the
 cost is material rather than as a market rate --- and notes that
 round-the-clock LLM inference at scale currently requires commercial cloud
-platforms, since university HPC clusters are batch-oriented and ill-suited to
-interactive serving~\cite{tpt24:Kortemeyer}. The same report states an
-explicit intent to explore open-weight models and on-premises hosting to
-reduce cost --- a posture this thesis shares in part: its generation uses
+platforms, since university HPC clusters are usually designed for batch
+operation~\cite{tpt24:Kortemeyer}. In the same passage, the report states an
+intent to explore open-weight models and on-premises hosting --- a posture this thesis shares in part: its generation uses
 open-weight models, served by a hosted inference provider, while retrieval
 runs locally (\autoref{design:subsec:deployment-decision}). Notably, none of these deployed-VTA studies applies prompt or context
 compression: the token overhead of retrieval is documented as a cost but not
