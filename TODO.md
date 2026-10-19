@@ -10,7 +10,13 @@ Carried over from the token-cost research integration (2026-07-05, source:
 `/Users/jeff/Downloads/fyp-thesis-token-cost-research-handoff.md`). Each item
 is also flagged as a `% TODO` comment at the indicated location.
 
-### A1. Run the baseline token audit
+### A1. Run the baseline token audit — DONE (2026-10-19)
+
+Run on the deployed system; written up in §3.4.1 (Table 3.3). Script and raw
+results in `exp/ch-token-audit/`. Finding: tool definitions (1,177 tokens,
+51%) and system prompt (615, 27%) outweigh retrieved context (512, 22%) on
+the small CS3241 corpus.
+
 
 **Where:** `chapters/ch-design.tex`, §3.4.1 (Baseline Token Audit,
 `design:subsec:tokenaudit`).
@@ -187,7 +193,7 @@ decision from the author.
 - **Title page:** DONE (2026-10-15) — degree "Master of Computing (General
   Track)" (class prints "in <field>" only when `\field` is set); end date
   and declaration date 30 October 2026.
-- **Ch 3 (§3.4):** token-audit numbers (A1). (Ethics paragraph done
+- **Ch 3 (§3.4):** done. (Token audit done 2026-10-19; ethics paragraph done
   2026-10-15: no student data used; IRB to be sought before collecting
   any; pseudonymous IDs 001, 002, … mapped to emails.)
 - **Ch 4 (§4.1.2):** AWS rationale (D1).

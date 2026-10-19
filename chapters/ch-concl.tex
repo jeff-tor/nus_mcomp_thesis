@@ -67,6 +67,14 @@ complexity suit students at each performance tier, and by checking whether
 students who follow its targets improve faster than those given questions at
 random levels.
 
+\paragraph{Trimming the fixed prompt overhead.} The token audit
+(\autoref{design:subsec:tokenaudit}) found that tool definitions and the
+system prompt make up about three-quarters of each agent pass's prompt,
+re-sent on every pass. Sending only the tools a turn is likely to need ---
+for example, omitting the documentation tools for questions about course
+logistics --- and shortening the tool descriptions would cut input tokens on
+every pass, alongside what compression saves on retrieved context.
+
 \paragraph{Broader evaluation of the compression stage.}
 The token-reduction and latency results of
 \autoref{eval:sec:results:compression} derive from a small probe over a
