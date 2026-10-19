@@ -46,35 +46,14 @@ depends on it.
 
 The system's inference configuration changed during the project, and the
 results in \autoref{ch:evaluation} were measured on different configurations.
-\autoref{impl:tab:configs} records each configuration and the results
-measured on it.
+The compression probe ran on the earliest, fully local configuration
+(Llama~3.2, 3B, on an 8\,GB laptop); the local rows of the provider benchmark
+on the August 2026 configuration (Qwen3 14B and Llama~3.2 on a 32\,GB M1
+Max); and the hosted benchmark rows, the token audit, the answer-quality
+evaluation, and the cost projection on the hybrid configuration deployed from
+27 September 2026. \autoref{impl:tab:configs} in \autoref{append:comparisons}
+lists each configuration in full.
 
-\begin{table}[htb]
-  \centering
-  \caption{Inference configurations used during the project.}
-  \label{impl:tab:configs}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{L{0.14\textwidth} L{0.37\textwidth} L{0.37\textwidth}}
-    \hline
-    \textbf{Period} & \textbf{Configuration} & \textbf{Results measured} \\
-    \hline
-    Development &
-      Fully local: Llama~3.2 (3B) via Ollama on an 8\,GB consumer laptop &
-      Compression probe (\autoref{eval:sec:results:compression}) \\
-    Aug 2026 &
-      Fully local: Qwen3 14B (agent) and Llama~3.2 (quiz) via Ollama on a
-      32\,GB M1 Max, reached from EC2 over a reverse SSH tunnel &
-      Local rows of the provider benchmark
-      (\autoref{eval:sec:results:providers}) \\
-    From 27 Sep 2026 &
-      Hybrid: gpt-oss-20b (agent) and gpt-oss-120b (quiz) on Groq; BGE-M3
-      embeddings and Llama~3.2 fallback local &
-      Hosted rows of the provider benchmark; cost projection
-      (\autoref{eval:subsec:results:cost}) \\
-    \hline
-  \end{tabular}
-\end{table}
 
 \subsection{Cloud Provider Selection}
 \label{impl:subsec:provider}

@@ -107,7 +107,9 @@ also flagged as a `% TODO` comment at the indicated location.
 
 Korea ~6 h (highest), Finland and France ~1.5 h, OECD average 3: confirmed.
 "More than six" corrected to "about six"; the unverified "barely moved since
-2018 in most systems" claim removed. Table numbers not added: the OECD report
+2018 in most systems" claim removed, replaced by the Korea country note's
+figures (admin work +0.6 h since 2018; 50% cite it as a stressor), cited as
+`oecd25:TalisKR`. Table numbers not added: the OECD report
 pages block automated access, so the report is cited as a whole.
 
 

@@ -4,7 +4,8 @@
 
 This appendix holds reference material summarised in the body: the
 deployment models considered in \autoref{design:sec:deployment}, the cloud
-providers considered in \autoref{impl:subsec:provider}, and the application
+providers considered in \autoref{impl:subsec:provider}, the inference
+configurations described in \autoref{impl:subsec:configs}, and the application
 components described in \autoref{impl:sec:stack}.
 
 \begin{table}[htb]
@@ -149,3 +150,32 @@ components described in \autoref{impl:sec:stack}.
            in the fourth layer.}
   \label{impl:fig:components}
 \end{figure}
+
+\begin{table}[htb]
+  \centering
+  \caption{Inference configurations used during the project.}
+  \label{impl:tab:configs}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.14\textwidth} L{0.37\textwidth} L{0.37\textwidth}}
+    \hline
+    \textbf{Period} & \textbf{Configuration} & \textbf{Results measured} \\
+    \hline
+    Development &
+      Fully local: Llama~3.2 (3B) via Ollama on an 8\,GB consumer laptop &
+      Compression probe (\autoref{eval:sec:results:compression}) \\
+    Aug 2026 &
+      Fully local: Qwen3 14B (agent) and Llama~3.2 (quiz) via Ollama on a
+      32\,GB M1 Max, reached from EC2 over a reverse SSH tunnel &
+      Local rows of the provider benchmark
+      (\autoref{eval:sec:results:providers}) \\
+    From 27 Sep 2026 &
+      Hybrid: gpt-oss-20b (agent) and gpt-oss-120b (quiz) on Groq; BGE-M3
+      embeddings and Llama~3.2 fallback local &
+      Hosted rows of the provider benchmark; token audit
+      (\autoref{design:subsec:tokenaudit}); answer-quality evaluation
+      (\autoref{eval:sec:results:quality}); cost projection
+      (\autoref{eval:subsec:results:cost}) \\
+    \hline
+  \end{tabular}
+\end{table}
