@@ -13,6 +13,11 @@ Rubric (see README.md):
     cites_A / cites_B          Y if the answer draws on or cites the course material
     not_covered_A / _B         off-syllabus only: Y if it says the material does not cover it
     preferred                  optional: A, B or tie
+
+AI-assisted review (option B): if the sheet carries provisional scores
+(suggested_correct_A / _B, suggested_cites_A / _B, suggested_not_covered_A / _B),
+every row must be marked reviewed = Y by the author, and the summary reports
+how many provisional scores the author changed.
 """
 import csv
 import json
@@ -67,8 +72,25 @@ def main(argv):
     key = json.load(open(key_path))
     raw = {r["id"]: r for r in json.load(open(raw_path))["results"]}
 
+    assisted = bool(sheet) and "suggested_correct_A" in sheet[0]
+    if assisted:
+        unreviewed = [s["id"] for s in sheet if (s.get("reviewed") or "").strip().upper() not in ("Y", "YES")]
+        if unreviewed:
+            die("these rows are not marked reviewed = Y by the author: " + ", ".join(unreviewed))
+    changes = {"checked": 0, "changed": 0, "changed_ids": []}
     rows = []
     for s in sheet:
+        if assisted:
+            for f in ("correct", "cites", "not_covered"):
+                for label in ("A", "B"):
+                    sug = (s.get(f"suggested_{f}_{label}") or "").strip().upper()
+                    fin = (s.get(f"{f}_{label}") or "").strip().upper()
+                    if sug == "" and fin == "":
+                        continue
+                    changes["checked"] += 1
+                    if sug != fin:
+                        changes["changed"] += 1
+                        changes["changed_ids"].append(f"{s['id']}:{f}_{label}")
         qid = s["id"]
         if qid not in key or qid not in raw:
             die(f"{qid}: missing from key.json or raw.json")
@@ -139,6 +161,9 @@ def main(argv):
             for cond in CONDS}},
         "cost_in_syllabus": cost(ins),
         "preferences": {p: sum(x["preferred"] == p for x in rows) for p in ("uncompressed", "compressed", "tie")},
+        "scoring": ({"method": "author, with AI-suggested provisional scores reviewed by the author",
+                     "provisional_scores": changes["checked"], "changed_by_author": changes["changed"],
+                     "changed": changes["changed_ids"]} if assisted else {"method": "author"}),
         "rows": rows,
     }
     json.dump(summary, open(f"{out}.json", "w"), indent=2)
@@ -167,6 +192,9 @@ def main(argv):
     o = summary["off_syllabus"]
     md += ["", f"Off-syllabus, says the material does not cover it: uncompressed "
                f"{o['uncompressed']['says_not_covered_pct']}%, compressed {o['compressed']['says_not_covered_pct']}%."]
+    sc = summary["scoring"]
+    md += ["", f"Scoring: {sc['method']}" + (f"; the author changed {sc['changed_by_author']} of "
+                                              f"{sc['provisional_scores']} provisional scores." if assisted else ".")]
     open(f"{out}.md", "w").write("\n".join(md) + "\n")
     print("\n".join(md))
 

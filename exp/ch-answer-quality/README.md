@@ -93,6 +93,24 @@ Judge correctness against the reference, not against your own preferred
 explanation: an answer that is correct but goes beyond the reference still
 scores 2.
 
+### Scoring with AI-suggested provisional scores (the method used here)
+
+The scores in this thesis are the author's, with AI assistance disclosed:
+
+1. Before `key.json` is opened, an AI assistant fills `suggested_correct_*`,
+   `suggested_cites_*` and `suggested_not_covered_*` for every answer, with a
+   one-line justification in `reason_A` / `reason_B`, and copies the
+   suggestions into the final score columns as a starting point.
+2. The author reads every answer against the reference, accepts or changes
+   each score in the final columns (`correct_*`, `cites_*`, `not_covered_*`),
+   and marks the row `reviewed` = `Y`.
+3. `score.py` refuses to run while any row is not marked reviewed, and reports
+   how many provisional scores the author changed.
+
+Report it as: *scored blind by the author, with provisional scores suggested
+by an AI assistant (Claude Opus 5.5) and reviewed by the author, who changed N
+of M provisional scores.*
+
 ## Summarise
 
 On your Mac, in the results folder:
