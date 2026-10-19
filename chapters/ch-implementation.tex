@@ -27,7 +27,8 @@ database, and Nginx run as Docker containers on one EC2 host, built and
 deployed through continuous integration.
 
 \autoref{impl:fig:components} in \autoref{append:comparisons} shows how the
-application is organised. The
+application is organised, and \autoref{append:architecture} gives the full
+master architecture diagram with the path of each use case. The
 browser client is a set of plain JavaScript modules, one per feature, over a
 single shared state. Every request passes through Nginx and an
 authentication gate that checks the session cookie and the user's role, so
