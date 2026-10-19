@@ -334,10 +334,10 @@ to operate is stored.
 
 The literature reviewed in \autoref{review:subsec:tokens} establishes in
 general that a RAG pipeline's input token count is dominated by retrieved
-context~\cite{femnlp23:Liu}; this section establishes it for \emph{this}
-system, in its own data, because that measured share --- not the citation ---
-is the design motivation for the compression stage. The audit decomposes the
-uncompressed pipeline's prompt into its four components:
+context~\cite{femnlp23:Liu}. Whether that holds for \emph{this} system is an
+empirical question, and its answer bounds what the compression stage can
+save. The audit decomposes the uncompressed pipeline's first-pass prompt into
+its components:
 
 \begin{equation}
   \label{design:eq:tokenaudit}
@@ -345,15 +345,20 @@ uncompressed pipeline's prompt into its four components:
     \;=\;
   \underbrace{k \cdot \bar{t}_{\mathrm{chunk}}}_{\text{retrieved context}}
   \;+\; t_{\mathrm{system}}
+  \;+\; t_{\mathrm{tools}}
+  \;+\; t_{\mathrm{context}}
   \;+\; t_{\mathrm{history}}
   \;+\; t_{\mathrm{query}},
 \end{equation}
 
 where $k$ is the number of retrieved chunks per query,
 $\bar{t}_{\mathrm{chunk}}$ the mean tokens per chunk under the deployed
-Canvas-material chunking configuration, and $t_{\mathrm{system}}$,
-$t_{\mathrm{history}}$, and $t_{\mathrm{query}}$ the system prompt,
-conversation history, and student question respectively. The quantities of
+chunking configuration, and $t_{\mathrm{system}}$, $t_{\mathrm{tools}}$,
+$t_{\mathrm{context}}$, $t_{\mathrm{history}}$, and $t_{\mathrm{query}}$ the
+system prompt, the tool definitions, the student's learning-management data,
+the conversation history, and the student question respectively. The tool
+term is not part of the usual RAG formulation; it is included because the
+deployed agent sends its tool definitions with every pass. The quantities of
 interest are the baseline input tokens per query and the share attributable
 to the retrieved-context term. This baseline anchors the thesis's coherence
 loop: the problem statement quantifies cost in tokens per query
@@ -361,11 +366,72 @@ loop: the problem statement quantifies cost in tokens per query
 the same units, and the evaluation reports compression's effect in the same
 units again (\autoref{eval:sec:metrics}).
 
-% TODO: run the audit on the actual pipeline (measure tokens per chunk and k
-% from the deployed chunking config; take system prompt / history / query
-% tokens from production logs) and report the numbers and the
-% retrieved-context share here.
-\draftnote{baseline token-audit measurements from the deployed pipeline.}
+\paragraph{Method.} The audit was run on the deployed system on 19 October
+2026, with compression switched off. A script inside the backend container
+used the deployed retrieval code, tool definitions, and persona, built each
+question's prompt one component at a time, and read the exact input-token
+count reported by the hosted provider after each step; the counts are
+therefore in the deployed agent model's tokenizer (gpt-oss-20b). Ten
+questions over the CS3241 corpus were used: seven standalone in-syllabus
+questions of different kinds (definition, concept, equation, detail,
+procedure, and synthesis), a follow-up to one of them, a logistics question,
+and an off-syllabus question. The tool definitions comprised five tools, two
+of them from the connected documentation (MCP) server. The student's
+learning-management data was not captured, because no test account is
+enrolled in CS3241, so $t_{\mathrm{context}} = 0$ throughout. The script,
+questions, and raw results are in the thesis repository
+(\texttt{exp/ch-token-audit}).
+
+\begin{table}[htb]
+  \centering
+  \caption{Composition of the uncompressed first-pass prompt: mean over the
+           seven standalone in-syllabus questions (CS3241, gpt-oss-20b
+           tokenizer).}
+  \label{design:tab:tokenaudit}
+  \begin{tabular}{l r r}
+    \hline
+    \textbf{Component} & \textbf{Tokens} & \textbf{Share} \\
+    \hline
+    Tool definitions, $t_{\mathrm{tools}}$ (5 tools)          & 1\,177 & 50.8\% \\
+    System prompt, $t_{\mathrm{system}}$                      & 615    & 26.6\% \\
+    Retrieved context, $k \cdot \bar{t}_{\mathrm{chunk}}$ ($k=3$) & 512 & 22.1\% \\
+    Student question, $t_{\mathrm{query}}$ (range 5--16)      & 12     & 0.5\%  \\
+    \hline
+    First-pass prompt, $T_{\mathrm{input}}$                   & 2\,316 & 100\%  \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\paragraph{Results.} \autoref{design:tab:tokenaudit} shows that, on this
+system, retrieved context is not the dominant term. Fixed overhead --- the
+tool definitions and the system prompt --- makes up 77\% of the first-pass
+prompt, and the tool definitions alone are its largest component. Two
+qualifications apply. First, the CS3241 corpus is small: its 314 words form
+three chunks of about 171 tokens each, so every in-syllabus question
+retrieves the whole corpus. At the configured maximum of $k = 5$, retrieved
+context would reach about 850 tokens, or 32\% of the prompt --- still less
+than the fixed overhead. Second, the overhead is paid on every agent pass,
+and the hosted provider applied no prompt caching
+(\autoref{eval:subsec:results:cost}), so a three-pass turn re-sends about
+3\,500 tokens of tool definitions alone.
+
+The other three questions show how the prompt varies. The follow-up question
+added 310 tokens of conversation history, a term that grows with every turn.
+The logistics question retrieved nothing, giving the smallest prompt
+(1\,802 tokens). The off-syllabus question on TCP congestion control
+retrieved one chunk (213 tokens) that passed the distance cut-off despite
+being irrelevant --- the same leak observed in the compression probe
+(\autoref{eval:sec:results:compression}), where only the compressor's
+sentence threshold withheld it.
+
+\paragraph{Implications.} The audit sets realistic expectations for the
+compression stage. Removing about 65\% of the retrieved context, as in the
+compression probe, saves about 330 tokens, or 14\% of the first-pass prompt
+on this corpus --- much less than the two-thirds of the prompt removed in
+the probe, whose prompts (545--769 tokens) carried no tool definitions. It
+also identifies a second, larger lever that compression does not touch: the
+fixed overhead, and in particular the tool definitions, which could be
+reduced by sending only the tools a turn needs (\autoref{ch:concl}).
 
 \subsection{Selection of the Compression Method}
 \label{design:subsec:compression-choice}

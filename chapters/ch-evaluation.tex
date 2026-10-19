@@ -318,7 +318,9 @@ against 6/10, for US\$0.00007 more per question).
 \label{eval:subsec:results:cost}
 
 The benchmark prompts carry no retrieved context, so production cost is
-modelled by adding about 1\,000 tokens of retrieved context per pass, with
+modelled by adding about 1\,000 tokens of retrieved context per pass --- an
+upper-range assumption, since the token audit measured about 510 tokens on
+the CS3241 corpus (\autoref{design:subsec:tokenaudit}) --- with
 and without the 65\% reduction measured in the compression probe
 (\autoref{eval:sec:results:compression}). Costs use Groq's list prices
 (gpt-oss-20b: US\$0.075 input and US\$0.30 output per million tokens;
@@ -387,7 +389,11 @@ when a question fell outside the syllabus. Its cost to quality is real but
 narrow: on one question, the sentence holding a needed equation fell below
 the retention threshold, and the answer lost it. Compression is therefore
 worth having, but its threshold needs tuning per deployment, and its quality
-cost has not yet been measured on a proper question set.
+cost has not yet been measured on a proper question set. Its reach is also
+bounded: on the deployed agent, retrieved context is only about a fifth of
+the first-pass prompt, behind the tool definitions and the system prompt
+(\autoref{design:subsec:tokenaudit}), so compression alone cannot cut the
+prompt by more than that share.
 
 \paragraph{RQ3: deployment model.} Hosted generation was faster than every
 local model usable in production, equally grounded, and more often correct

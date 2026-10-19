@@ -1,0 +1,11 @@
+id,question,type,follow_up_of,course,chunks_retrieved,retrieved_chars,t_system,t_context,t_retrieved,t_history,t_query,t_tools,first_pass_input,retrieved_share_pct,passes_observed,notes
+Q1,What is ray tracing?,definition,,CS3241,3,2264,615,0,512,0,5,1177,2309,22.2,,
+Q2,How does a shadow ray decide whether a point is in shadow?,concept,,CS3241,3,2264,615,0,512,0,13,1177,2317,22.1,,
+Q3,How do you find where a ray hits a sphere?,equation,,CS3241,3,2264,615,0,511,0,11,1177,2314,22.1,,
+Q4,What does the discriminant tell us when intersecting a ray with a sphere?,detail,,CS3241,3,2264,615,0,511,0,16,1177,2319,22.0,,
+Q5,Walk me through the steps of the ray tracing algorithm for a single pixel.,procedural,,CS3241,3,2264,615,0,512,0,15,1177,2319,22.1,,
+Q6,"Why is the recursion depth limited in ray tracing, and what values are typical?",concept,,CS3241,3,2264,615,0,511,0,16,1177,2319,22.0,,
+Q7,What is the difference between primary rays and secondary rays?,synthesis,,CS3241,3,2264,615,0,512,0,11,1177,2315,22.1,,
+Q8,And what happens if the discriminant is exactly zero?,follow-up,Q3,CS3241,2,1345,615,0,312,310,11,1177,2425,12.9,,history = Q3 question + generated answer (1015 chars)
+Q9,When is my next CS3241 assignment due?,logistics,,CS3241,0,0,615,0,0,0,10,1177,1802,0.0,,no chunk passed the distance cut-off
+Q10,How does TCP congestion control work?,off-syllabus,,CS3241,1,983,615,0,213,0,7,1177,2012,10.6,,
