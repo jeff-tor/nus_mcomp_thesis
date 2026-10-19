@@ -192,8 +192,8 @@ decision from the author.
 
 - **Name the AI model (and version)** that judged quiz answer-key
   correctness — §5.1.1.
-- **AWS rationale:** placeholder until the GCP/Azure comparison is done —
-  §4.1.2.
+- **AWS rationale:** DONE (2026-10-19) — short note in §4.1.2 (industry
+  standard); GCP/Azure comparison listed as future work in §6.3.
 - **Report P95 latency** once larger samples exist (current: n=10 / n=3).
 - **Time a full production turn on Groq** (retrieval + live tools +
   streaming); the benchmark used stubbed tools.
@@ -207,7 +207,7 @@ decision from the author.
 - **Ch 3 (§3.4):** done. (Token audit done 2026-10-19; ethics paragraph done
   2026-10-15: no student data used; IRB to be sought before collecting
   any; pseudonymous IDs 001, 002, … mapped to emails.)
-- **Ch 4 (§4.1.2):** AWS rationale (D1).
+- **Ch 4 (§4.1.2):** done (AWS note, 2026-10-19).
 - **Ch 5:** question set and scoring protocol for the RQ2 answer-quality
   evaluation (§5.1); update the summary with those results (§5.5).
 - **Ch 6:** final conclusion once the answer-quality results exist.

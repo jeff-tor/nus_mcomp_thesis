@@ -86,12 +86,11 @@ needs a cloud platform for the application server and database.
 three major cloud providers across ten dimensions that drive this system's
 implementation, from managed AI services to pricing and learning curve.
 
-The application server runs on AWS EC2 (us-east-1).
-% TODO: AWS was chosen as the industry-standard platform for deploying
-% cloud-based components. Replace this placeholder once the comparison of
-% service level, cost, and related factors against GCP and Azure is done,
-% tying the deciding dimensions back to \autoref{design:sec:requirements}.
-\draftnote{rationale for AWS --- currently chosen as the industry-standard platform for cloud-based components; a comparison of service level, cost, and related factors against GCP and Azure is in progress.}
+The application server runs on AWS EC2 (us-east-1). AWS was chosen as the
+industry-standard platform for deploying cloud-based components; a systematic
+comparison of service level and cost against GCP and Azure, along the
+dimensions of \autoref{impl:tab:providers}, is left to future work
+(\autoref{ch:concl}).
 Generation, however, is not served by any of the three platforms' managed AI
 services but by a dedicated inference provider, selected separately
 (\autoref{impl:subsec:llm-providers}).
