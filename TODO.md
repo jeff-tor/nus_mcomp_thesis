@@ -27,7 +27,13 @@ Canvas-material chunking config, plus system-prompt/history/query tokens from
 production logs, and report the retrieved-context share. This number anchors
 Ch 1, Ch 3, and the evaluation.
 
-### A2. Verify the Jill Watson citation
+### A2. Verify the Jill Watson citation — DONE (2026-10-19)
+
+Maiti & Goel, EDM 2024 workshop; ACL Anthology pages added for LLMLingua,
+LongLLMLingua, Selective Context, ECoRAG, Kweon et al.; BGE-M3 updated to its
+Findings ACL 2024 version. "Multiple institutions and disciplines" corrected
+to "multiple courses and colleges".
+
 
 **Where:** `references.bib` (`arxiv24:JillWatson`), cited in
 `ch-intro.tex` and `ch-review.tex` §2.2.1.
@@ -73,7 +79,12 @@ residency instead.
   per student per week, 13 weeks) with rates from production logs.
 - Optionally turn the table into a chart.
 
-### A5. Keep the novelty claim current
+### A5. Keep the novelty claim current — DONE (2026-10-19)
+
+Searched again: no published evaluation of RECOMP-style or prompt compression
+in an educational assistant (checked arXiv 2509.17961, 2604.25924). Claim
+stays hedged ("to the best of our knowledge").
+
 
 **Where:** `chapters/ch-review.tex`, §2.2.3 (`review:subsec:compression`).
 
@@ -92,7 +103,15 @@ original citation details are recovered and checked.
 Carried over from the lit-review integration (2026-07-05). Each item below is
 also flagged as a `% TODO` comment at the indicated location.
 
-### B1. Verify TALIS cross-country figures and cite table numbers
+### B1. Verify TALIS cross-country figures — DONE (2026-10-19)
+
+Korea ~6 h (highest), Finland and France ~1.5 h, OECD average 3: confirmed.
+"More than six" corrected to "about six"; the unverified "barely moved since
+2018 in most systems" claim removed, replaced by the Korea country note's
+figures (admin work +0.6 h since 2018; 50% cite it as a stressor), cited as
+`oecd25:TalisKR`. Table numbers not added: the OECD report
+pages block automated access, so the report is cited as a whole.
+
 
 **Where:** `chapters/ch-review.tex`, §2.1.1 (Educator Time Allocation), after
 the Singapore paragraph.

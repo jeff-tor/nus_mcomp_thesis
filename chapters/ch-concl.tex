@@ -78,20 +78,11 @@ overlapped. And the persona should tell the student when the course material
 does not cover a question even when no excerpts are provided, which no answer
 did in either condition.
 
-\paragraph{Adaptive, evidentiality-guided compression.}
-The extractive compression stage adopted from
-\textsc{Recomp}~\cite{iclr24:Xu} carries two known limitations, identified
-by~\citet{facl25:Jeong}~\cite{facl25:Jeong}: as the number of retrieved
-documents grows, the compressor struggles to filter the increasing share of
-irrelevant content, and a fixed compression ratio (here, the static threshold
-$\tau$ and cap $k$ of \autoref{impl:sec:compression}) is suboptimal
-per-question --- this system's own evaluation observed exactly this failure
-mode when an equation-bearing sentence fell below the retention cut-off
-(\autoref{eval:sec:results:compression}). Evidentiality-guided compression
-with an adaptive per-query ratio, as in ECoRAG~\cite{facl25:Jeong}, is the
-natural upgrade path, at the cost of an LLM-in-the-loop labelling pipeline
-that the present system's design excluded
-(\autoref{design:subsec:compression-choice}).
+\paragraph{Adaptive, evidentiality-guided compression.} A fixed threshold
+and cap are suboptimal per question, as the dropped equation in
+\autoref{eval:sec:results:compression} showed; evidentiality-guided
+compression with an adaptive ratio, as in ECoRAG~\cite{facl25:Jeong}, is the
+natural upgrade, at the cost of an LLM-in-the-loop labelling pipeline.
 
 \paragraph{Validating the adaptive quiz.} The quiz's rule table could be
 validated by asking instructors to rate whether its target Bloom's level and
@@ -107,27 +98,19 @@ for example, omitting the documentation tools for questions about course
 logistics --- and shortening the tool descriptions would cut input tokens on
 every pass, alongside what compression saves on retrieved context.
 
-\paragraph{Broader evaluation of the compression stage.}
-The compression results derive from a three-question probe and a
-20-question evaluation on two small course corpora, scored by one rater
-(\autoref{eval:sec:results:compression}, \autoref{eval:sec:results:quality}).
-A larger question set across several courses, scored by more than one rater,
-with P50/P95 latency and a variant of the persona that answers directly, is
-needed before the effects can be claimed as general.
-\paragraph{Production-hardened deployment.}
-The deployed prototype runs on a single application host
-(\autoref{design:sec:architecture}). A production target on AWS has been
-designed but not provisioned: Aurora PostgreSQL (Serverless~v2, with
-pgvector) in place of the containerised database; the same backend image on
-ECS Fargate behind an Application Load Balancer, chosen over AWS Lambda
-because chat responses stream and the tool-calling loop can outlast a
-Lambda timeout; a GPU auto-scaling group in place of the local inference
-host; Cognito in place of application-managed sessions; scheduled ingestion
-through EventBridge and Lambda; and CloudFront, a web application firewall,
-a cache, managed secrets, and multi-availability-zone deployment. Building
-and costing this target, and re-running the cost projection of
-\autoref{eval:subsec:results:cost} against it, would test whether the
-system's per-student cost holds at institutional scale. Costing equivalent
-deployments on GCP and Azure, along the dimensions of
-\autoref{impl:tab:providers}, would also test the choice of AWS, which was
-made as the industry-standard platform rather than by systematic comparison.
+\paragraph{Broader evaluation of the compression stage.} The compression
+results come from small samples on two small corpora; a larger, multi-rater
+question set across several courses is needed
+(\autoref{eval:sec:discussion}).
+
+\paragraph{Production-hardened deployment.} The prototype runs on a single
+application host (\autoref{design:sec:architecture}). A production target on
+AWS has been designed but not provisioned: a managed PostgreSQL database with
+pgvector, the backend on container orchestration behind a load balancer
+(rather than serverless functions, which time out on streamed, multi-pass
+chat), a GPU group in place of the local inference host, managed identity,
+scheduled ingestion, and the usual network hardening. Building and costing
+this target --- and the equivalent deployments on GCP and Azure, along the
+dimensions of \autoref{impl:tab:providers}, which would also test the choice
+of AWS --- would show whether the per-student cost of
+\autoref{eval:subsec:results:cost} holds at institutional scale.
