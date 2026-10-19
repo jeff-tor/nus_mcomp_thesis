@@ -90,77 +90,10 @@ run, and what happens when either is unavailable. Three candidates are
 considered --- fully cloud-hosted, fully on-premises (local), and hybrid ---
 and assessed against the requirements of \autoref{design:sec:requirements}.
 
-\autoref{design:tab:deployment} compares the three candidate deployment models
-across the dimensions most relevant to a virtual teaching assistant.
-
-\begin{table}[htb]
-  \centering
-  \caption{Comparison of deployment models for the virtual teaching assistant.}
-  \label{design:tab:deployment}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{L{0.13\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.185\textwidth}}
-    \hline
-    \textbf{Dimension} & \textbf{Cloud} & \textbf{On-Premises} & \textbf{Hybrid} & \textbf{Relevance to This System} \\
-    \hline
-    Scalability &
-      Auto-scaling, elastic resources &
-      Fixed hardware capacity &
-      Burst to cloud for peak load &
-      Needed when many students interact simultaneously \\
-    Initial cost (CapEx) &
-      Low upfront cost &
-      High hardware investment &
-      Moderate; reuses existing hardware &
-      Important for student projects with limited budget \\
-    Operational cost (OpEx) &
-      Pay-as-you-go pricing &
-      Maintenance, electricity, upgrades &
-      Both cost models apply &
-      Cloud easier to forecast for experimentation \\
-    AI/ML infrastructure &
-      Managed GPUs, LLM APIs, training services &
-      GPUs and frameworks configured manually &
-      Local inference; managed services for heavy workloads &
-      Faster iteration for adaptive learning models \\
-    Maintenance and updates &
-      Managed by provider &
-      Self-managed patches and upgrades &
-      Split responsibility &
-      Frees effort for algorithm design over operations \\
-    Security controls &
-      Built-in IAM, encryption, monitoring &
-      Full control, higher responsibility &
-      Must secure both environments and the link &
-      Student learning data requires strong protection \\
-    Data privacy and control &
-      Shared responsibility model &
-      Full ownership of data &
-      Sensitive data on-premises; compute in cloud &
-      On-premises stronger for sensitive datasets \\
-    Reliability and availability &
-      Multi-region redundancy &
-      Depends on local setup &
-      Cloud fallback for local outages &
-      Important for continuous student access \\
-    Latency &
-      Depends on region selection &
-      Very low on local network &
-      Low for local paths; variable for cloud paths &
-      Useful for real-time AI responses \\
-    Development speed &
-      Fast prototyping with managed services &
-      Longer setup time &
-      Added integration complexity &
-      Accelerates the project timeline \\
-    Vendor lock-in risk &
-      Higher (managed services) &
-      Lower &
-      Lower; workloads remain portable &
-      Key architectural consideration \\
-    \hline
-  \end{tabular}
-\end{table}
+\autoref{design:tab:deployment} in \autoref{append:comparisons} compares the
+three candidate deployment models across eleven dimensions relevant to a
+virtual teaching assistant, from scalability and cost to data privacy and
+vendor lock-in; the decision below draws on it.
 
 \subsection{Deployment Decision}
 \label{design:subsec:deployment-decision}

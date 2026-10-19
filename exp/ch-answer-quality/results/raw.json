@@ -1,0 +1,1040 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "course": "IT5001",
+  "temperature": 0,
+  "max_tokens": 1024,
+  "seed": 5105,
+  "rag": {
+    "top_k": 5,
+    "max_distance": 0.6
+  },
+  "compression": {
+    "top_k": 6,
+    "min_score": 0.5
+  },
+  "ran_at": "2026-10-19T14:07:22.385Z",
+  "results": [
+    {
+      "id": "A01",
+      "question": "What is the difference between / and // in Python 3, and what does -7 // 2 give?",
+      "kind": "in-syllabus",
+      "tag": "code",
+      "source": "01-python-basics.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.32900734639342466,
+      "retrieval_ms": 647,
+      "compression": {
+        "rawChars": 3983,
+        "keptChars": 267,
+        "ratio": 0.06703489831785087,
+        "totalSentences": 18,
+        "keptSentences": 3,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.592,
+          0.569,
+          0.567
+        ]
+      },
+      "uncompressed": {
+        "answer": "Great question! Let’s think about how division works in Python 3.\n\n1. **What do you expect when you divide two integers?**  \n   - If you write `7 / 2`, what type of result do you think you’ll get?\n\n2. **What happens if you want an integer result instead of a float?**  \n   - Is there a different operator that keeps the result as an integer?\n\nOnce you’ve considered those, you’ll see the difference between `/` and `//`. If you’d like me to confirm your thoughts or give the exact answer, just let me know!",
+        "finish": "stop",
+        "prompt_tokens": 1771,
+        "completion_tokens": 140,
+        "latency_ms": 835,
+        "context_chars": 4235
+      },
+      "compressed": {
+        "answer": "Great question! Let’s break it down step by step.\n\n1. **What do the operators `/` and `//` do?**  \n   - `/` is the *true division* operator. It always returns a floating‑point result (a `float`), even if the division is exact.  \n   - `//` is the *floor division* operator. It divides and then rounds the result down to the nearest whole number (an integer) – that’s why it’s called “floor” division.\n\n2. **How does floor division handle negative numbers?**  \n   Floor division rounds *toward negative infinity*. So for a negative dividend, the result is the next integer that is less than or equal to the exact quotient.\n\n3. **Apply that to `-7 // 2`:**  \n   - The exact quotient is `-3.5`.  \n   - Rounding toward negative infinity gives `-4`.  \n   - Therefore, `-7 // 2` evaluates to `-4`.\n\nSo, `/` gives you a float (`-3.5`), while `//` gives you the floor integer (`-4`). Feel free to try a few more examples to see the pattern!",
+        "finish": "stop",
+        "prompt_tokens": 789,
+        "completion_tokens": 267,
+        "latency_ms": 544,
+        "context_chars": 424,
+        "compression_ms": 3090
+      }
+    },
+    {
+      "id": "A02",
+      "question": "Why does 0.1 + 0.2 == 0.3 evaluate to False, and how should floats be compared?",
+      "kind": "in-syllabus",
+      "tag": "code",
+      "source": "01-python-basics.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3454243963352004,
+      "retrieval_ms": 443,
+      "compression": {
+        "rawChars": 3734,
+        "keptChars": 466,
+        "ratio": 0.12479914301017675,
+        "totalSentences": 26,
+        "keptSentences": 5,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.575,
+          0.572,
+          0.55,
+          0.548,
+          0.505
+        ]
+      },
+      "uncompressed": {
+        "answer": "**Why `0.1 + 0.2 == 0.3` is `False`**\n\n- In binary, most decimal fractions cannot be represented exactly.  \n  * 0.1 → an infinite repeating binary fraction.  \n  * 0.2 → another infinite repeating binary fraction.  \n- Python stores floats as 64‑bit IEEE‑754 binary numbers, so each of those values is rounded to the nearest representable binary number.\n- When you add the two rounded numbers, the result is again rounded to the nearest representable binary number.  \n  The rounded result is **not** exactly 0.3 (which itself is also rounded), so the equality test fails.\n\nThis is the same reason you see tiny errors in many scientific calculations.\n\n**How to compare floats correctly**\n\n1. **Use a tolerance (epsilon)**  \n   ```python\n   def almost_equal(a, b, eps=1e-9):\n       return abs(a - b) < eps\n   ```\n   - Pick `eps` based on the magnitude of the numbers you’re comparing.  \n   - For very large numbers, a relative tolerance (`abs(a-b) < eps * max(abs(a), abs(b))`) can be more appropriate.\n\n2. **Use the `decimal` module** when you need exact decimal arithmetic (e.g., money).  \n   ```python\n   from decimal import Decimal\n   Decimal('0.1') + Decimal('0.2') == Decimal('0.3')   # True\n   ```\n\n3. **Avoid `==` for floats** unless you know the values are produced by exact arithmetic (e.g., integer division that yields a clean binary fraction).\n\n**Quick check**\n\n```python\n>>> 0.1 + 0.2\n0.30000000000000004\n>>> 0.3\n0.3\n>>> abs((0.1 + 0.2) - 0.3) < 1e-9\nTrue\n```\n\nSo, the key takeaway: floating‑point numbers are approximations; compare them with a tolerance or use `decimal` for exact decimal values.",
+        "finish": "stop",
+        "prompt_tokens": 1769,
+        "completion_tokens": 474,
+        "latency_ms": 992,
+        "context_chars": 3984
+      },
+      "compressed": {
+        "answer": "**Why the comparison fails**\n\n`0.1`, `0.2`, and `0.3` are *decimal* numbers, but a computer stores them in binary floating‑point format (IEEE‑754).  \nOnly a few decimal fractions can be represented exactly in binary.  \nWhen the interpreter converts `0.1` and `0.2` to binary, each gets a tiny rounding error:\n\n```\n0.1  →  0.10000000000000000555…\n0.2  →  0.20000000000000001110…\n```\n\nAdding those two binary numbers gives\n\n```\n0.30000000000000004441…\n```\n\nwhich is **not** exactly `0.3` (which is stored as `0.29999999999999998890…`).  \nHence `0.1 + 0.2 == 0.3` evaluates to `False`.  \nThis is a classic example of floating‑point precision limits.\n\n**How to compare floats safely**\n\nThe excerpt from your course notes (01‑python‑basics.md) says:\n\n> *“floats with a tolerance (…) or use the module when exactness matters (e.g. A is raised if the text is not a valid number.)”*\n\nSo the recommended approach is to compare with a tolerance (epsilon) or use the `decimal` module for exact decimal arithmetic.\n\n1. **Tolerance comparison**\n\n```python\ndef almost_equal(a, b, eps=1e-9):\n    return abs(a - b) < eps\n\nprint(almost_equal(0.1 + 0.2, 0.3))   # True\n```\n\n2. **Using `decimal` for exact decimal math**\n\n```python\nfrom decimal import Decimal, getcontext\n\ngetcontext().prec = 28          # default precision\nprint(Decimal('0.1') + Decimal('0.2') == Decimal('0.3'))  # True\n```\n\n**Takeaway**\n\n- Direct `==` on floats is unreliable because of binary representation.\n- Use a small tolerance (`abs(a-b) < eps`) for most numeric comparisons.\n- For applications that require exact decimal arithmetic (e.g., financial calculations), switch to the `decimal` module.\n\nFeel free to try the `almost_equal` function with other numbers or ask if you’d like to see more examples!",
+        "finish": "stop",
+        "prompt_tokens": 833,
+        "completion_tokens": 521,
+        "latency_ms": 749,
+        "context_chars": 625,
+        "compression_ms": 1576
+      }
+    },
+    {
+      "id": "A03",
+      "question": "What does the expression \"\" or \"default\" evaluate to, and why?",
+      "kind": "in-syllabus",
+      "tag": "code",
+      "source": "01-python-basics.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.42497619839366696,
+      "retrieval_ms": 357,
+      "compression": {
+        "rawChars": 4053,
+        "keptChars": 359,
+        "ratio": 0.08857636318776216,
+        "totalSentences": 28,
+        "keptSentences": 3,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.59,
+          0.531,
+          0.503
+        ]
+      },
+      "uncompressed": {
+        "answer": "Let’s think about how the `or` operator works in Python.  \nWhen you write `a or b`, Python evaluates `a` first.  \n- If `a` is *truthy*, it returns `a` immediately.  \n- If `a` is *falsy*, it evaluates and returns `b`.\n\nNow, what is the truthiness of an empty string `\"\"`?  \nAccording to the basics excerpt, empty containers—including `\"\"`—are falsy.\n\nSo in `\"\" or \"default\"`:\n1. `\"\"` is evaluated → it’s falsy.  \n2. Because it’s falsy, Python evaluates the right side and returns `\"default\"`.\n\nTherefore the expression evaluates to the string `\"default\"`.",
+        "finish": "stop",
+        "prompt_tokens": 1769,
+        "completion_tokens": 169,
+        "latency_ms": 533,
+        "context_chars": 4302
+      },
+      "compressed": {
+        "answer": "In Python the expression\n\n```python\n\"\" or \"default\"\n```\n\nevaluates to the string `\"default\"`.\n\n**Why?**\n\n1. The `or` operator is a *short‑circuit* boolean operator.  \n   * It evaluates the left operand first.  \n   * If that operand is *truthy*, it returns it immediately.  \n   * If the left operand is *falsy*, it evaluates and returns the right operand.\n\n2. An empty string (`\"\"`) is considered *falsy* in a boolean context.  \n   (Any empty sequence or collection – `[]`, `{}`, `()` – is falsy.)\n\n3. Since the left operand is falsy, `or` evaluates the right operand, `\"default\"`, which is truthy, and returns it.\n\nSo the whole expression yields `\"default\"`.",
+        "finish": "stop",
+        "prompt_tokens": 735,
+        "completion_tokens": 201,
+        "latency_ms": 558,
+        "context_chars": 491,
+        "compression_ms": 1436
+      }
+    },
+    {
+      "id": "A04",
+      "question": "What does the else clause on a for loop do?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "02-control-flow.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3832941890042685,
+      "retrieval_ms": 601,
+      "compression": {
+        "rawChars": 3956,
+        "keptChars": 724,
+        "ratio": 0.18301314459049545,
+        "totalSentences": 29,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.687,
+          0.607,
+          0.559,
+          0.532,
+          0.528,
+          0.526
+        ]
+      },
+      "uncompressed": {
+        "answer": "The `else` clause on a `for` (or `while`) loop runs **only when the loop terminates normally**—that is, when it *does not* exit via a `break`.  \nThink of it as “if we finished scanning every item without finding a match, do this”.\n\n```python\nfor item in items:\n    if is_valid(item):\n        print(\"found\", item)\n        break          # exit the loop immediately\nelse:\n    print(\"no valid item\")\n```\n\n- If `break` is hit, the `else` block is skipped.  \n- If the loop exhausts the iterable without hitting `break`, the `else` block executes.\n\nThis pattern is handy for searches or checks where you want a “not found” action.  \n(See the excerpt from *02-control-flow.md* in your course notes.)",
+        "finish": "stop",
+        "prompt_tokens": 1738,
+        "completion_tokens": 219,
+        "latency_ms": 494,
+        "context_chars": 4201
+      },
+      "compressed": {
+        "answer": "That’s a great question!  \nThink about what happens when a `for` loop finishes normally versus when it’s interrupted by a `break`.  \n- If the loop runs through all its iterations without hitting a `break`, what do you think the `else` block should do?  \n- If the loop is stopped early with a `break`, should the `else` block still execute?\n\nTry answering those two points, and then we can dive into the exact syntax and a quick example.",
+        "finish": "stop",
+        "prompt_tokens": 809,
+        "completion_tokens": 115,
+        "latency_ms": 372,
+        "context_chars": 825,
+        "compression_ms": 1107
+      }
+    },
+    {
+      "id": "A05",
+      "question": "What numbers does range(10, 0, -1) produce?",
+      "kind": "in-syllabus",
+      "tag": "code",
+      "source": "02-control-flow.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.5029466302079559,
+      "retrieval_ms": 481,
+      "compression": {
+        "rawChars": 3826,
+        "keptChars": 80,
+        "ratio": 0.020909566126502875,
+        "totalSentences": 25,
+        "keptSentences": 2,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.631,
+          0.549
+        ]
+      },
+      "uncompressed": {
+        "answer": "Let’s think about how `range(start, stop, step)` works.  \n- It starts at `start`.  \n- It keeps adding `step` until it would reach or pass `stop`.  \n- The `stop` value itself is **not** included.\n\nGiven `range(10, 0, -1)`, what would the first few values be if you keep subtracting 1?  \nWhat happens when you get to 1 and then subtract 1 again? Does that value still satisfy the condition “greater than 0”?\n\nTry writing out the sequence: 10, 9, 8, … and see where it stops. Once you have the list, you can double‑check by running it in Python or by recalling that the stop value (0) is excluded.",
+        "finish": "stop",
+        "prompt_tokens": 1817,
+        "completion_tokens": 178,
+        "latency_ms": 620,
+        "context_chars": 4073
+      },
+      "compressed": {
+        "answer": "Let’s think about how `range(start, stop, step)` works.  \n- It starts at `start`.  \n- It keeps adding `step` until it would pass `stop`.  \n- The `stop` value itself is **not** included.\n\nGiven `range(10, 0, -1)`:\n\n1. What is the starting value?  \n2. What is the step?  \n3. When does the sequence stop?\n\nTry writing out the first few numbers and see when you would go past 0. Once you have the list, let me know what you got!",
+        "finish": "stop",
+        "prompt_tokens": 681,
+        "completion_tokens": 136,
+        "latency_ms": 426,
+        "context_chars": 177,
+        "compression_ms": 1418
+      }
+    },
+    {
+      "id": "A06",
+      "question": "Python has no do-while loop. How do you write a loop that must run at least once?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "02-control-flow.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3411893059240757,
+      "retrieval_ms": 2118,
+      "compression": {
+        "rawChars": 3417,
+        "keptChars": 924,
+        "ratio": 0.2704126426690079,
+        "totalSentences": 25,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.804,
+          0.615,
+          0.615,
+          0.607,
+          0.577,
+          0.553
+        ]
+      },
+      "uncompressed": {
+        "answer": "A common trick is to use a `while True:` loop and break out when the exit condition is met.  \nCan you think of a small example where you’d need to read input at least once and then stop when the user types “done”? Try writing that with `while True:` and a `break`. If you get stuck, let me know what part is confusing!",
+        "finish": "stop",
+        "prompt_tokens": 1551,
+        "completion_tokens": 94,
+        "latency_ms": 707,
+        "context_chars": 3663
+      },
+      "compressed": {
+        "answer": "Great question!  \nSince Python doesn’t have a built‑in `do‑while`, the usual trick is to use a `while True` loop and break out when the condition is met.  \n\n**Try this pattern first:**\n\n```python\nwhile True:\n    # … do something …\n    if exit_condition:\n        break\n```\n\nCan you think of a situation where you’d want to check the condition *after* the first iteration? What would you put inside the loop body? If you’d like, share your attempt and I’ll help you refine it!",
+        "finish": "stop",
+        "prompt_tokens": 868,
+        "completion_tokens": 131,
+        "latency_ms": 553,
+        "context_chars": 1058,
+        "compression_ms": 3828
+      }
+    },
+    {
+      "id": "A07",
+      "question": "Why can writing several separate if statements be a bug compared with an if/elif chain?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "02-control-flow.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.36055497652947166,
+      "retrieval_ms": 465,
+      "compression": {
+        "rawChars": 3771,
+        "keptChars": 742,
+        "ratio": 0.1967647838769557,
+        "totalSentences": 27,
+        "keptSentences": 4,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.653,
+          0.539,
+          0.517,
+          0.502
+        ]
+      },
+      "uncompressed": {
+        "answer": "A common pitfall is writing several independent `if` statements when you actually want only **one** branch to run.  \nWhy does that matter?\n\nThink about the logic you’re trying to express.  \nIf you want “if X then A, else if Y then B, else C”, you should use an `if/elif/else` chain.  \nIf you write:\n\n```python\nif X:\n    A\nif Y:\n    B\nelse:\n    C\n```\n\nwhat happens when both `X` and `Y` are true?  \nBoth `A` and `B` will execute, and the `else` will be attached only to the second `if`.  \nThat’s usually not what you intended.\n\n**Guiding question:**  \nWhen you have mutually exclusive conditions, how can you ensure that only the first true condition runs?  \n\nThe answer is to use an `elif` chain (or a `switch`‑style construct in newer Python).  \nThat way, once a condition is satisfied, the rest are skipped.  \n\nSo, writing separate `if`s can be a bug because it allows multiple branches to fire when they should be exclusive.",
+        "finish": "stop",
+        "prompt_tokens": 1668,
+        "completion_tokens": 257,
+        "latency_ms": 721,
+        "context_chars": 4021
+      },
+      "compressed": {
+        "answer": "Good question!  \nThink about what happens when you write several **independent** `if` statements:\n\n```python\nif condition_a:\n    do_A()\nif condition_b:\n    do_B()\n```\n\nNow imagine `condition_a` and `condition_b` can both be true at the same time.  \nWhat will the program do?\n\n- It will execute `do_A()` **and** then, because the second `if` is separate, it will also execute `do_B()`.  \n- If you intended that only one of the branches should run, you’ve unintentionally allowed both to fire.\n\nAn `if/elif/else` chain, on the other hand, guarantees that **only the first true branch** is executed:\n\n```python\nif condition_a:\n    do_A()\nelif condition_b:\n    do_B()\n```\n\nHere, once `condition_a` is true, the rest of the chain is skipped, so `do_B()` won’t run even if `condition_b` is also true.\n\nSo the bug arises when the logic requires mutually exclusive branches but you accidentally let multiple branches run because you used separate `if`s instead of an `elif` chain.",
+        "finish": "stop",
+        "prompt_tokens": 826,
+        "completion_tokens": 259,
+        "latency_ms": 612,
+        "context_chars": 874,
+        "compression_ms": 1711
+      }
+    },
+    {
+      "id": "A08",
+      "question": "Why is a mutable default argument like acc=[] a problem, and how do you fix it?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "03-functions-recursion.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.39546521034343174,
+      "retrieval_ms": 596,
+      "compression": {
+        "rawChars": 3893,
+        "keptChars": 598,
+        "ratio": 0.1536090418700231,
+        "totalSentences": 16,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.571,
+          0.529,
+          0.525,
+          0.517,
+          0.511,
+          0.5
+        ]
+      },
+      "uncompressed": {
+        "answer": "A mutable default argument (e.g. `acc=[]`) is shared **once** for every call to the function.  \nThat means:\n\n1. The list is created when the function is defined, not each time it runs.  \n2. Every subsequent call sees the *same* list, so items added in one call persist into the next call.\n\nThis usually leads to surprising bugs, especially with recursion or repeated calls.\n\n**How to fix it**\n\nThe common idiom is to use `None` as the default and create a new list inside the function:\n\n```python\ndef my_func(x, acc=None):\n    if acc is None:\n        acc = []          # fresh list for this call\n    # … use acc …\n    return acc\n```\n\nThis pattern is mentioned in the IT5001 excerpt [1] (“the standard fix is `acc=None` plus `if acc is None: acc = []` inside the body”). It guarantees each invocation gets its own list, avoiding unintended sharing.",
+        "finish": "stop",
+        "prompt_tokens": 1732,
+        "completion_tokens": 235,
+        "latency_ms": 495,
+        "context_chars": 4147
+      },
+      "compressed": {
+        "answer": "A mutable default argument (e.g. `acc=[]`) is a problem because the default value is created **once** when the function is defined, not each time it’s called.  \nSo every call that doesn’t supply its own `acc` will share the *same* list.  \nIf one call appends to that list, the next call starts with the list already containing those items, leading to surprising, hard‑to‑debug behavior.\n\n**How to fix it**\n\nUse an immutable default (like `None`) and create a new list inside the function when needed:\n\n```python\ndef my_func(items, acc=None):\n    if acc is None:\n        acc = []          # fresh list for this call\n    # … use acc …\n```\n\nNow each call gets its own independent list.  \nThis pattern is the standard way to avoid the mutable‑default pitfall.",
+        "finish": "stop",
+        "prompt_tokens": 829,
+        "completion_tokens": 212,
+        "latency_ms": 599,
+        "context_chars": 790,
+        "compression_ms": 1678
+      }
+    },
+    {
+      "id": "A09",
+      "question": "Why does incrementing a global counter inside a function raise UnboundLocalError?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "03-functions-recursion.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3557674724334492,
+      "retrieval_ms": 1356,
+      "compression": {
+        "rawChars": 3549,
+        "keptChars": 211,
+        "ratio": 0.05945336714567484,
+        "totalSentences": 18,
+        "keptSentences": 2,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.578,
+          0.503
+        ]
+      },
+      "uncompressed": {
+        "answer": "That’s a classic gotcha in Python.  \nThink about what happens when the interpreter sees an assignment to a name inside a function body.  \n\n**Question:**  \nWhen you write `count += 1` inside a function, what does Python interpret that as for the variable `count`?  \n\nIf you’re unsure, try writing a tiny snippet:\n\n```python\ncount = 0\ndef inc():\n    count += 1\n```\n\nRun it and see what error you get. The message will say something like “UnboundLocalError: local variable 'count' referenced before assignment.”  \n\nWhy does that happen?  \n- The assignment (`count += 1`) is *syntactic sugar* for `count = count + 1`.  \n- Because there’s an assignment to `count` anywhere in the function, Python treats `count` as a **local variable** for the entire scope of that function.  \n- When the function starts executing, it tries to evaluate the right‑hand side (`count + 1`). But the local `count` hasn’t been initialized yet, so it’s “unbound.” Hence the error.\n\nSo the root cause is that the presence of an assignment makes the name local, shadowing the global variable of the same name. To modify the global variable, you need to tell Python explicitly that you mean the global one:\n\n```python\ndef inc():\n    global count\n    count += 1\n```\n\nOr, better practice, pass the counter in and return the new value, avoiding globals altogether.  \n\nDoes that clarify why the `UnboundLocalError` occurs? If you’d like, we can walk through a full example together.",
+        "finish": "stop",
+        "prompt_tokens": 1580,
+        "completion_tokens": 358,
+        "latency_ms": 785,
+        "context_chars": 3808
+      },
+      "compressed": {
+        "answer": "Great question!  \nWhen you write something like\n\n```python\ncounter = 0\n\ndef inc():\n    counter += 1\n```\n\nPython raises an **`UnboundLocalError`**.  \nWhy does that happen? Let’s walk through the rules Python follows when it sees a variable name inside a function.\n\n---\n\n### 1. Is the name *local* or *global*?\n\n- **Local**: a name that is assigned to anywhere in the function body.\n- **Global**: a name that is *not* assigned inside the function, so Python looks it up in the surrounding (module) scope.\n\n**Key rule**: *If a name is assigned anywhere in the function, Python treats it as a local variable for the entire function body, even before the assignment line is executed.*\n\n---\n\n### 2. What happens at the line `counter += 1`?\n\n`counter += 1` is syntactic sugar for:\n\n```python\ncounter = counter + 1\n```\n\nSo Python tries to read the current value of `counter` **before** it assigns the new value.  \nBecause `counter` is considered *local* (due to the assignment), Python looks for a local value that hasn’t been created yet → **`UnboundLocalError`**.\n\n---\n\n### 3. How to make it work\n\nTell Python explicitly that you mean the *global* variable:\n\n```python\ncounter = 0\n\ndef inc():\n    global counter   # declare intent\n    counter += 1\n```\n\nNow `counter` inside `inc` refers to the module‑level variable, and the increment works.\n\n---\n\n### Quick recap\n\n- Any assignment inside a function makes that name local to the function.\n- `+=` is an assignment, so the name becomes local.\n- Python tries to read the local name before it’s defined → `UnboundLocalError`.\n- Use `global` (or `nonlocal` for nested functions) to refer to the outer variable.\n\n---\n\n**Try it out**: Write a small script with a global counter and a function that increments it. Add the `global` keyword and run it. If you still see an error, let me know what the traceback says!",
+        "finish": "stop",
+        "prompt_tokens": 716,
+        "completion_tokens": 476,
+        "latency_ms": 806,
+        "context_chars": 343,
+        "compression_ms": 5024
+      }
+    },
+    {
+      "id": "A10",
+      "question": "What two parts must every correct recursive function have?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "03-functions-recursion.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.4701444542235448,
+      "retrieval_ms": 706,
+      "compression": {
+        "rawChars": 3658,
+        "keptChars": 259,
+        "ratio": 0.07080371787862219,
+        "totalSentences": 27,
+        "keptSentences": 3,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.641,
+          0.593,
+          0.512
+        ]
+      },
+      "uncompressed": {
+        "answer": "Great question! Think about what a recursive function needs to do so it eventually stops calling itself. What two essential components do you think that is?",
+        "finish": "stop",
+        "prompt_tokens": 1632,
+        "completion_tokens": 45,
+        "latency_ms": 479,
+        "context_chars": 3928
+      },
+      "compressed": {
+        "answer": "Every correct recursive function must contain **two essential parts**:\n\n1. **A base case** – a condition that stops the recursion and returns a value without making another recursive call.  \n2. **A recursive step** – a call to the same function that works on a smaller or simpler instance, moving the problem toward the base case.  \n\nThese two components guarantee that the recursion will terminate and produce a result.",
+        "finish": "stop",
+        "prompt_tokens": 699,
+        "completion_tokens": 103,
+        "latency_ms": 375,
+        "context_chars": 364,
+        "compression_ms": 5320
+      }
+    },
+    {
+      "id": "A11",
+      "question": "Why is the naive recursive Fibonacci slow, and how does memoisation help?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "03-functions-recursion.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.4225771040708922,
+      "retrieval_ms": 405,
+      "compression": {
+        "rawChars": 3343,
+        "keptChars": 573,
+        "ratio": 0.1714029314986539,
+        "totalSentences": 25,
+        "keptSentences": 5,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.547,
+          0.535,
+          0.516,
+          0.516,
+          0.501
+        ]
+      },
+      "uncompressed": {
+        "answer": "Great question! Let’s unpack it step by step.\n\n**1. What does the naive recursive Fibonacci do?**  \nThink about the function\n\n```python\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)\n```\n\nWhat happens when you call `fib(5)`?  \n- It calls `fib(4)` and `fib(3)`.  \n- `fib(4)` again calls `fib(3)` and `fib(2)`.  \n- Notice that `fib(3)` is now being computed **twice**.\n\n**Guiding question:**  \n*How many times does `fib(k)` get recomputed for a given `k` as `n` grows?*  \n\nThink about the tree of calls: each node spawns two children until reaching the base case. The number of nodes grows exponentially.\n\n**2. Why is that slow?**  \n- Each call incurs overhead (function call, stack frame).  \n- The same sub‑problems are solved over and over.  \n- The total number of calls is roughly `2^n`, so the time complexity is `O(2^n)`.\n\n**3. What is memoisation?**  \nIt’s a technique where you remember (“cache”) the result of a function call the first time you compute it, and then reuse that stored result whenever the same input appears again.\n\n**4. How does memoisation change the call pattern?**  \n- The first time you compute `fib(3)`, you store its result.  \n- Subsequent calls to `fib(3)` just look up the cached value instead of recomputing.  \n- The recursion tree collapses into a single path of unique inputs: `fib(n), fib(n-1), …, fib(0)`.\n\n**5. What’s the new complexity?**  \n- Each distinct `fib(k)` is computed once: `n+1` calls.  \n- So the time complexity drops to `O(n)`.  \n- Space complexity also becomes `O(n)` because you store `n+1` results (plus the recursion stack).\n\n**Quick code sketch with memoisation:**\n\n```python\nfrom functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)\n```\n\n`lru_cache` automatically handles the caching for you.\n\n**Takeaway:**  \nThe naive version is slow because it recomputes the same sub‑problems many times, leading to exponential growth in calls. Memoisation eliminates this redundancy by caching results, turning the algorithm into a linear‑time solution.",
+        "finish": "stop",
+        "prompt_tokens": 1558,
+        "completion_tokens": 583,
+        "latency_ms": 1296,
+        "context_chars": 3604
+      },
+      "compressed": {
+        "answer": "Let’s think about what the naive Fibonacci function does.  \nWhen you call `fib(n)` it calls `fib(n‑1)` and `fib(n‑2)`.  \nEach of those calls again splits into two more calls, and so on.\n\n**Question:**  \nHow many times does the same sub‑value (say `fib(5)`) get recomputed in that tree of calls?\n\nIf you draw the call tree, you’ll see that many nodes are identical.  \nFor example, `fib(5)` is computed twice: once as part of `fib(6)` and once as part of `fib(7)`.  \nIn general, the number of calls grows exponentially—roughly `2^n`.  \nThat’s why the naive version is slow: it does a lot of redundant work.\n\n---\n\n### How memoisation changes this\n\nMemoisation stores the result of each sub‑problem the first time it’s computed.  \nWhen the same sub‑problem is needed again, the function simply looks up the stored value instead of recomputing it.\n\n**Resulting complexity**\n\n- **Without memoisation:** `T(n) = T(n-1) + T(n-2) + O(1)` → exponential, `O(2^n)`.\n- **With memoisation:** each distinct `fib(k)` is computed once, so the total work is linear, `O(n)`.\n\nThe space cost is also linear because you keep a table (often a dictionary) of size `n`.\n\n---\n\n**Bottom line:**  \nThe naive recursive Fibonacci is slow because it recomputes the same sub‑problems many times.  \nMemoisation eliminates that redundancy by caching results, turning the algorithm from exponential to linear time.",
+        "finish": "stop",
+        "prompt_tokens": 790,
+        "completion_tokens": 378,
+        "latency_ms": 1614,
+        "context_chars": 680,
+        "compression_ms": 2847
+      }
+    },
+    {
+      "id": "A12",
+      "question": "What happens in Python if a recursive function never reaches its base case?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "03-functions-recursion.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.32158696861497094,
+      "retrieval_ms": 560,
+      "compression": {
+        "rawChars": 3867,
+        "keptChars": 598,
+        "ratio": 0.15464184122058444,
+        "totalSentences": 31,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.692,
+          0.602,
+          0.587,
+          0.583,
+          0.54,
+          0.53
+        ]
+      },
+      "uncompressed": {
+        "answer": "If a recursive function never hits its base case, what do you think will happen to the call stack?  \nThink about how many frames can be pushed before Python stops you.  \nOnce you’ve guessed, let me know and I’ll confirm or correct you.",
+        "finish": "stop",
+        "prompt_tokens": 1668,
+        "completion_tokens": 68,
+        "latency_ms": 1215,
+        "context_chars": 4122
+      },
+      "compressed": {
+        "answer": "That’s a great question!  \nThink about what a recursive call does in Python. What happens to the call stack each time you call the function again?  \n\nIf the function never hits its base case, what will eventually happen to that stack?  \n(Consider the default recursion limit and the error Python raises.)",
+        "finish": "stop",
+        "prompt_tokens": 802,
+        "completion_tokens": 78,
+        "latency_ms": 1686,
+        "context_chars": 760,
+        "compression_ms": 2526
+      }
+    },
+    {
+      "id": "A13",
+      "question": "If I write ys = xs and then append to ys, why does xs change too?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "04-data-structures.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.4028867110025379,
+      "retrieval_ms": 600,
+      "compression": {
+        "rawChars": 3645,
+        "keptChars": 664,
+        "ratio": 0.1821673525377229,
+        "totalSentences": 15,
+        "keptSentences": 5,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.52,
+          0.517,
+          0.512,
+          0.504,
+          0.502
+        ]
+      },
+      "uncompressed": {
+        "answer": "`ys = xs` doesn’t create a new list – it just creates another name that refers to the **same** list object that `xs` refers to.  \nIn Python, variables are references to objects. When you write\n\n```python\nys = xs\n```\n\nboth `ys` and `xs` point to the same list in memory.  \nSo when you do\n\n```python\nys.append(10)\n```\n\nyou’re mutating that single list object. Since `xs` points to that same object, the change is visible through `xs` as well.\n\nThink of it like two pointers to the same house: if you add a new room to the house, both pointers see the updated house.\n\nIf you want a *copy* of the list so that changes to `ys` don’t affect `xs`, you need to copy it explicitly:\n\n```python\nys = xs[:]          # shallow copy\n# or\nys = list(xs)       # shallow copy\n# or\nys = copy.deepcopy(xs)  # deep copy if nested lists\n```\n\nThese create a new list object, so `ys.append(...)` will only modify the new list.",
+        "finish": "stop",
+        "prompt_tokens": 1730,
+        "completion_tokens": 261,
+        "latency_ms": 663,
+        "context_chars": 3899
+      },
+      "compressed": {
+        "answer": "Great question!  \nWhen you do\n\n```python\nys = xs\n```\n\nyou’re **not** making a copy of the list `xs`.  \nYou’re simply creating a new variable name (`ys`) that refers to the **same** list object that `xs` refers to.\n\nThink of it like this:\n\n| Variable | Points to | List contents |\n|----------|-----------|---------------|\n| `xs`     | List object A | `[1, 2, 3]` |\n| `ys`     | List object A | `[1, 2, 3]` |\n\nBoth `xs` and `ys` point to *List object A*.  \nWhen you call `ys.append(4)`, the list object itself is mutated:\n\n```python\nys.append(4)   # List A becomes [1, 2, 3, 4]\n```\n\nSince `xs` points to the same object, looking at `xs` now shows the updated list:\n\n```python\nprint(xs)  # [1, 2, 3, 4]\n```\n\nThis behavior is exactly what the lecture notes in **[1]** describe: *“Passing a list to a function passes the reference, so in‑place changes inside the function are visible to the caller.”* The same principle applies to assignment.\n\nIf you want a separate list that you can modify without affecting the original, you need to **copy** it:\n\n```python\nys = xs.copy()          # or list(xs), or xs[:]\n```\n\nNow `ys` refers to a new list object, and changes to `ys` won’t touch `xs`.\n\nSo, the reason `xs` changes is that `ys` and `xs` are two names for the same mutable list object.",
+        "finish": "stop",
+        "prompt_tokens": 828,
+        "completion_tokens": 392,
+        "latency_ms": 786,
+        "context_chars": 796,
+        "compression_ms": 2930
+      }
+    },
+    {
+      "id": "A14",
+      "question": "Why can a tuple be used as a dictionary key but a list cannot?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "04-data-structures.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3592332364271089,
+      "retrieval_ms": 1785,
+      "compression": {
+        "rawChars": 3948,
+        "keptChars": 180,
+        "ratio": 0.04559270516717325,
+        "totalSentences": 17,
+        "keptSentences": 2,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.548,
+          0.504
+        ]
+      },
+      "uncompressed": {
+        "answer": "Great question! Let’s think about what makes a dictionary key “acceptable” in Python.\n\n**What does a dictionary key need to be?**  \nA key must be *hashable*. That means:\n\n1. It has a hash value that doesn’t change over its lifetime.  \n2. It can be compared for equality with other keys.\n\n**Now, compare a tuple and a list:**\n\n- **Tuple** – immutable. Once created, its contents can’t change, so its hash stays constant.  \n- **List** – mutable. You can append, change an element, etc. If a list were used as a key, its hash could change while it’s in the dictionary, breaking the hash table’s invariants.\n\nSo the core reason is immutability → hashability. A tuple can be hashed and used as a key; a list cannot because it’s mutable and therefore unhashable. \n\nDoes that line up with what you’ve seen in the course notes? If you’d like, we can walk through a quick example to see the error you get when you try to use a list as a key.",
+        "finish": "stop",
+        "prompt_tokens": 1811,
+        "completion_tokens": 243,
+        "latency_ms": 2126,
+        "context_chars": 4202
+      },
+      "compressed": {
+        "answer": "A good place to start is to think about what a dictionary key *needs* to do.\n\n**What does a dictionary do with a key?**  \nWhen you insert `d[key] = value`, the dictionary has to:\n\n1. **Locate the bucket** where the key should live.  \n2. **Check if that key is already there** (to avoid duplicates).  \n3. **Retrieve the value** later when you look up `d[key]`.\n\nAll of those operations rely on being able to **compare** keys quickly and, for the lookup, to **hash** them.\n\n---\n\n### 1. Hashability\n\n- **Hashable objects** have a hash value that never changes during their lifetime.  \n- The hash is used to decide which bucket a key goes into.  \n- If the hash could change, the dictionary would lose track of the key.\n\n**Tuples** are hashable *if* all of their elements are hashable.  \n**Lists** are not hashable because they are mutable: you can change an element, add or remove items, and that would change the contents and thus the hash.\n\n---\n\n### 2. Immutability\n\n- A dictionary key must be immutable so that its hash stays constant.  \n- Tuples are immutable: once created, you cannot change their elements.  \n- Lists are mutable: you can append, pop, or assign to an index.\n\nBecause a list can change, the dictionary cannot guarantee that the key will stay in the same bucket.\n\n---\n\n### Quick recap\n\n| Feature | Tuple | List |\n|---------|-------|------|\n| Mutable? | No | Yes |\n| Hashable? | Yes (if elements hashable) | No |\n| Can be a key? | Yes | No |\n\nSo the core reason: **a tuple is immutable and hashable, so its hash value is stable; a list is mutable and unhashable, so it cannot serve as a dictionary key.**",
+        "finish": "stop",
+        "prompt_tokens": 703,
+        "completion_tokens": 425,
+        "latency_ms": 888,
+        "context_chars": 280,
+        "compression_ms": 20318
+      }
+    },
+    {
+      "id": "A15",
+      "question": "What is the time complexity of checking membership with in on a list versus a dict or set?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "04-data-structures.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3667622774753443,
+      "retrieval_ms": 1699,
+      "compression": {
+        "rawChars": 3613,
+        "keptChars": 655,
+        "ratio": 0.18128978688070854,
+        "totalSentences": 22,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.645,
+          0.558,
+          0.534,
+          0.527,
+          0.508,
+          0.506
+        ]
+      },
+      "uncompressed": {
+        "answer": "Great question!  \nThink about what “membership” means for each container:\n\n- For a **list**, Python has to look at each element until it finds a match (or reaches the end).  \n- For a **dict** or **set**, Python uses a hash table, so it can jump directly to the bucket that would contain the key.\n\nCan you guess the Big‑O time for each case? If you’re unsure, let me know and I’ll give you a hint.",
+        "finish": "stop",
+        "prompt_tokens": 1714,
+        "completion_tokens": 114,
+        "latency_ms": 598,
+        "context_chars": 3867
+      },
+      "compressed": {
+        "answer": "Great question!  \nLet’s think about what “membership test” actually does for each container.\n\n1. **List (`in`)**  \n   - How does Python check if an element is in a list?  \n   - Does it look at every element one by one, or does it jump around?\n\n2. **Dict or Set (`in`)**  \n   - What data structure underlies a dictionary or a set?  \n   - How does hashing help when searching for a key?\n\nOnce you’ve considered those points, you can match the operations to their time complexities. If you’d like me to confirm your reasoning or give the exact Big‑O notation, just let me know!",
+        "finish": "stop",
+        "prompt_tokens": 856,
+        "completion_tokens": 154,
+        "latency_ms": 378,
+        "context_chars": 788,
+        "compression_ms": 7781
+      }
+    },
+    {
+      "id": "A16",
+      "question": "How do you count how many times each word appears in a list of words?",
+      "kind": "in-syllabus",
+      "tag": "code",
+      "source": "04-data-structures.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.40361612406820435,
+      "retrieval_ms": 782,
+      "compression": {
+        "rawChars": 3976,
+        "keptChars": 800,
+        "ratio": 0.2012072434607646,
+        "totalSentences": 25,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.568,
+          0.553,
+          0.549,
+          0.535,
+          0.534,
+          0.527
+        ]
+      },
+      "uncompressed": {
+        "answer": "That’s a classic “frequency count” problem.  \nBefore I give you the full code, let’s think about the steps:\n\n1. **What data structure will let you store “word → count” efficiently?**  \n   Think about the operations you need:  \n   - Look up a word to see if it’s already been seen.  \n   - Increment its count.  \n\n2. **How do you update the count when you see a word for the first time?**  \n   You need a way to give a default value (0) if the word isn’t in the structure yet.\n\n3. **What Python idiom is commonly used for this pattern in IT5001?**  \n   Recall the “counting idiom” mentioned in the course material.\n\nTry writing a small snippet that follows those ideas. Once you’ve got something, paste it here and we can walk through it together!",
+        "finish": "stop",
+        "prompt_tokens": 1831,
+        "completion_tokens": 199,
+        "latency_ms": 1453,
+        "context_chars": 4231
+      },
+      "compressed": {
+        "answer": "Great question! Let’s think about the steps you’d need to take to count words in a list.\n\n1. **What data structure could hold the counts?**  \n   - What type of container lets you associate each word with a number that you can update?\n\n2. **How do you update the count for a word you’ve seen before?**  \n   - If the word is already in your container, what operation would you perform?\n\n3. **What happens when you encounter a word for the first time?**  \n   - How would you initialize its count?\n\nOnce you’ve considered those points, try writing a short snippet that loops over the list and updates the counts. Let me know what you come up with, and I’ll help you refine it!",
+        "finish": "stop",
+        "prompt_tokens": 884,
+        "completion_tokens": 170,
+        "latency_ms": 636,
+        "context_chars": 963,
+        "compression_ms": 2660
+      }
+    },
+    {
+      "id": "A17",
+      "question": "Why does calling s.upper() not change the string s?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "05-strings-file-io.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.38914106280526817,
+      "retrieval_ms": 1122,
+      "compression": {
+        "rawChars": 3538,
+        "keptChars": 544,
+        "ratio": 0.1537591859807801,
+        "totalSentences": 21,
+        "keptSentences": 5,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.543,
+          0.531,
+          0.504,
+          0.504,
+          0.504
+        ]
+      },
+      "uncompressed": {
+        "answer": "Good question!  \nThink about what a *string* is in Python.  \n- Is it a mutable object that you can change in place?  \n- Or is it immutable, meaning once it’s created its contents can’t be altered?\n\nIf it’s immutable, what happens when you call a method that “changes” it, like `upper()`?  \nWhat does the method actually return?  \n\nTry writing a small snippet:\n\n```python\ns = \"hello\"\nresult = s.upper()\nprint(result)          # what do you see?\nprint(s)               # did s change?\n```\n\nWhat do you observe?  \nThe key point is that `upper()` (and other “modifying” string methods) **return a new string** and leave the original unchanged. This is why you often see code like:\n\n```python\ns = s.upper()   # reassign to capture the new string\n```\n\nSo, the reason `s.upper()` doesn’t change `s` is that strings are immutable, and the method returns a new string instead of modifying the existing one.",
+        "finish": "stop",
+        "prompt_tokens": 1629,
+        "completion_tokens": 234,
+        "latency_ms": 829,
+        "context_chars": 3793
+      },
+      "compressed": {
+        "answer": "Good question!  \nThink about what a string is in Python.  \n- Is a string a mutable object that you can change in place?  \n- Or is it immutable, meaning once it’s created its contents can’t be altered?\n\nIf it’s immutable, what happens when you call a method like `upper()` that “changes” the text?  \n\nTry to answer that first, and then we can discuss the exact mechanism.",
+        "finish": "stop",
+        "prompt_tokens": 792,
+        "completion_tokens": 102,
+        "latency_ms": 1239,
+        "context_chars": 708,
+        "compression_ms": 2407
+      }
+    },
+    {
+      "id": "A18",
+      "question": "What happens to an existing file when you open it with mode \"w\"?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "05-strings-file-io.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.3921436123974933,
+      "retrieval_ms": 581,
+      "compression": {
+        "rawChars": 3623,
+        "keptChars": 653,
+        "ratio": 0.18023737234336185,
+        "totalSentences": 24,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.655,
+          0.587,
+          0.587,
+          0.553,
+          0.517,
+          0.506
+        ]
+      },
+      "uncompressed": {
+        "answer": "When you open a file with mode `\"w\"` (write), the file is **truncated**—its existing contents are erased immediately.  \nSo the file becomes empty as soon as the `open()` call succeeds, and any data you write later will replace that empty state.  \n\nThis is why the lab notes warn:  \n> “Opening with `\"w\"` erases the previous contents immediately, a frequent Lab 3 accident; use `\"a\"` to extend.”  \n\nIf you want to keep the old data and add to it, use `\"a\"` (append) instead.",
+        "finish": "stop",
+        "prompt_tokens": 1671,
+        "completion_tokens": 138,
+        "latency_ms": 501,
+        "context_chars": 3876
+      },
+      "compressed": {
+        "answer": "When you open a file with mode `\"w\"` in Python, what do you think happens to the file’s current contents?  \nTry to recall the description from the course material you have. If you’re unsure, think about the purpose of the `\"w\"` mode compared to `\"a\"` (append) or `\"r\"` (read). Once you’ve made a guess, let me know, and we can confirm or refine it together.",
+        "finish": "stop",
+        "prompt_tokens": 797,
+        "completion_tokens": 104,
+        "latency_ms": 363,
+        "context_chars": 757,
+        "compression_ms": 1502
+      }
+    },
+    {
+      "id": "A19",
+      "question": "Why should you strip a line before splitting it on commas when reading a file?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "05-strings-file-io.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.36106628427487064,
+      "retrieval_ms": 918,
+      "compression": {
+        "rawChars": 3538,
+        "keptChars": 855,
+        "ratio": 0.24166195590729225,
+        "totalSentences": 24,
+        "keptSentences": 6,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.546,
+          0.539,
+          0.532,
+          0.532,
+          0.529,
+          0.519
+        ]
+      },
+      "uncompressed": {
+        "answer": "Good question!  \nWhen you read a line from a file, what does the line usually end with?  \n\n- Think about the newline character (`\"\\n\"`) that `open()` keeps in each line.  \n- What happens if that newline stays inside the last field when you call `split(\",\")`?  \n\nTry writing a short snippet that reads a line, prints it, and then splits it. Notice the last element.  \nOnce you see that, you’ll understand why the “strip‑split‑convert” pipeline is the backbone of Lab 3 (see excerpt [1] and [3]).",
+        "finish": "stop",
+        "prompt_tokens": 1622,
+        "completion_tokens": 141,
+        "latency_ms": 749,
+        "context_chars": 3792
+      },
+      "compressed": {
+        "answer": "When you read a line from a file, the line usually ends with a newline character (`\\n`).  \nIf you split that line on commas **before** removing the newline, the last field will still contain the `\\n`.  \nThat stray newline can:\n\n1. **Break type conversions** – e.g., `int(\"85\\n\")` raises a `ValueError` because the string isn’t purely numeric.\n2. **Mess up string comparisons** – `\"Smith\\n\" == \"Smith\"` is `False`.\n3. **Create hidden whitespace** – leading/trailing spaces can affect string equality or formatting.\n\nBy calling `line.strip()` first, you remove all leading/trailing whitespace, including the newline, so each field is clean before you split and process it. This defensive step is what the “skip bad lines, keep going” pattern in the course material recommends.",
+        "finish": "stop",
+        "prompt_tokens": 830,
+        "completion_tokens": 207,
+        "latency_ms": 419,
+        "context_chars": 959,
+        "compression_ms": 2742
+      }
+    },
+    {
+      "id": "A20",
+      "question": "Why is a bare except: clause discouraged?",
+      "kind": "in-syllabus",
+      "tag": "prose",
+      "source": "06-oop-exceptions.md",
+      "chunks_retrieved": 5,
+      "best_distance": 0.541386008262631,
+      "retrieval_ms": 2347,
+      "compression": {
+        "rawChars": 3479,
+        "keptChars": 212,
+        "ratio": 0.0609370508766887,
+        "totalSentences": 25,
+        "keptSentences": 3,
+        "empty": false,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": [
+          0.558,
+          0.533,
+          0.502
+        ]
+      },
+      "uncompressed": {
+        "answer": "A bare `except:` catches **every** exception, not just the ones you expect.  \nThat means:\n\n1. **You swallow real bugs** – if a typo (`NameError`) or a logic error (`IndexError`) occurs, the bare clause will hide it and the program will continue in an inconsistent state.  \n2. **You hide system‑level signals** – `KeyboardInterrupt`, `SystemExit`, and other critical exceptions are also caught, so the user can’t stop the program with Ctrl‑C or exit cleanly.  \n3. **You lose debugging information** – the traceback is suppressed, making it hard to trace why the program failed.\n\nThe course material (excerpt [4] from *06‑oop‑exceptions.md*) says:\n\n> “Catch **specific** exceptions — a bare `except:` also swallows `KeyboardInterrupt` and typos like `NameError`, hiding real bugs.”\n\nSo the recommended pattern is:\n\n```python\ntry:\n    # risky code\nexcept ValueError:          # only the exception you expect\n    handle_problem()\n```\n\nIf you really need to catch everything (rare), use `except Exception:` and still re‑raise or log the original exception. This keeps system‑level signals out while giving you a clear error path.",
+        "finish": "stop",
+        "prompt_tokens": 1599,
+        "completion_tokens": 277,
+        "latency_ms": 703,
+        "context_chars": 3727
+      },
+      "compressed": {
+        "answer": "A bare `except:` clause is discouraged because it catches **every** exception, including ones you didn’t anticipate and ones that are usually better left to propagate.  \n\nFrom the course material (06‑oop‑exceptions.md):\n\n> *“Raise your own with ; re‑raise inside an except with bare . Catch with / , narrowest class first: Catch specific exceptions — a bare also swallows and typos like , hiding real bugs.”*\n\nSo:\n\n- **It swallows bugs** – if you misspell an attribute or a typo occurs, the bare except will hide it, making debugging hard.\n- **It hides system‑level errors** – things like `KeyboardInterrupt`, `SystemExit`, or `MemoryError` will also be caught, potentially preventing the program from shutting down cleanly.\n- **It obscures intent** – by catching everything, you lose clarity about what errors you actually expect and handle.\n\nInstead, list the specific exception classes you want to handle, e.g.:\n\n```python\ntry:\n    ...\nexcept ValueError as e:\n    ...\n```\n\nThis keeps error handling precise and makes your code easier to maintain and debug.",
+        "finish": "stop",
+        "prompt_tokens": 706,
+        "completion_tokens": 249,
+        "latency_ms": 772,
+        "context_chars": 338,
+        "compression_ms": 7625
+      }
+    },
+    {
+      "id": "A21",
+      "question": "How does TCP congestion control work?",
+      "kind": "off-syllabus",
+      "tag": "off",
+      "source": "",
+      "chunks_retrieved": 2,
+      "best_distance": 0.5845432520471638,
+      "retrieval_ms": 619,
+      "compression": {
+        "rawChars": 1250,
+        "keptChars": 0,
+        "ratio": 0,
+        "totalSentences": 9,
+        "keptSentences": 0,
+        "empty": true,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": []
+      },
+      "uncompressed": {
+        "answer": "Great question! Let’s unpack TCP congestion control together.  \nFirst, can you tell me what you already know about how TCP manages data flow? (For example, do you remember the “slow start” idea or the role of ACKs?)  \n\nOnce you share a bit, I’ll guide you through the main mechanisms: **slow start, congestion avoidance, fast retransmit, and fast recovery**. If you’d like a deeper dive into any part, just let me know!",
+        "finish": "stop",
+        "prompt_tokens": 989,
+        "completion_tokens": 117,
+        "latency_ms": 460,
+        "context_chars": 1391
+      },
+      "compressed": {
+        "answer": "Great question! Let’s start by breaking it down:\n\n1. **What is the goal of congestion control?**  \n   - Why do we need it in TCP?  \n   - What happens if we ignore it?\n\nThink about what “congestion” means in a network context. Once you have that, we can explore how TCP detects it and reacts. What’s your current understanding of why congestion control is necessary?",
+        "finish": "stop",
+        "prompt_tokens": 622,
+        "completion_tokens": 101,
+        "latency_ms": 1282,
+        "context_chars": 0,
+        "compression_ms": 1046
+      }
+    },
+    {
+      "id": "A22",
+      "question": "What is the difference between a process and a thread?",
+      "kind": "off-syllabus",
+      "tag": "off",
+      "source": "",
+      "chunks_retrieved": 5,
+      "best_distance": 0.482215854725386,
+      "retrieval_ms": 722,
+      "compression": {
+        "rawChars": 3727,
+        "keptChars": 0,
+        "ratio": 0,
+        "totalSentences": 21,
+        "keptSentences": 0,
+        "empty": true,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": []
+      },
+      "uncompressed": {
+        "answer": "Great question! Let’s start by thinking about how a program runs in an operating system.\n\n**What do you think a “process” is?**  \n- Think of it as a self‑contained running program.  \n- It has its own memory space, open files, and system resources.\n\n**What about a “thread”?**  \n- A thread is a smaller unit of execution that lives inside a process.  \n- Multiple threads share the same memory and resources of their parent process.\n\nSo, the key differences are:\n\n| Feature | Process | Thread |\n|---------|---------|--------|\n| **Memory** | Separate address space | Shares address space with other threads in the same process |\n| **Resources** | Own file descriptors, sockets, etc. | Share these resources with sibling threads |\n| **Isolation** | One process crashing doesn’t directly affect another | A crash in one thread can bring down the whole process |\n| **Creation cost** | Relatively expensive (OS context switch, memory allocation) | Cheaper (just a stack and register state) |\n| **Communication** | Requires IPC mechanisms (pipes, sockets, shared memory) | Can communicate via shared variables (but need synchronization) |\n\n**Why does this matter?**  \n- If you need strong isolation (e.g., running untrusted code), use separate processes.  \n- If you need fast, lightweight concurrency and can manage shared state safely, use threads.\n\nFeel free to ask for a deeper dive into any of these points or an example in Python!",
+        "finish": "stop",
+        "prompt_tokens": 1663,
+        "completion_tokens": 324,
+        "latency_ms": 906,
+        "context_chars": 3985
+      },
+      "compressed": {
+        "answer": "Great question! Before I give you a full answer, let’s think about what each term actually represents in a computer system.\n\n**Socratic hint:**  \n- What does a *process* own that a *thread* does not?  \n- How does a *thread* share resources with its siblings?\n\nTry answering those two prompts, and then let me know what you come up with. Once you’ve had a chance to think it through, I’ll walk you through the full comparison.",
+        "finish": "stop",
+        "prompt_tokens": 626,
+        "completion_tokens": 115,
+        "latency_ms": 604,
+        "context_chars": 0,
+        "compression_ms": 1171
+      }
+    },
+    {
+      "id": "A23",
+      "question": "How do I create a Python virtual environment with venv?",
+      "kind": "off-syllabus",
+      "tag": "off",
+      "source": "",
+      "chunks_retrieved": 3,
+      "best_distance": 0.5461954203960477,
+      "retrieval_ms": 698,
+      "compression": {
+        "rawChars": 2374,
+        "keptChars": 0,
+        "ratio": 0,
+        "totalSentences": 19,
+        "keptSentences": 0,
+        "empty": true,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": []
+      },
+      "uncompressed": {
+        "answer": "Great question!  \nBefore we dive into the exact commands, let’s think about why you’d want a virtual environment:\n\n- **Isolation** – keeps the packages you install for one project separate from others.  \n- **Reproducibility** – you can share the exact environment with classmates or on a server.\n\nSo, what do you think is the first step when you want to create a fresh environment in a project folder?  \n(Think about the command you’d run from the terminal and the name you might give the environment.)",
+        "finish": "stop",
+        "prompt_tokens": 1293,
+        "completion_tokens": 123,
+        "latency_ms": 521,
+        "context_chars": 2547
+      },
+      "compressed": {
+        "answer": "Great question!  \nBefore I walk you through the steps, let’s make sure you’re clear on why we use a virtual environment:\n\n- **Isolation** – Keeps the packages you install for one project separate from others.\n- **Reproducibility** – Makes it easier to share the exact environment with classmates or on a server.\n\n**Now, what do you already know about `venv`?**  \n- Have you used `python -m venv` before?  \n- Do you know where you want the environment to live (e.g., inside your project folder)?\n\nAnswering these will help me tailor the next steps. If you’re ready, I can give you the exact command sequence.",
+        "finish": "stop",
+        "prompt_tokens": 627,
+        "completion_tokens": 158,
+        "latency_ms": 443,
+        "context_chars": 0,
+        "compression_ms": 1571
+      }
+    },
+    {
+      "id": "A24",
+      "question": "What is gradient descent?",
+      "kind": "off-syllabus",
+      "tag": "off",
+      "source": "",
+      "chunks_retrieved": 2,
+      "best_distance": 0.5779794049926246,
+      "retrieval_ms": 681,
+      "compression": {
+        "rawChars": 1427,
+        "keptChars": 0,
+        "ratio": 0,
+        "totalSentences": 11,
+        "keptSentences": 0,
+        "empty": true,
+        "minScore": 0.5,
+        "topK": 6,
+        "scores": []
+      },
+      "uncompressed": {
+        "answer": "Great question! Before I give you a full explanation, let’s think about the problem it solves.\n\n**What problem does gradient descent help with?**  \n- It’s used to find the minimum (or maximum) of a function, especially when the function is complicated or high‑dimensional.\n\nCan you name a situation in your coursework where you need to minimize a cost or error function?",
+        "finish": "stop",
+        "prompt_tokens": 1023,
+        "completion_tokens": 95,
+        "latency_ms": 1128,
+        "context_chars": 1569
+      },
+      "compressed": {
+        "answer": "Great question! Before I give you a full explanation, let’s think about what you already know:\n\n- **What is an optimization problem?**  \n- **What does “gradient” refer to in calculus?**  \n- **Why might we want to “descend” along a gradient?**\n\nIf you can answer those, we’ll be ready to piece together the definition of gradient descent. Give it a try!",
+        "finish": "stop",
+        "prompt_tokens": 620,
+        "completion_tokens": 101,
+        "latency_ms": 673,
+        "context_chars": 0,
+        "compression_ms": 759
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "A01": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A02": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A03": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A04": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A05": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A06": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A07": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A08": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A09": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A10": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A11": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A12": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A13": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A14": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A15": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A16": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A17": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A18": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A19": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A20": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A21": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A22": {
+    "A": "compressed",
+    "B": "uncompressed"
+  },
+  "A23": {
+    "A": "uncompressed",
+    "B": "compressed"
+  },
+  "A24": {
+    "A": "compressed",
+    "B": "uncompressed"
+  }
+}

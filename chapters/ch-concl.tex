@@ -7,13 +7,33 @@ This thesis set out to measure, rather than assert, the workload relief that
 an AI teaching assistant delivers, and to make such an assistant affordable
 to operate at institutional scale. It presented a retrieval-augmented virtual
 teaching assistant over NUS Canvas course materials, defined how the
-instructor-hours it returns can be measured, and integrated an extractive retrieval-
-compression stage that, in an initial probe, removed roughly two-thirds of
-prompt tokens on in-syllabus questions and correctly withheld context from an
-out-of-syllabus query (\autoref{eval:sec:results:compression}).
+instructor-hours it returns can be measured, and evaluated an extractive
+retrieval-compression stage on the deployed system.
 
-\draftnote{final conclusion, once the answer-quality evaluation in
-\autoref{ch:evaluation} is complete.}
+On the three research questions, the findings are as follows. For RQ1, the
+thesis defines an hour-denominated measure of the instructor time an
+assistant returns and identifies what the system must record to compute it:
+every chat query, with its course, time, and text. The deployed system does
+not yet store chat turns, so the measure is defined but not yet applied
+(\autoref{eval:subsec:hours}). For RQ3, a hybrid deployment --- open-weight
+models on a hosted provider for generation, with retrieval and a fallback
+model kept local --- was faster than the local alternatives at equal
+grounding, at a projected cost of cents per student per semester
+(\autoref{eval:sec:results:providers}). For RQ2, compression cut input tokens
+by half or more, and on a compute-bound local model it cut latency too; but
+on the hybrid deployment its own embedding step made answers slower, and on
+20 course-material questions it lowered answer quality, mainly because the
+Socratic persona, given less context, more often replied with questions that
+conveyed nothing (\autoref{eval:sec:results:quality}).
+
+Two lessons cut across these results. First, the cost lever is input tokens,
+but which tokens matters: on this system, the tool definitions and system
+prompt sent with every agent pass outweigh the retrieved context that the
+compression literature targets (\autoref{design:subsec:tokenaudit}). Second,
+what a deployed assistant can later claim depends on what it records and how
+it is deployed; measurement and optimisation choices have to be designed for
+the deployment from the start, rather than added afterwards. The system and
+the evaluation tooling built here provide a base for doing both.
 
 \section{Limitations}
 \label{concl:sec:limitations}
@@ -46,6 +66,18 @@ instructor-hours measure to be computed directly from deflected queries, and
 would let the instructor analytics draw on the questions students actually
 ask, for example by clustering them by topic, alongside quiz and assignment results.
 
+\paragraph{Fitting compression to the deployment.} The answer-quality
+evaluation (\autoref{eval:sec:results:quality}) points to four concrete
+changes. The compressor should keep code rather than strip it, since course
+material such as IT5001's states key facts in code, and stripping it
+produced garbled quotations. Its embedding step should run where retrieval's
+embeddings already are, or on a hosted embedding service, so that it costs
+milliseconds rather than seconds. The retrieval distance cut-off should be
+calibrated per course, since off-syllabus and in-syllabus distances
+overlapped. And the persona should tell the student when the course material
+does not cover a question even when no excerpts are provided, which no answer
+did in either condition.
+
 \paragraph{Adaptive, evidentiality-guided compression.}
 The extractive compression stage adopted from
 \textsc{Recomp}~\cite{iclr24:Xu} carries two known limitations, identified
@@ -76,12 +108,12 @@ logistics --- and shortening the tool descriptions would cut input tokens on
 every pass, alongside what compression saves on retrieved context.
 
 \paragraph{Broader evaluation of the compression stage.}
-The token-reduction and latency results of
-\autoref{eval:sec:results:compression} derive from a small probe over a
-single course corpus; a larger course-material QA set across multiple
-courses, with P50/P95 latency and answer-quality scoring
-(\autoref{eval:subsec:tokenmetrics}), is required before the reductions can
-be claimed as general.
+The compression results derive from a three-question probe and a
+20-question evaluation on two small course corpora, scored by one rater
+(\autoref{eval:sec:results:compression}, \autoref{eval:sec:results:quality}).
+A larger question set across several courses, scored by more than one rater,
+with P50/P95 latency and a variant of the persona that answers directly, is
+needed before the effects can be claimed as general.
 \paragraph{Production-hardened deployment.}
 The deployed prototype runs on a single application host
 (\autoref{design:sec:architecture}). A production target on AWS has been

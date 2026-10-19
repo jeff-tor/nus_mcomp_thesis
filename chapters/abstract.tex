@@ -35,20 +35,24 @@
     source, in what is, to our knowledge, the first evaluation of retrieval
     compression in a deployed educational assistant.
 
-    In a controlled probe on the deployed system, compression removed roughly
-    two-thirds of prompt tokens on in-syllabus questions and cut end-to-end
-    latency by up to 55\% despite its own overhead, while selective
+    In a controlled probe on a locally hosted model, compression removed
+    roughly two-thirds of prompt tokens on in-syllabus questions and cut
+    end-to-end latency by up to 55\% despite its own overhead, while selective
     augmentation correctly withheld context from an out-of-syllabus query.
     A benchmark of local against hosted inference on the same tasks showed
     hosted generation to be 1.5--6.6 times faster with equal grounding,
     at a projected generation cost of US\$0.11--0.27 per student per
     semester.
-    % TODO: replace the bracketed placeholders below with the results of the
-    % answer-quality evaluation (TODO.md A3).
-    On a set of [n] course-material questions, compression [preserved / reduced]
-    answer quality by [result]. These findings indicate that an AI teaching
+    On 20 course-material questions on the deployed hybrid system, however,
+    compression cut prompts by 53\% but lowered mean answer correctness from
+    1.55 to 1.30 (on a 0--2 scale) and, because its embedding step runs on the
+    local host, added about 4\,s per answer; a token audit further showed
+    that tool definitions and the system prompt, not retrieved context, make
+    up most of each prompt. These findings indicate that an AI teaching
     assistant can be operated affordably at the scale universities actually
-    operate, and set out how the administrative load it relieves can be
-    measured in instructor-hours once its chat interactions are recorded.
+    operate, that prompt compression must be matched to the deployment rather
+    than applied by default, and set out how the administrative load such an
+    assistant relieves can be measured in instructor-hours once its chat
+    interactions are recorded.
 
 \end{abstract}
