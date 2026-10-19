@@ -1,0 +1,151 @@
+\chapter{Supplementary Figures and Tables}
+\label{append:comparisons}
+\vspace*{2em}
+
+This appendix holds reference material summarised in the body: the
+deployment models considered in \autoref{design:sec:deployment}, the cloud
+providers considered in \autoref{impl:subsec:provider}, and the application
+components described in \autoref{impl:sec:stack}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Comparison of deployment models for the virtual teaching assistant.}
+  \label{design:tab:deployment}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.13\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.185\textwidth}}
+    \hline
+    \textbf{Dimension} & \textbf{Cloud} & \textbf{On-Premises} & \textbf{Hybrid} & \textbf{Relevance to This System} \\
+    \hline
+    Scalability &
+      Auto-scaling, elastic resources &
+      Fixed hardware capacity &
+      Burst to cloud for peak load &
+      Needed when many students interact simultaneously \\
+    Initial cost (CapEx) &
+      Low upfront cost &
+      High hardware investment &
+      Moderate; reuses existing hardware &
+      Important for student projects with limited budget \\
+    Operational cost (OpEx) &
+      Pay-as-you-go pricing &
+      Maintenance, electricity, upgrades &
+      Both cost models apply &
+      Cloud easier to forecast for experimentation \\
+    AI/ML infrastructure &
+      Managed GPUs, LLM APIs, training services &
+      GPUs and frameworks configured manually &
+      Local inference; managed services for heavy workloads &
+      Faster iteration for adaptive learning models \\
+    Maintenance and updates &
+      Managed by provider &
+      Self-managed patches and upgrades &
+      Split responsibility &
+      Frees effort for algorithm design over operations \\
+    Security controls &
+      Built-in IAM, encryption, monitoring &
+      Full control, higher responsibility &
+      Must secure both environments and the link &
+      Student learning data requires strong protection \\
+    Data privacy and control &
+      Shared responsibility model &
+      Full ownership of data &
+      Sensitive data on-premises; compute in cloud &
+      On-premises stronger for sensitive datasets \\
+    Reliability and availability &
+      Multi-region redundancy &
+      Depends on local setup &
+      Cloud fallback for local outages &
+      Important for continuous student access \\
+    Latency &
+      Depends on region selection &
+      Very low on local network &
+      Low for local paths; variable for cloud paths &
+      Useful for real-time AI responses \\
+    Development speed &
+      Fast prototyping with managed services &
+      Longer setup time &
+      Added integration complexity &
+      Accelerates the project timeline \\
+    Vendor lock-in risk &
+      Higher (managed services) &
+      Lower &
+      Lower; workloads remain portable &
+      Key architectural consideration \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Comparison of major cloud providers for the virtual teaching
+           assistant.}
+  \label{impl:tab:providers}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.13\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.18\textwidth} L{0.185\textwidth}}
+    \hline
+    \textbf{Dimension} & \textbf{AWS} & \textbf{Google Cloud (GCP)} & \textbf{Microsoft Azure} & \textbf{Relevance to This System} \\
+    \hline
+    Managed AI services &
+      Bedrock, SageMaker &
+      Vertex AI (strong ML workflows) &
+      Azure OpenAI Service &
+      Needed for question generation and adaptive learning \\
+    LLM integration &
+      Broad model ecosystem &
+      Strong data--ML integration &
+      Deep OpenAI ecosystem &
+      Influences development complexity \\
+    Data analytics stack &
+      Redshift, Kinesis &
+      BigQuery, Pub/Sub (very strong) &
+      Synapse, Event Hubs &
+      Useful for tracking student metrics and analytics \\
+    Serverless compute &
+      Lambda &
+      Cloud Functions &
+      Azure Functions &
+      Suits event-driven microservices \\
+    Kubernetes support &
+      EKS &
+      GKE (very mature) &
+      AKS &
+      Relevant for a microservices architecture \\
+    Developer experience &
+      Very large ecosystem &
+      Clean ML workflows &
+      Strong enterprise integration &
+      Impacts development speed \\
+    Identity and access management &
+      Powerful but complex &
+      Simpler structure &
+      Tight Microsoft-ecosystem integration &
+      Security for student accounts \\
+    Pricing model &
+      Flexible but complex &
+      Often cost-efficient for analytics &
+      Enterprise-oriented pricing &
+      Important for long-term deployment \\
+    Learning curve &
+      Medium--high &
+      Lower for ML-focused projects &
+      Medium &
+      Relevant for a solo developer \\
+    Best strength &
+      Largest ecosystem and flexibility &
+      Data and AI workflow excellence &
+      OpenAI integration and enterprise tools &
+      Helps justify the final platform choice \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htb]
+  \centering
+  \input{pic/ch-implementation/fig-components}
+  \caption{Application components, by layer. Each feature has one browser
+           module and one request handler; the handlers share the services
+           in the fourth layer.}
+  \label{impl:fig:components}
+\end{figure}

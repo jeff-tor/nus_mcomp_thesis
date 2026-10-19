@@ -18,9 +18,42 @@ stored (\autoref{concl:sec:limitations}).
 \section{Experimental Setup}
 \label{eval:sec:setup}
 
-% TODO: Dataset / course cohort, baselines, hardware, and evaluation
-% protocol.
-\draftnote{the question set and scoring protocol for the answer-quality part of RQ2.}
+\subsection{Answer-Quality Evaluation}
+\label{eval:subsec:setup:quality}
+
+To measure what compression costs in answer quality (RQ2), 24 questions were
+written over the IT5001 (Python programming) corpus, a larger course than the
+CS3241 corpus of the compression probe: six lecture notes of about 2\,700
+words. Twenty questions are in-syllabus, spread across all six lectures, each
+with a reference answer taken from the notes; five of these are tagged
+\emph{code}, because their key fact appears only in code, which the
+compressor strips (\autoref{impl:sec:compression}), and fifteen
+\emph{prose}. Four are off-syllabus, one of them a topic from another course
+(CS5000), to test whether the assistant says when the material does not cover
+a question.
+
+Each question was answered twice on the deployed system on 19 October 2026,
+with retrieval exactly as in production (the five nearest chunks, cosine
+distance at most 0.6): once with every retrieved chunk in full
+(\emph{uncompressed}) and once with \textsc{Recomp}-lite compression ($k = 6$,
+$\tau = 0.5$; \emph{compressed}). Both answers used the production persona,
+gpt-oss-20b at temperature~0, and no tools, so the retrieved context was the
+only difference between them. The two answers to each question were labelled
+A and B in a seeded random order, so that scoring was blind to the condition.
+
+Each in-syllabus answer was scored against its reference: 2 if correct and
+complete, 1 if partly correct (missing a key point, or with a minor error),
+and 0 if wrong or if it conveyed none of the reference. The persona instructs
+the assistant to teach Socratically, so some answers ask guiding questions
+instead of answering; these were scored 1 if the hint stated at least one key
+fact of the reference and 0 if it only asked questions, and were recorded as
+\emph{Socratic}. Each answer was also marked for whether it drew on the course
+material, and each off-syllabus answer for whether it said the material did
+not cover the question.
+An AI assistant (Claude Opus 5.5) suggested a provisional score for every
+answer, with a one-line justification, before the A/B key was opened; the
+author then read each answer against its reference and reviewed every
+provisional score, changing none of the 96.
 
 \subsection{Local versus Hosted Inference Benchmark}
 \label{eval:subsec:setup:providers}
@@ -149,8 +182,6 @@ the institutional cost evidence of \autoref{intro:sec:problem}.
 
 % TODO: report P95 latency once larger samples exist; current samples
 % (n=10 and n=3) support medians and ranges only.
-% TODO: decide the course-material QA evaluation set (n questions over the
-% ingested Canvas corpus) for dimension 4.
 % TODO: replace the assumed usage rates in the cost projection
 % (\autoref{eval:subsec:results:cost}) with rates from production logs.
 
@@ -158,7 +189,8 @@ the institutional cost evidence of \autoref{intro:sec:problem}.
 \label{eval:sec:results}
 
 The results below cover RQ2 and RQ3. \autoref{eval:sec:results:compression}
-reports the compression probe, \autoref{eval:sec:results:providers} the
+reports the compression probe, \autoref{eval:sec:results:quality} the
+answer-quality evaluation, \autoref{eval:sec:results:providers} the
 local-versus-hosted benchmark, and \autoref{eval:subsec:results:cost} the
 resulting cost projection. RQ1 is answered by the measure itself
 (\autoref{eval:subsec:hours}), so it has no results table.
@@ -227,6 +259,68 @@ extractive compression~\cite{iclr24:Xu} and motivates the conservative default
 statistically robust: they derive from a three-question probe over a single
 course corpus, and a larger question set across multiple courses is required
 before the reductions can be claimed as general.
+
+\subsection{Context Compression: Answer Quality}
+\label{eval:sec:results:quality}
+
+\autoref{eval:tab:quality} summarises the answer-quality evaluation of
+\autoref{eval:subsec:setup:quality}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Answer quality with and without compression (IT5001, 20
+           in-syllabus questions, gpt-oss-20b). Latency is generation only;
+           compression adds its own overhead, reported in the text.}
+  \label{eval:tab:quality}
+  \begin{tabular}{l r r}
+    \hline
+    \textbf{Metric} & \textbf{Uncompressed} & \textbf{Compressed} \\
+    \hline
+    Mean correctness (0--2)          & 1.55   & 1.30   \\
+    Fully correct                    & 65\%   & 55\%   \\
+    Wrong or empty (score 0)         & 10\%   & 25\%   \\
+    Draws on the course material     & 40\%   & 25\%   \\
+    Prompt tokens (mean)             & 1\,693 & 789    \\
+    Output tokens (mean)             & 221    & 234    \\
+    Generation latency (mean)        & 0.84\,s & 0.72\,s \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Compression cut the prompt by 53\%, keeping on average 4.5 of 23.4 candidate
+sentences from the five retrieved chunks, and answer quality fell. Compared
+question by question, the compressed answer was better on 3 questions, the
+same on 10, and worse on 7; with 20 questions this difference is not
+statistically significant (two-sided sign test, $p = 0.34$), but its
+direction is consistent. Contrary to expectation, the loss was not
+concentrated in the \emph{code} questions, whose mean score was unchanged
+(1.2 in both conditions), but in the \emph{prose} questions (1.67 to 1.33).
+
+Most of the loss came from the persona's Socratic behaviour rather than from
+wrong answers. Seven answers in each condition were Socratic, but the
+compressed ones were more often empty of content: five of seven compressed
+Socratic answers stated no fact from the reference, against two of seven
+uncompressed. Among the answers that did answer directly, all 13
+uncompressed answers were fully correct, against 11 of 13 compressed. Both
+compressed shortfalls had the same cause: the answer quoted a garbled sentence
+``from the notes'', in which the compressor had removed the inline code ---
+for example, a sentence recommending ``the module'' where the notes name the
+\texttt{decimal} module.
+
+Compression added its own latency. Embedding the candidate sentences, which
+on the hybrid deployment travels to the local embedding host, took 4.0\,s on
+average (1.1--20.3\,s), against a saving of 0.12\,s in generation. On this
+deployment, compression therefore made answers slower, not faster, the
+opposite of the compression probe, which ran on a compute-bound local model
+whose generation time fell with prompt length.
+
+For the four off-syllabus questions, the uncompressed condition injected
+two to five irrelevant chunks: their nearest distances (0.48--0.59) overlap
+the range of the in-syllabus questions (0.32--0.54), so the 0.6 cut-off cannot
+separate them. Compression withheld all of them in every case, as selective
+augmentation intends. Yet in neither condition did any answer say that the
+course material did not cover the question (0 of 8): the assistant answered,
+or asked questions, from general knowledge.
 
 \subsection{Local versus Hosted Inference}
 \label{eval:sec:results:providers}
@@ -381,16 +475,23 @@ stores decides what can later be claimed about it, so the data a workload
 measure needs should be specified, as here, before deployment rather than
 after.
 
-\paragraph{RQ2: compression.} On in-syllabus questions, extractive
-compression removed about two-thirds of input tokens and, because a local
-model's latency grows with prompt length, cut end-to-end latency despite its
-own overhead. It also kept the model on topic and withheld context entirely
-when a question fell outside the syllabus. Its cost to quality is real but
-narrow: on one question, the sentence holding a needed equation fell below
-the retention threshold, and the answer lost it. Compression is therefore
-worth having, but its threshold needs tuning per deployment, and its quality
-cost has not yet been measured on a proper question set. Its reach is also
-bounded: on the deployed agent, retrieved context is only about a fifth of
+\paragraph{RQ2: compression.} Extractive compression reliably cuts input
+tokens: by about two-thirds in the probe and by 53\% on the IT5001 question
+set. Its other effects depend on the deployment and on the question. On a
+compute-bound local model it cut end-to-end latency, but on the hybrid
+deployment its own embedding step, which runs on the remote embedding host,
+cost far more than it saved, so answers became slower. Its cost to quality,
+measured on 20 questions, was small for questions the model answered
+directly, but real overall: mean correctness fell from 1.55 to 1.30 and wrong
+or empty answers rose from 10\% to 25\%, mostly because, with less context,
+the Socratic persona more often replied with questions that conveyed nothing.
+Removing code also produced garbled quotations attributed to the notes. On
+the other side, compression kept irrelevant material out of every
+off-syllabus prompt, which the distance cut-off alone did not. Compression is
+therefore worth keeping as an option rather than as a default: it suits
+deployments where generation is compute-bound and embedding is cheap, and it
+needs to preserve code before it suits course material like IT5001's. Its
+reach is also bounded: on the deployed agent, retrieved context is only about a fifth of
 the first-pass prompt, behind the tool definitions and the system prompt
 (\autoref{design:subsec:tokenaudit}), so compression alone cannot cut the
 prompt by more than that share.
@@ -424,15 +525,30 @@ and streaming) was timed on the hosted provider. Free-tier throttling was
 excluded from latency, and queueing on paid tiers may differ. Finally, the
 cost projection rests on assumed usage rates.
 
+\paragraph{Threats to validity of the answer-quality evaluation.}
+The evaluation uses 20 in-syllabus questions from one course, scored by one
+rater, so it shows the direction of the effect, not its size with any
+precision; a larger, multi-rater question set is needed. Blinding was
+imperfect: the two garbled quotations reveal which condition produced them.
+The Socratic persona confounds the measure, since an answer that withholds a
+correct explanation by design scores the same as a wrong one; a variant of
+the evaluation that asks the persona for a direct answer would separate the
+two. Answers were generated without tools and at temperature~0, which
+isolates the effect of the context but differs from production, where the
+agent may call tools.
+
 \section{Summary}
 \label{eval:sec:summary}
 
 For RQ1, the thesis defines an hour-denominated measure of the instructor
 time the assistant returns, and identifies that computing it requires
 stored chat turns, which the deployed system does not yet keep. For RQ2, extractive
-compression cut input tokens on in-syllabus questions by about two-thirds and
-reduced latency, at the cost of occasionally dropping a needed sentence. For
+compression cut input tokens by 53--67\% and kept irrelevant material out of
+off-syllabus prompts, but on 20 IT5001 questions it lowered mean answer
+correctness from 1.55 to 1.30 (not statistically significant), largely
+through content-free Socratic replies, and on the hybrid deployment its
+embedding step made answers about 4\,s slower. For
 RQ3, a hybrid deployment --- hosted generation, local retrieval, and a local
 fallback --- was faster than the local alternatives at equal grounding, at a
 projected US\$0.11--0.27 per student per semester. Both results come from
-small samples and need larger question sets. \draftnote{update this summary with the answer-quality results for RQ2.}
+small samples and need larger question sets.

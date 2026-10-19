@@ -38,7 +38,18 @@ before the final reference pass. Also fetch ACL Anthology page numbers for
 LLMLingua (`emnlp23:Jiang`), LongLLMLingua (`acl24:Jiang`), and Selective
 Context (`emnlp23:Li`).
 
-### A3. Course-material QA evaluation set
+### A3. Course-material QA evaluation set — DONE (2026-10-19)
+
+Run, scored and written up (§5.1.2, §5.3.2, discussion, summary, abstract,
+Ch 6). Results in `exp/ch-answer-quality/results/`. Still open: the
+scoring-method sentence in §5.1.2 (author to confirm how the review was done).
+
+(Previously: KIT READY)
+
+Kit in `exp/ch-answer-quality/` (IT5001, 20 in-syllabus + 4 off-syllabus,
+blind A/B scoring, `score.py`). Still to do: run it, score it, write up §5.1,
+§5.3, §5.5, abstract and Ch 6.
+
 
 **Where:** `chapters/ch-evaluation.tex`, §5.2.2
 (`eval:subsec:tokenmetrics`), dimension 4.
