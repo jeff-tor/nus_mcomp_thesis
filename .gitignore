@@ -1,5 +1,5 @@
 # Output
-ChickenR.pdf
+CP5105-Thesis-Report.pdf
 *.md5
 *.bbl
 *.aux 
@@ -28,3 +28,6 @@ pdfbuild/
 *.toc 
 *.zip
 *.xdv
+
+# macOS
+.DS_Store
