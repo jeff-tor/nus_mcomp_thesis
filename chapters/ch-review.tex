@@ -31,9 +31,8 @@ is the OECD's Teaching and Learning International Survey (TALIS), whose 2024
 cycle covered some 280\,000 educators across 55 education
 systems~\cite{oecd25:Talis}. Across the OECD, full-time lower-secondary
 teachers report a 41-hour working week, of which only 22.7 hours is classroom
-teaching; general administrative work accounts for roughly 3 hours per week, a
-share that has remained essentially stable since the 2018
-cycle~\cite{oecd25:Talis}.
+teaching; general administrative work accounts for roughly 3 hours per
+week~\cite{oecd25:Talis}.
 
 Singapore, the deployment context of this thesis, sits well above these
 averages. Its teachers report a 47.3-hour working week --- about six hours
@@ -209,8 +208,8 @@ on.
     OECD TALIS 2024, international report~\cite{oecd25:Talis} &
       Survey &
       55 systems &
-      OECD average 3\,h/week admin; stable since 2018; AI seen by teachers as
-      an admin remedy \\
+      OECD average 3\,h/week admin; AI seen by teachers as an admin
+      remedy \\
     García-Gallego et al.~\cite{apec15:GarciaGallego} &
       Panel econometrics &
       604 professors, Spain &
@@ -408,9 +407,10 @@ question answering in a deployable VTA is therefore this thesis's empirical
 contribution on the technical side, complementing the workload measurement of
 \autoref{review:subsec:gap}: the RAG pipeline is deployed as the intervention
 that \autoref{review:subsec:ai} identified, paired with a defined method for
-the missing hour-denominated measurement, and made cheaper to operate --- in
-both the hosted and local regimes --- by the compression stage described in \autoref{impl:sec:compression}
-and evaluated in \autoref{eval:sec:results:compression}.
+the missing hour-denominated measurement, and paired with a compression stage
+that cuts its input tokens (\autoref{impl:sec:compression}), whose trade-offs in
+latency and answer quality are evaluated in
+\autoref{eval:sec:results:compression} and \autoref{eval:sec:results:quality}.
 
 \section{Summary}
 \label{review:sec:summary}
