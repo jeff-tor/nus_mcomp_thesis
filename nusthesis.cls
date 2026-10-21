@@ -333,15 +333,16 @@
     been used in this report.\par
     \vspace{1.5em}
     I also acknowledge the use of \@AIVersion\par
-    {\color{red} for initial idea generation, language refinement, and\par
-    summarization.} All content has been critically reviewed\par
-    and supplemented with my own analysis to ensure\par
-    accuracy and originality.\par
+    for drafting and editing text, developing the evaluation\par
+    scripts, checking references, and suggesting provisional\par
+    scores in the answer-quality evaluation (Section~\ref{eval:subsec:setup:quality}).\par
+    All content has been critically reviewed and supplemented\par
+    with my own analysis to ensure accuracy and originality.\par
     \vspace{1.5em}
     This report has also not been submitted for any\par
     degree in any university previously.\par
     \ifdefined \@declaresign
-      \vspace{1.2in}
+      \vspace{0.8in}
       \begin{figure}[!h]
         \centering\includegraphics[height=1in]{\@declaresign}
       \end{figure}
