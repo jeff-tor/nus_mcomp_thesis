@@ -135,6 +135,24 @@ The deployed system records quiz interactions but not chat turns
 in this thesis; storing chat histories, which would make the measure
 computable, is future work (\autoref{concl:sec:limitations}).
 
+\paragraph{Illustrative projection.} To indicate the likely scale, the measure
+can be projected from stated assumptions rather than logs
+(\autoref{append:tab:hours}). Weekly hours returned are the product of
+enrolment (200--300), questions per student per week (0.14--0.59, from the
+KAIST deployment's conversations and exchanges over 14
+weeks~\cite{acl25:Kweon}), the share that are routine, the share answered
+fully correctly (65\%, \autoref{eval:sec:results:quality}), the share that
+would otherwise have reached staff, and the handling time per question. The
+handling time is modelled as reading the question (238 words per
+minute~\cite{jml19:Brysbaert}), looking up the answer, and composing a reply
+(19 words per minute when composing~\cite{chi99:Karat}), giving 2.7--8.4
+minutes. The projection ranges from 0.1 to 7.2 instructor-hours per course per
+week, with a central estimate of 1.3 (about 17 hours over a 13-week
+semester); it is most sensitive to the question rate, the handling time, and
+the share of questions that would otherwise have reached staff --- exactly
+what logged chat turns would measure. It is an illustration under
+assumptions, not a measurement.
+
 A secondary, complementary signal, possible once chat turns are logged
 (\autoref{concl:sec:limitations}), is question-topic clustering over the same
 logs: the distribution of what students actually ask provides an objective,
@@ -169,16 +187,10 @@ metric language as the problem statement
         reported rather than netted out, following the practice
         of~\citet{facl25:Jeong}~\cite{facl25:Jeong};
   \item \textbf{Answer quality} on course-material question answering, to
-        verify that compression does not degrade answers --- mirroring how
+        measure whether compression degrades answers --- mirroring how
         \textsc{Recomp} and TCRA-LLM report the compression--quality
         trade-off~\cite{iclr24:Xu, femnlp23:Liu}.
 \end{enumerate}
-
-The per-student-per-semester projection under dimension 2 --- baseline versus
-compressed, extrapolated to a realistic course enrolment and set beside the
-US\$7.50 per student per course per semester observed for
-Ethel~\cite{tpt24:Kortemeyer} --- connects the evaluation directly back to
-the institutional cost evidence of \autoref{intro:sec:problem}.
 
 % TODO: report P95 latency once larger samples exist; current samples
 % (n=10 and n=3) support medians and ranges only.
@@ -359,14 +371,10 @@ under the setup of \autoref{eval:subsec:setup:providers}.
 The two gpt-oss models were 1.5--6.6 times faster end to end than the local
 models usable for production (Llama~3.2 and Qwen3 14B) and matched the best
 of them on grounding (10/10). The only faster local model, Qwen3 8B, never
-called the expected tools and grounded only 3/10 turns. Generation throughput differed by 6--50 times: about
-19--75 tokens per second locally against 475--965 hosted. These hosted
-latencies are conservative for production: the same calls made from the
-application server on EC2 took 229--256\,ms per agent pass, two to five
-times faster than from the benchmark client. In the local regime, by
-contrast, latency in production was dominated not by generation but by cold
-model loads and by embedding over the SSH tunnel (1.2--1.7\,s, against
-0.12\,s on the host itself).
+called the expected tools and grounded only 3/10 turns. Hosted throughput was 6--50 times
+higher (475--965 against 19--75 tokens per second), and these latencies are
+conservative: from the EC2 application server, an agent pass took
+229--256\,ms.
 
 Two further observations matter for the token argument of this thesis.
 First, the hosted gpt-oss models took three passes per multi-part turn where
@@ -458,10 +466,8 @@ single-pass RAG. Token counts are not comparable across model families ---
 the same prompt counted 1\,093 tokens under Llama~3.2, 758 under Qwen3, and
 672 under gpt-oss --- so compression ratios are compared within a model only.
 
-Rate limits are a separate capacity constraint. The free tier allows 8\,000
-tokens per minute per model; at about 5\,500 tokens per retrieval-augmented
-agent turn, one model serves roughly 1.4 turns per minute across all users,
-so a production deployment at course scale requires a paid tier.
+Separately, the free tier's 8\,000 tokens per minute per model serve only
+about 1.4 agent turns per minute, so course-scale use needs a paid tier.
 
 \section{Discussion}
 \label{eval:sec:discussion}
@@ -503,27 +509,20 @@ Retrieval could not move to the hosted provider, and a local fallback turns
 provider failures into degraded answers rather than outages, so the hybrid
 model best meets the requirements.
 
-\paragraph{Tokens as the cost lever.} Both inference regimes reward fewer input tokens, for different reasons. In
-the hosted regime, tokens are billed directly and multiplied by agent passes;
-in the local regime, they appear as prefill latency and, more acutely, as
-memory pressure on a host shared with the retriever. This supports the claim
-in \autoref{intro:sec:problem} that input tokens per query are the primary
-controllable cost driver in both regimes.
+\paragraph{Tokens as the cost lever.} Both regimes reward fewer input tokens
+--- billed and multiplied by agent passes when hosted, and paid in prefill
+latency and memory pressure when local --- supporting the claim of
+\autoref{intro:sec:problem}.
 
 \paragraph{Threats to validity of the provider benchmark.}
-Samples are small ($n=10$ for the headline scenario and quizzes, $n=3$
-otherwise): enough to rank models, not to support P95 latencies or
-fine-grained claims. The local and hosted agent runs were five weeks apart, on
-different Ollama versions, although prompts, stubs, and loop were identical.
-Hosted latencies include trans-Pacific round trips from the benchmark client.
-Quiz correctness was judged by an AI model rather than a human, in a single
-unblinded pass over five computer science topics; the judge may share
-failure modes with the models it rated, and a second, human rater is
-needed. Stubbed tool results measure model behaviour rather than
-live-data effects, and no complete production turn (retrieval, live tools,
-and streaming) was timed on the hosted provider. Free-tier throttling was
-excluded from latency, and queueing on paid tiers may differ. Finally, the
-cost projection rests on assumed usage rates.
+Samples are small ($n=10$ and $n=3$): enough to rank models, not to support
+P95 latencies. Local and hosted runs were five weeks apart, on different
+Ollama versions, with identical prompts, stubs, and loop; hosted latencies
+include trans-Pacific round trips and exclude free-tier throttling. Quiz
+correctness was judged by an AI model in one unblinded pass, which may share
+failure modes with the models it rated. Stubbed tools measure model
+behaviour, not live-data effects, and no complete production turn was timed
+on the hosted provider. The cost projection rests on assumed usage rates.
 
 \paragraph{Threats to validity of the answer-quality evaluation.}
 The evaluation uses 20 in-syllabus questions from one course, scored by one
@@ -542,7 +541,9 @@ agent may call tools.
 
 For RQ1, the thesis defines an hour-denominated measure of the instructor
 time the assistant returns, and identifies that computing it requires
-stored chat turns, which the deployed system does not yet keep. For RQ2, extractive
+stored chat turns, which the deployed system does not yet keep; an
+illustrative projection puts it at 0.1--7.2 hours per course per week
+(central estimate 1.3). For RQ2, extractive
 compression cut input tokens by 53--67\% and kept irrelevant material out of
 off-syllabus prompts, but on 20 IT5001 questions it lowered mean answer
 correctness from 1.55 to 1.30 (not statistically significant), largely
