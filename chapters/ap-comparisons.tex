@@ -5,8 +5,9 @@
 This appendix holds reference material summarised in the body: the
 deployment models considered in \autoref{design:sec:deployment}, the cloud
 providers considered in \autoref{impl:subsec:provider}, the inference
-configurations described in \autoref{impl:subsec:configs}, and the application
-components described in \autoref{impl:sec:stack}.
+configurations described in \autoref{impl:subsec:configs}, the application
+components described in \autoref{impl:sec:stack}, and the instructor-hours
+projection of \autoref{eval:subsec:hours}.
 
 \begin{table}[htb]
   \centering
@@ -178,4 +179,42 @@ components described in \autoref{impl:sec:stack}.
       (\autoref{eval:subsec:results:cost}) \\
     \hline
   \end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Illustrative projection of instructor-hours returned per course per
+           week (\autoref{eval:subsec:hours}). Every scenario uses the measured
+           65\% fully-correct rate; all other values are assumptions.}
+  \label{append:tab:hours}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{L{0.42\textwidth} r r r}
+    \hline
+    \textbf{Parameter} & \textbf{Low} & \textbf{Central} & \textbf{High} \\
+    \hline
+    Enrolment, $N$                                         & 200  & 250  & 300  \\
+    Questions per student per week, $q$\textsuperscript{a} & 0.14 & 0.36 & 0.59 \\
+    Share of questions that are routine, $r$               & 60\% & 75\% & 90\% \\
+    Share answered fully correctly, $d$ (measured)         & 65\% & 65\% & 65\% \\
+    Share that would otherwise reach staff, $s$            & 20\% & 35\% & 50\% \\
+    Look-up time per question (min)                        & 0.5  & 1.0  & 2.0  \\
+    Reply length (words), composed at 19 wpm\textsuperscript{b} & 40 & 75 & 120 \\
+    Handling time per question, $t$ (min)\textsuperscript{c} & 2.7 & 5.1 & 8.4 \\
+    \hline
+    Questions taken off staff per week ($N q r d s$)        & 2.2  & 15.4 & 51.4 \\
+    \textbf{Instructor-hours per course per week}          & \textbf{0.1} & \textbf{1.3} & \textbf{7.2} \\
+    Instructor-hours per 13-week semester                  & 1    & 17   & 94   \\
+    \hline
+\end{tabular}
+
+  \vspace{4pt}
+  \parbox{0.86\textwidth}{\scriptsize
+    \textsuperscript{a}KAIST deployment~\cite{acl25:Kweon}: 916 conversations
+    (low) or 3\,869 exchanges (high) from 472 students over 14 weeks; central is
+    their midpoint.
+    \textsuperscript{b}Composition typing rate reported by Karat et
+    al.~\cite{chi99:Karat}.
+    \textsuperscript{c}Reading a 25-word question at 238 words per
+    minute~\cite{jml19:Brysbaert}, plus look-up, plus composing the reply.}
 \end{table}
