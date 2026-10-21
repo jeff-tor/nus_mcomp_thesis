@@ -199,7 +199,7 @@ models also gives each its own rate-limit budget on the provider.
 \section{Context Compression for Token Reduction}
 \label{impl:sec:compression}
 
-When the compression stage was developed and evaluated, response generation
+When the compression stage was developed and first evaluated, response generation
 ran on a small, locally hosted language model (Llama~3.2, 3B parameters, served
 through Ollama on an 8\,GB consumer laptop; \autoref{impl:tab:configs}). Under standard retrieval-augmented generation
 (RAG)~\cite{neurips20:Lewis}, the top-$N$ retrieved chunks of course material are
@@ -230,8 +230,8 @@ The stage is inserted between the existing retriever and the generation call
         which is reused from the retrieval step at no additional cost;
   \item sentences scoring above a threshold $\tau$ are retained, highest first,
         capped at $k$ sentences; if none qualifies, the context is left empty
-        (selective augmentation) and the model is instructed to state that the
-        topic is not covered by the course materials.
+        (selective augmentation), so the model receives no course material
+        for that question.
 \end{enumerate}
 
 Reusing the retrieval embedder is a deliberate engineering choice: the compressor
