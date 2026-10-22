@@ -325,7 +325,7 @@
   \begin{alwayssingle}
   \begin{center}
     {\Large \bfseries \declearname}\par
-    \vspace{1in}
+    \vspace{0.6in}
     {\large 
     I hereby declare that this report is my original work and it has\par 
      been written by me in its entirety. I have duly\par 
@@ -335,7 +335,8 @@
     I also acknowledge the use of \@AIVersion\par
     for drafting and editing text, developing the evaluation\par
     scripts, checking references, and suggesting provisional\par
-    scores in the answer-quality evaluation (Section~\ref{eval:subsec:setup:quality}).\par
+    scores in the answer-quality evaluation (Section~\ref{eval:subsec:setup:quality})\par
+    and judging quiz answer keys (Section~\ref{eval:subsec:setup:providers}).\par
     All content has been critically reviewed and supplemented\par
     with my own analysis to ensure accuracy and originality.\par
     \vspace{1.5em}
