@@ -6,9 +6,6 @@ Mon 26 Oct 2026.
 
 ## Open before submission
 
-- **Name the AI model (and version)** that judged quiz answer-key
-  correctness: §5.1.2, marked by the one remaining `% TODO` in
-  `chapters/ch-evaluation.tex`.
 - **Demo video link:** add it to §1.1 next to the project page once
   uploaded (narration script in `demo/demo-script.md`).
 - **Supervisor feedback** from the catch-up, if any.

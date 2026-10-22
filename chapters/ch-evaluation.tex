@@ -83,11 +83,11 @@ per turn, excluding rate-limit pauses.
 \paragraph{Quiz benchmark.} The production multiple-choice prompt was run
 unchanged over five rotating topics ($n=10$ per model, temperature 0.7),
 with the same parse and schema check as production. Answer-key correctness
-was then judged by an AI model rather than a human rater: a single,
-unblinded LLM-based review of each question against its keyed answer. The
+was then judged by an AI model, Claude Opus~5.5 (Anthropic), rather than
+a human rater: a single, unblinded LLM-based review of each question
+against its keyed answer. The
 correct-key rates are therefore indicative only, and a human-rated,
 course-specific item set is required before they can be relied on.
-% TODO: name the AI model (and version) that judged answer-key correctness.
 
 \section{Evaluation Metrics}
 \label{eval:sec:metrics}
