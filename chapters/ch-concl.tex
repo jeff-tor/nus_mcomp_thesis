@@ -55,6 +55,95 @@ design rather than calibrated against instructors' judgement or student
 outcomes. Whether its targets are the right ones for a given course is
 untested.
 
+\section{Contributions, Results, and Learning Points}
+\label{concl:sec:reflection}
+
+\paragraph{Summary of contributions.} The thesis makes the three
+contributions set out in \autoref{intro:sec:contributions}. First, it
+designed, built, and deployed StudyAI, a retrieval-augmented teaching
+assistant over NUS Canvas course materials, with a tool-calling chat agent,
+an adaptive quiz, and instructor analytics over quiz and assignment results
+(Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second, it defined
+an hour-denominated measure of the instructor time such an assistant
+returns, and identified the server-side records needed to compute it
+(\autoref{eval:subsec:hours}). Third, it evaluated an extractive,
+\textsc{Recomp}-style compression stage on the deployed system, in tokens,
+cost, latency, and answer quality, together with a comparison of local and
+hosted inference that set the hybrid deployment
+(\autoref{ch:evaluation}).
+
+\paragraph{Results against the baselines.} \autoref{concl:tab:results}
+sets each headline result against the baseline it was measured against.
+
+\begin{table}[htb]
+  \centering
+  \caption{Headline results against their baselines.}
+  \label{concl:tab:results}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{L{0.17\textwidth} L{0.25\textwidth} L{0.25\textwidth} L{0.21\textwidth}}
+    \hline
+    \textbf{Question} & \textbf{Baseline} & \textbf{This system} & \textbf{Outcome} \\
+    \hline
+    RQ1: instructor time &
+      No hour-based measure in prior work &
+      Defined measure; projected 1.3\,h per course per week (0.1--7.2) &
+      Defined, not yet measured \\
+    RQ2: prompt tokens &
+      Uncompressed RAG &
+      $-53\%$ (IT5001) to $-67\%$ (CS3241) &
+      Reduced \\
+    RQ2: latency &
+      Uncompressed RAG &
+      Local: 17.2 to 7.7\,s; hosted: +4.0\,s overhead &
+      Depends on the deployment \\
+    RQ2: answer quality &
+      Uncompressed: mean 1.55 of 2 &
+      Compressed: mean 1.30 ($p=0.34$) &
+      Lower; not significant \\
+    RQ3: agent turn &
+      Local Qwen3 14B: 11.2\,s, 10/10 grounded &
+      Hosted gpt-oss-20b: 1.7\,s, 10/10 grounded &
+      Faster, equally grounded \\
+    RQ3: quiz answer keys &
+      Local Llama~3.2: 3/10 correct &
+      Hosted gpt-oss-120b: 8/10 correct &
+      Better (AI-judged) \\
+    Cost per student &
+      Ethel: US\$7.50 per course per semester &
+      US\$0.11--0.27 per semester (projected) &
+      Lower; indicative only \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\paragraph{Learning points.} Five lessons from building and evaluating the
+system are worth carrying into similar projects.
+\begin{itemize}
+  \item \textbf{Audit before optimising.} Compression was chosen to cut the
+        retrieved context, but the token audit, run later, showed that tool
+        definitions and the system prompt were the larger share of each
+        prompt. Measuring first would have pointed the optimisation at the
+        larger cost.
+  \item \textbf{Record what you will need to claim.} The instructor-hours
+        measure could not be computed because chat turns were never stored.
+        Logging is cheap to add at the start and impossible to recover
+        afterwards.
+  \item \textbf{A saving is not a result until quality is checked.}
+        Compression halved the prompt but lowered answer quality, and quiz
+        questions that passed the schema check still had wrong answer keys.
+        Each optimisation needed a quality measure alongside its cost.
+  \item \textbf{Results depend on where the system runs.} The same
+        compression stage made a compute-bound local model faster and the
+        hosted deployment slower, so an optimisation has to be evaluated on
+        the deployment it is meant for.
+  \item \textbf{Design for provider change.} The original managed model was
+        retired by its vendor during the project, and one hosted model
+        rejected the agent's tool schema. Keeping providers behind one
+        interface, with a local fallback, made switching a configuration
+        change rather than a rewrite.
+\end{itemize}
+
 \section{Future Research Directions}
 
 \paragraph{Storing chat histories for analytics.}
