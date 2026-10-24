@@ -117,31 +117,33 @@ sets each headline result against the baseline it was measured against.
   \end{tabular}
 \end{table}
 
-\paragraph{Learning points.} Five lessons from building and evaluating the
-system are worth carrying into similar projects.
+\paragraph{Learning points.} The project gave lessons in three areas.
 \begin{itemize}
-  \item \textbf{Audit before optimising.} Compression was chosen to cut the
-        retrieved context, but the token audit, run later, showed that tool
-        definitions and the system prompt were the larger share of each
-        prompt. Measuring first would have pointed the optimisation at the
-        larger cost.
-  \item \textbf{Record what you will need to claim.} The instructor-hours
-        measure could not be computed because chat turns were never stored.
-        Logging is cheap to add at the start and impossible to recover
-        afterwards.
-  \item \textbf{A saving is not a result until quality is checked.}
-        Compression halved the prompt but lowered answer quality, and quiz
-        questions that passed the schema check still had wrong answer keys.
-        Each optimisation needed a quality measure alongside its cost.
-  \item \textbf{Results depend on where the system runs.} The same
-        compression stage made a compute-bound local model faster and the
-        hosted deployment slower, so an optimisation has to be evaluated on
-        the deployment it is meant for.
-  \item \textbf{Design for provider change.} The original managed model was
-        retired by its vendor during the project, and one hosted model
-        rejected the agent's tool schema. Keeping providers behind one
-        interface, with a local fallback, made switching a configuration
-        change rather than a rewrite.
+  \item \textbf{Technical contribution.} I built the system end to end:
+        ingestion into pgvector, retrieval with BGE-M3 embeddings, the
+        compression stage, the tool-calling agent, the adaptive quiz, and a
+        hybrid deployment on AWS with Groq and a local fallback. Deployment
+        shaped the engineering: the fallback must never switch a stream that
+        has already started, and the fallback model must stay loaded to meet
+        the latency budget.
+  \item \textbf{Research.} Measure before optimising: the token audit, run
+        after compression was chosen, showed that retrieved context was the
+        smaller share of the prompt. Check quality alongside cost, since
+        compression halved the prompt but lowered correctness, and evaluate
+        on the target deployment, where the same stage can speed a system up
+        or slow it down. A system can only support claims about what it
+        records: without chat logs, instructor-hours could only be
+        projected.
+  \item \textbf{AI tools: MCP, agents, and agentic workflows.} An agentic
+        workflow multiplies the prompt: every tool call is another pass that
+        re-sends the system prompt, context, and tool definitions, so tools
+        became the largest token cost. MCP made external documentation
+        servers easy to plug in as tools, but each one adds definitions to
+        every pass. Providers differ in ways a single prompt never shows:
+        tool-call formats, schema strictness, and reasoning tokens billed as
+        output. AI models also served as evaluators: Claude Opus~5.5 judged
+        quiz answer keys and suggested scores that I reviewed, which saved
+        time but required disclosure and human review.
 \end{itemize}
 
 \section{Future Research Directions}
