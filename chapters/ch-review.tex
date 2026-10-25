@@ -237,29 +237,26 @@ on.
   \end{tabular}
 \end{table}
 
-\section{From Scripted Chatbots to Retrieval-Augmented Generation}
+\FloatBarrier
+\section{Retrieval-Augmented Teaching Assistants and Their Cost}
 \label{review:sec:rag}
 
-The chatbot systems surveyed by the AI-in-education literature of
-\autoref{review:subsec:ai} share a common architecture: student questions are
-matched against hand-authored scripts by keywords or string similarity, and
-the response is the stored answer of the best-matching
-pattern~\cite{icacci17:Ranoliya, sust22:Ahmad}. Such systems can deflect
-narrowly anticipated FAQs, but they are brittle to paraphrase, cannot answer
-questions whose answers were never scripted, and shift the maintenance burden
-back onto staff --- every syllabus change requires editing scripts, which is
-itself administrative work.
-
-Retrieval-augmented generation (RAG)~\cite{neurips20:Lewis} replaces both
-halves of that architecture. Questions and course materials are embedded in a
-shared dense vector space, so retrieval is semantic rather than lexical and
-survives paraphrase; and the answer is synthesised by a language model
-conditioned on the retrieved passages, so the system can compose answers from
-material nobody scripted, while remaining grounded in the course corpus rather
-than in the model's parametric memory. The retrieval quality of such a
-pipeline rests on the embedding model; this thesis uses
-BGE-M3~\cite{arxiv24:Chen}, a multilingual, multi-granularity embedder suited
-to heterogeneous course materials.
+The AI-intervention thread of \autoref{review:subsec:ai} rests on scripted
+chatbots that match student questions against hand-authored answers by
+keywords or string similarity~\cite{icacci17:Ranoliya, sust22:Ahmad}.
+Such systems are brittle to paraphrase, cannot answer anything that was not
+scripted, and turn every syllabus change into script maintenance --- itself
+administrative work. This section turns to the modern form of the remedy,
+the one this thesis builds, and to the cost it carries. Retrieval-augmented
+generation (RAG)~\cite{neurips20:Lewis} embeds questions and course materials
+in a shared vector space, so retrieval is semantic and survives paraphrase,
+and has a language model compose the answer from the retrieved passages,
+grounded in the course corpus rather than in the model's parametric memory;
+this thesis uses the multilingual BGE-M3 embedder~\cite{arxiv24:Chen}.
+The rest of this section reviews RAG teaching assistants now deployed at
+scale (\autoref{review:subsec:vtas}), the token cost they share
+(\autoref{review:subsec:tokens}), and the compression methods that target it
+(\autoref{review:subsec:compression}).
 
 \subsection{LLM-Based Virtual Teaching Assistants at Scale}
 \label{review:subsec:vtas}
