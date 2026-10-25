@@ -37,19 +37,19 @@ future work.
 \label{intro:sec:problem}
 
 Educators operate under a fixed time budget divided across teaching,
-preparation, marking, administration, and --- in higher education ---
-research. Survey evidence shows that non-teaching duties consume a large and
+preparation, marking, administration, and in higher education, research.
+Survey evidence shows that non-teaching duties consume a large and
 stable share of this budget: Singapore teachers report four hours per week of
 administrative work (above the OECD average of three) within a 47.3-hour
 working week of which only 17.7 hours is teaching, and 53\% rank excessive
 administrative work as their foremost source of occupational
 stress~\cite{oecd25:TalisSG}. Panel evidence from higher education shows that
-this burden is a quality problem, not merely a workload problem: non-teaching
-duties that carry no compensating load relief measurably reduce teaching
+this burden is a quality problem, not just a workload problem: non-teaching
+duties that carry no compensating load relief consequently reduce teaching
 quality, while research time feeds back positively into teaching quality over
 most of its observed range~\cite{apec15:GarciaGallego}. The AI-in-education
 literature has long proposed intelligent systems --- chatbots, automated
-assessment, learning analytics --- as the remedy, arguing that such
+assessment, learning analytics as the remedy, arguing that such
 applications \enquote{minimize the administrative tasks of a teacher to
 invest more in teaching and guiding students}~\cite{sust22:Ahmad}; yet that
 same literature concedes that its claims remain qualitative and
@@ -86,11 +86,11 @@ controllable cost driver.
 
 This thesis presents a retrieval-augmented virtual teaching assistant built
 over NUS Canvas course materials that absorbs routine student-support load
---- clarification, content navigation, and logistics queries --- and, unlike
+in the form of clarification, content navigation, and logistics queries, and unlike
 prior work, defines an hour-denominated measure of the instructor time it
 returns, together with the interaction data needed to compute it, connecting
 the workload-measurement, teaching-quality, and AI-intervention literatures
-(\autoref{ch:review}). The system is built for low-cost deployment ---
+(\autoref{ch:review}). The system is built for low-cost deployment,
 open-weight generation on a hosted inference provider, with retrieval and a
 fallback model kept local --- and an extractive, sentence-level
 retrieval-compression stage adapted from
@@ -104,16 +104,16 @@ units --- tokens, cost, and latency per query
 
 The objectives of this thesis are to:
 \begin{enumerate}[label=(\roman*)]
-    \item design and build a retrieval-augmented virtual teaching assistant
+    \item Design and build a retrieval-augmented virtual teaching assistant
           over institutional (NUS Canvas) course materials that answers
           routine clarification, content-navigation, and logistics queries
           without instructor involvement;
-    \item define an hour-denominated measure of the instructor time the
+    \item Define an hour-denominated measure of the instructor time the
           assistant returns per course per week, and identify the
           interaction data needed to compute it;
-    \item surface analytics over students' quiz and assignment results, as a
+    \item Surface analytics over students' quiz and assignment results, as a
           behaviour-based teaching signal for instructors;
-    \item reduce the input-token cost of each query by integrating an
+    \item Reduce the input-token cost of each query by integrating an
           extractive retrieval-compression stage between retrieval and
           generation, and evaluate its effect on tokens, cost, latency, and
           answer quality.
@@ -143,6 +143,5 @@ This thesis makes three contributions, mirroring the gap stated in
           statement --- tokens, cost, and latency per query --- and on answer
           quality (\autoref{impl:sec:compression},
           \autoref{eval:sec:results:compression}, and
-          \autoref{eval:sec:results:quality}); to our knowledge, this is
-          the first such evaluation.
+          \autoref{eval:sec:results:quality})
 \end{enumerate}
