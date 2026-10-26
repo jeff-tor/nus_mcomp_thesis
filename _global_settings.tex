@@ -47,10 +47,18 @@
 
 \usepackage{hyperref}
 \hypersetup{hidelinks} % links stay clickable, without coloured boxes
-\renewcommand{\sectionautorefname}{\S}
-\let\subsectionautorefname\sectionautorefname
-\let\subsubsectionautorefname\sectionautorefname
-\renewcommand{\chapterautorefname}{Chapter}
+% Capitalised \autoref names. Set through babel's English hook, because
+% babel resets them to lowercase at \begin{document}.
+\addto\extrasenglish{%
+  \def\chapterautorefname{Chapter}%
+  \def\sectionautorefname{Section}%
+  \def\subsectionautorefname{Section}%
+  \def\subsubsectionautorefname{Section}%
+  \def\appendixautorefname{Appendix}%
+  \def\figureautorefname{Figure}%
+  \def\tableautorefname{Table}%
+  \def\equationautorefname{Equation}%
+}
 
 \usepackage{listings}
 \renewcommand{\lstlistingname}{Code}
