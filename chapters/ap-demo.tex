@@ -1,0 +1,60 @@
+\chapter{Demonstration Video}
+\label{append:demo}
+\vspace*{2em}
+
+A video demonstration of the deployed system accompanies this report. It is
+6~minutes 54~seconds long and is available at:
+
+\begin{center}
+  \url{https://youtu.be/W2av8mtkLbQ}\\[1.5em]
+  \qrcode[height=3cm]{https://youtu.be/W2av8mtkLbQ}
+\end{center}
+
+The video was recorded on the deployed system in its hybrid configuration
+(\autoref{impl:subsec:configs}), using demonstration student and instructor
+accounts; no student data appears in it. It follows the four use cases of
+\autoref{append:architecture}, so each segment can be read alongside the
+matching figure. \autoref{append:tab:demo} lists the segments in order.
+
+\begin{table}[htb]
+  \centering
+  \caption{Segments of the demonstration video, with the use case each shows
+           and where it is described in this report.}
+  \label{append:tab:demo}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{0.18\textwidth} L{0.10\textwidth} L{0.42\textwidth} L{0.20\textwidth}}
+    \hline
+    \textbf{Segment} & \textbf{Use case} & \textbf{What is shown} & \textbf{Described in} \\
+    \hline
+    Introduction & --- &
+      The overview site and the StudyAI sign-in page &
+      \autoref{intro:sec:overview} \\
+    Asking the assistant & S1 &
+      A course question answered from the retrieved course notes, then a
+      multi-part request that the agent completes by calling tools &
+      \autoref{impl:sec:qa}, \autoref{append:fig:arch-s1} \\
+    Adaptive quiz & S2 &
+      A quiz sitting whose question levels adapt to the student's answers,
+      ending with a feedback note &
+      \autoref{impl:sec:analytics}, \autoref{append:fig:arch-s2} \\
+    Instructor analytics & I1 &
+      Class quiz performance and the generated course-improvement note &
+      \autoref{impl:sec:analytics}, \autoref{append:fig:arch-i1} \\
+    LMS connection & I2 &
+      Courses, assignments, deadlines, and grades fetched live from the
+      learning management system &
+      \autoref{impl:sec:retrieval}, \autoref{append:fig:arch-i2} \\
+    Close & --- &
+      A summary of the deployment and the evaluation &
+      \autoref{ch:concl} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Two points should be kept in mind when watching. First, the compression stage
+of \autoref{impl:sec:compression} is off in the recording, as it is by
+default in the deployment, so the answers shown use uncompressed retrieval.
+Second, chat turns shown in the video are not stored on the server
+(\autoref{concl:sec:limitations}); the instructor analytics are computed from
+quiz and assignment results only.
