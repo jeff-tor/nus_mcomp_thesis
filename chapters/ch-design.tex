@@ -194,8 +194,8 @@ scheduled ingestion --- has been designed but not provisioned
 \label{design:sec:methodology}
 
 \paragraph{Research approach.} The thesis follows a build-and-evaluate
-approach: it designs and builds the assistant as an artefact, deploys it on
-real course materials, and evaluates it empirically. The
+approach: it designs and builds the assistant as an artefact, deploys it with
+course materials written for the purpose, and evaluates it empirically. The
 system was developed iteratively, and design decisions were revised when
 measurements contradicted them --- the move from a fully local to a hybrid
 deployment (\autoref{design:subsec:deployment-decision}) is the clearest
@@ -221,7 +221,9 @@ which map onto the objectives in \autoref{intro:sec:objectives}:
 
 \paragraph{Data sources.} Four sources feed the evaluation:
 \begin{itemize}[nosep]
-  \item \textbf{Course materials} from NUS Canvas courses, ingested into the
+  \item \textbf{Course materials} written by the author for this project,
+        not NUS lecture notes. They cover the topics of the demonstration
+        courses, are organised by course code, and are ingested into the
         retrieval index (\autoref{impl:sec:retrieval}); the compression probe
         and token audit use the CS3241 (computer graphics) corpus, and the
         answer-quality evaluation the IT5001 (Python programming) corpus.
@@ -414,7 +416,7 @@ the stage is described in \autoref{impl:sec:compression}.
 \label{design:sec:summary}
 
 The design rests on three decisions. First, the assistant is a
-retrieval-augmented, tool-calling agent over NUS Canvas course materials that
+retrieval-augmented, tool-calling agent for NUS Canvas courses that
 answers routine queries, with a defined measure of the instructor time it
 returns (FR1--FR5). Second, it is deployed as
 a hybrid: open-weight models on a hosted provider generate answers, while

@@ -176,7 +176,7 @@ hours, the relief it delivers.
 This thesis addresses that gap with the first two of its contributions.
 First, it builds the
 modern form of the proposed intervention: a retrieval-augmented virtual
-teaching assistant over institutional (NUS Canvas) course materials
+teaching assistant for institutional (NUS Canvas) courses
 (Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second --- and unlike
 prior work --- it defines how to measure the intervention's effect: a direct,
 hour-denominated estimate of the instructor-hours returned per course per
@@ -399,7 +399,7 @@ open-domain QA and general benchmarks, not on educational course-material
 RAG. To the best of our knowledge, no published work evaluates
 \textsc{Recomp} --- or a comparable retrieval-compression method --- in a
 deployed educational virtual-teaching-assistant setting. Quantifying
-compression's cost--latency--quality trade-off on real course-material
+compression's cost--latency--quality trade-off on course-material
 question answering in a deployable VTA is therefore this thesis's empirical
 contribution on the technical side, complementing the workload measurement of
 \autoref{review:subsec:gap}: the RAG pipeline is deployed as the intervention
@@ -432,8 +432,8 @@ long contexts also degrading answer quality~\cite{tacl24:Liu}. A compression
 literature attacks this token count at its source~\cite{emnlp23:Li,
 emnlp23:Jiang, acl24:Jiang, femnlp23:Liu, iclr24:Xu, facl25:Jeong}, but has,
 to our knowledge, never been evaluated in an educational VTA. This thesis supplies the
-intervention --- a RAG-based virtual teaching assistant over NUS Canvas course
-materials with extractive retrieval compression~\cite{neurips20:Lewis,
+intervention --- a RAG-based virtual teaching assistant for NUS Canvas courses
+with extractive retrieval compression~\cite{neurips20:Lewis,
 iclr24:Xu} --- together with a defined, hour-denominated measure of the
 instructor-hours returned and a token, cost, latency, and answer-quality
-account of compression on real course-material questions.
+account of compression on course-material questions.
