@@ -6,7 +6,7 @@
 This thesis set out to measure, rather than assert, the workload relief that
 an AI teaching assistant delivers, and to make such an assistant affordable
 to operate at institutional scale. It presented a retrieval-augmented virtual
-teaching assistant over NUS Canvas course materials, defined how the
+teaching assistant for NUS Canvas courses, defined how the
 instructor-hours it returns can be measured, and evaluated an extractive
 retrieval-compression stage on the deployed system.
 
@@ -48,6 +48,14 @@ assignment results rather than on the questions students ask in chat, and the in
 \autoref{eval:subsec:hours}, which counts deflected chat queries, cannot yet
 be computed from the system's own records.
 
+\paragraph{The course materials are not NUS lecture notes.} The notes the
+assistant answers from were written by the author for this project, on the
+topics of the demonstration courses (\autoref{design:sec:methodology}). The
+results therefore show the pipeline working on representative material, not
+on a real course's notes, whose length, format, and share of code may
+differ. Using real material needs only re-ingestion
+(\autoref{impl:sec:retrieval}).
+
 \paragraph{The adaptive quiz's rule table is not validated.} The table that
 maps a student's performance tier to a target Bloom's level and complexity
 (\autoref{impl:sec:analytics}) follows established principles but was set by
@@ -61,7 +69,7 @@ untested.
 \paragraph{Summary of contributions.} The thesis makes the three
 contributions set out in \autoref{intro:sec:contributions}. First, it
 designed, built, and deployed StudyAI, a retrieval-augmented teaching
-assistant over NUS Canvas course materials, with a tool-calling chat agent,
+assistant for NUS Canvas courses, with a tool-calling chat agent,
 an adaptive quiz, and instructor analytics over quiz and assignment results
 (Chapters~\ref{ch:design} and~\ref{ch:implementation}). Second, it defined
 an hour-denominated measure of the instructor time such an assistant

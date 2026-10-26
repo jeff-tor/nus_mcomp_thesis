@@ -13,8 +13,9 @@ what it costs, and what this thesis contributes.
 \label{intro:sec:overview}
 
 This thesis presents the \emph{AI-Powered Omniscient Teacher Assistant}, a
-retrieval-augmented virtual teaching assistant built over NUS Canvas course
-materials. It answers routine clarification, content-navigation, and
+retrieval-augmented virtual teaching assistant built for NUS Canvas courses.
+The course notes it answers from in this thesis were written for the project,
+not taken from NUS courses (\autoref{design:sec:methodology}). The assistant answers routine clarification, content-navigation, and
 logistics questions; defines how the instructor time it returns can be
 measured in hours; and compresses retrieved context before generation
 so that it can be operated affordably. The system is deployed under the name
@@ -87,7 +88,7 @@ devices. In both regimes, the number of input tokens per query is the primary
 controllable cost driver.
 
 This thesis presents a retrieval-augmented virtual teaching assistant built
-over NUS Canvas course materials that absorbs routine student-support load
+for NUS Canvas courses that absorbs routine student-support load
 in the form of clarification, content navigation, and logistics queries, and unlike
 prior work, defines an hour-denominated measure of the instructor time it
 returns, together with the interaction data needed to compute it, connecting
@@ -107,7 +108,7 @@ units --- tokens, cost, and latency per query
 The objectives of this thesis are to:
 \begin{enumerate}[label=(\roman*)]
     \item Design and build a retrieval-augmented virtual teaching assistant
-          over institutional (NUS Canvas) course materials that answers
+          for institutional (NUS Canvas) courses that answers
           routine clarification, content-navigation, and logistics queries
           without instructor involvement;
     \item Define an hour-denominated measure of the instructor time the
@@ -127,8 +128,8 @@ The objectives of this thesis are to:
 This thesis makes three contributions, mirroring the gap stated in
 \autoref{review:subsec:gap}:
 \begin{enumerate}
-    \item \textbf{A deployed retrieval-augmented teaching assistant} over NUS
-          Canvas course materials --- the modern form of the AI intervention
+    \item \textbf{A deployed retrieval-augmented teaching assistant} for NUS
+          Canvas courses --- the modern form of the AI intervention
           that the AI-in-education literature has long proposed
           (Chapters~\ref{ch:design} and~\ref{ch:implementation}).
     \item \textbf{An hour-denominated measure of workload relief.} Unlike
@@ -141,7 +142,7 @@ This thesis makes three contributions, mirroring the gap stated in
     \item \textbf{An evaluation of retrieval compression in a deployed
           educational assistant.} An extractive, sentence-level compression
           stage adapted from \textsc{Recomp}~\cite{iclr24:Xu} is evaluated
-          on real course-material questions in the same units as the problem
+          on course-material questions in the same units as the problem
           statement --- tokens, cost, and latency per query --- and on answer
           quality (\autoref{impl:sec:compression},
           \autoref{eval:sec:results:compression}, and
